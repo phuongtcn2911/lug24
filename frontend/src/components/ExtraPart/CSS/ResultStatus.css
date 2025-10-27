@@ -1,0 +1,56 @@
+
+.image-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.orderStatus-image {
+  width: 350px;
+  height: auto;
+  object-fit: contain;
+}
+
+.order-info {
+  border: 1px solid #c8c8c8;
+  padding: 0.5rem 0;
+  border-radius: 0px 0px 8px 8px;
+}
+
+.order-info-wrapper {
+  position: relative;
+  margin: -1.2rem -1.2rem; /* đẩy ra ngoài box */
+}
+
+.order-card {
+  max-width: 700px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  border: 1px solid #c8c8c8;
+  border-radius: 8px;
+  overflow: hidden; /* để phần trên/dưới bo khớp */
+  background-color: #fff;
+}
+
+/* PHẦN TRÊN */
+.order-header {
+  padding: 2rem 1rem 1.5rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+
+/* PHẦN DƯỚI */
+.order-body {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* ĐƯỜNG PHÂN CÁCH */
+.divider {
+  margin: 0;
+  border: none;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+}

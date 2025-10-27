@@ -1,0 +1,88 @@
+:root {
+
+    --label-w: 140px;
+
+    --bg: #ffffff;
+    --muted: #6b7280;
+
+    --border: 1px solid #c8c8c8;
+    --radius: 8px;
+    --accent: #D98128;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    text-align: left;
+}
+
+fieldset.group {
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 24px 18px 18px 18px;
+    position: relative;
+    
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.fieldset-content {
+  position: relative;
+  overflow: hidden;  /* cắt animation nhưng legend không bị ảnh hưởng */
+  min-height: 3rem;  /* tuỳ chỉnh để giữ đủ chỗ */
+}
+
+.fieldset-columns {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
+
+.col {
+    flex: 0.8;
+    display: inline-grid;
+    /* flex-direction: column; */
+    gap: 25px;
+}
+
+.col.double {
+    flex: 1;
+    display: flex;
+}
+
+.row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+fieldset.group>legend {
+    padding: 4px 12px;
+
+    color: var(--accent);
+    background: var(--bg);
+    position: absolute;
+    top: -18px;
+    left: 16px;
+    transform: none;
+    border-radius: 999px;
+
+}
+
+.section-box {
+    padding-block: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.section-box:last-child {
+    border-bottom: none;
+}
+
+.column.custom {
+  padding-inline: .75rem;
+  padding-block: .5rem;
+}

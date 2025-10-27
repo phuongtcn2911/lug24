@@ -1,0 +1,18 @@
+#root {
+  width: 768px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  --button-shadow: hsl(0, 0%, 32%);
+  --button-shadow-hover: rgba(7, 77, 19, 0.8);
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+

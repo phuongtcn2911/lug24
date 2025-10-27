@@ -1,0 +1,45 @@
+.custom-checkbox-group {
+  display: flex;
+  gap: 20px;
+}
+
+.custom-checkbox-item {
+  display: flex;
+  /* align-items: center; */
+  cursor: pointer;
+  user-select: none;
+}
+
+.custom-checkbox-box {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #bbb;
+  border-radius: 4px; /* khác radio: vuông nhẹ */
+  margin-right: 8px;
+  position: relative;
+  transition: all 0.2s ease;
+  flex-shrink: 0;;
+}
+
+.custom-checkbox-box.checked {
+  border-color: #D98128;
+  background-color: #F9BD15;
+}
+
+.custom-checkbox-box.checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.custom-checkbox-label {
+  font-size: 16px;
+  color: #333;
+}

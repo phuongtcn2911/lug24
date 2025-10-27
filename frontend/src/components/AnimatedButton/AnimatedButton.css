@@ -1,0 +1,52 @@
+.buttonWithTextAndImg{
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+    width: 320px;
+    height: 180px;
+    border-radius: 30px;
+    cursor: pointer;
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease;
+
+    border: 5px solid #fff;
+    box-shadow: 0 5px 15px var(--button-shadow);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.buttonWithTextAndImg img {
+    position: absolute;
+    height: 300px;
+    object-fit: none;
+    /* border-radius: 0px 80px 100px; */
+    transform: translate(-320px, -100px) ;
+    transition: transform 0.3s ease;
+}
+
+.buttonWithTextAndImg span {
+    position: absolute;
+    z-index: 2;
+    /* Đảm bảo chữ nằm trên hình */
+    color: white;
+    font-weight: bold;
+    font-size: xx-large;
+    text-transform: uppercase;
+  
+    /* Canh giữa chữ */
+    transform: translate(-50px, -30px);
+    transition: transform 0.3s ease;
+}
+
+.buttonWithTextAndImg:hover{
+    transition: transform 0.3s ease;
+}
+
+.buttonWithTextAndImg:hover img {
+    transform: translate(-240px, -100px);
+}
+
+.buttonWithTextAndImg:hover span{
+    transform: translate(-5px, -15px);
+}

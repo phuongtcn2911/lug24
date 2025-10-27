@@ -1,0 +1,78 @@
+
+
+.progress-container {
+    position: relative;
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+/* Thanh ngang */
+.progress-line {
+    position: absolute;
+    top: 30px;
+    /* ✅ canh giữa vòng tròn (cao 40px) */
+    left: 12%;
+    right: 12%;
+    height: 2px;
+    background: #dbdbdb;
+    z-index: 1;
+}
+
+.progress-line::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #F9BD15; /* màu Bulma */
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.progress-container[data-step="1"] .progress-line::after {
+  width: 0%;
+}
+.progress-container[data-step="2"] .progress-line::after {
+  width: 33%;
+}
+.progress-container[data-step="3"] .progress-line::after {
+  width: 66%;
+}
+.progress-container[data-step="4"] .progress-line::after {
+  width: 100%;
+}
+
+
+
+.circle {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #dbdbdb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #b5b5b5;
+    position: relative;
+    z-index: 2;
+}
+
+.circle.is-active {
+    border-color: #f9bd15;
+    color: #f9bd15;
+}
+
+.circle.is-completed {
+    background: #f9bd15;
+    color: white;
+    border-color: #f9bd15;
+}
+
+.box {
+    border-radius: 8px;
+}
+
+.step.active p {
+  color: #D98128;
+}

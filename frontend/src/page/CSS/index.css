@@ -1,0 +1,287 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  align-items: center;
+
+
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --isOrange:#F9BD15;
+  --isDarkOrange:#D98128;
+  /* --border: 1px solid #c8c8c8;
+  --radius: 8px;
+  --accent: #D98128;
+  --bg: #ffffff; */
+}
+
+a {
+  font-weight: 500;
+  /* color:  var(--isOrange); */
+  text-decoration: inherit;
+}
+
+a:hover {
+  /* color: var(--isDarkOrange); */
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* h1 {
+  font-size: 3rem;
+  line-height: 1.1;
+}
+
+h2{
+  font-size: 2rem;
+  line-height:1.0;
+} */
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+/* button:hover {
+  border-color: #646cff;
+} */
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+
+.marquee {
+  position: relative;
+  overflow: hidden;
+  /* Giới hạn trong column */
+  white-space: nowrap;
+
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
+}
+
+.timeBox {
+  clip-path: polygon(6% 0, 100% 0, 100% 100%, 0 100%);
+  background: #F9BD15;
+  display: inline-block;
+  overflow: hidden !important;
+
+}
+
+.marquee span {
+  display: inline-block;
+  padding-right: 50%;
+  animation: marquee 10s linear infinite;
+
+}
+
+ 
+
+
+@keyframes marquee {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+
+
+/* .extraPart {
+  width: 100%;
+  height: 100px;
+  background-color: #ececec;
+  border-radius: 15px;
+  display: flex;
+} */
+
+/* .column{
+  padding: 10px;
+}
+
+.column.col-1{
+  flex:1;
+}
+.column.col-2{
+  flex:2;
+}
+.column.col-3{
+  flex:3;
+}
+.column.col-4{
+  flex:4;
+}
+.column.col-5{
+  flex:5;
+}
+.column.col-6{
+  flex:6;
+}
+.column.col-7{
+  flex:7;
+}
+.column.col-8{
+  flex:8;
+}
+.column.col-9{
+  flex:9;
+}
+.column.col-10{
+  flex:10;
+}
+.column.col-11{
+  flex:11;
+}
+.column.col-12{
+  flex:12;
+} */
+
+.videoFrame {
+  width: 100%;
+  height: 450px;
+  background-color: #a1a1a1;
+  border-radius: 15px;
+}
+
+
+
+#imgLogo {
+  justify-self: center;
+}
+
+#buttonList {
+  padding: 0;
+
+}
+
+#buttonList ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.is-orange{
+  color:var(--isOrange)
+}
+
+.button.is-orange{
+  background-color: var(--isOrange);
+  border-color: transparent;
+  color: #fff;
+
+}
+
+.chapter-title {
+  font-weight: 700;           /* in đậm */
+  font-size: 1.1rem;          /* cỡ chữ, tuỳ chỉnh */
+  display: inline-block;       /* để underline ngắn theo width chữ */
+  border-bottom: 3px solid #ffae00; /* gạch ngang màu cam như hình */
+  padding-bottom: 3px;        /* khoảng cách chữ và gạch ngang */
+  margin-bottom: 0.5rem;      /* khoảng cách với nội dung phía dưới */
+}
+
+.badge-container {
+  position: relative;
+}
+
+.badge-container .button {
+  position: relative;
+}
+
+.badge-container .badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #ff3860; /* đỏ Bulma */
+  color: #fff;
+  border-radius: 9999px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+
+/* .isOrange {
+  background-color: #FCBF10;
+}
+
+.isGreen {
+  background-color: #48c78e;
+}
+
+.isRed {
+  background-color: #ff3860;
+}
+
+.isBlue {
+  background-color: #3E8ED0;
+}
+
+.isPurple {
+  background-color: #485FC7;
+}
+
+.hasTextOrange {
+  color: #D77C29;
+}
+
+.hasTextGreen {
+  color: #55BE8C;
+}
+
+.hasTextRed {
+  color: #D42C40;
+}
+
+.hasTextBlue {
+  color: #1F66B1;
+}
+
+.hasTextPurple {
+  color: #4E62AD;
+}
+
+.hasTextBrown{
+  color: #D9812A;
+} */

@@ -1,0 +1,45 @@
+/* OTP container */
+.otp-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem; /* khoảng cách giữa các ô */
+  margin-top: 0.75rem;
+}
+
+/* OTP input ô đơn */
+.otp-input {
+  width: 3rem;
+  height: 3.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+  border-radius: var(--bulma-radius-medium, 6px);
+  border: 1px solid var(--bulma-border, #dbdbdb);
+  transition: all 0.15s ease;
+}
+
+/* Dựa trên class Bulma mặc định */
+.otp-input:focus {
+  border-color: var(--bulma-link, #485fc7);
+  box-shadow: 0 0 0 0.125em rgba(72, 95, 199, 0.25);
+  outline: none;
+}
+
+/* Trạng thái khi nhập xong toàn bộ mã */
+.otp-container.is-complete .otp-input {
+  border-color: var(--bulma-success, #23d160);
+}
+
+/* Trạng thái lỗi (nếu cần highlight sai mã) */
+.otp-container.is-error .otp-input {
+  border-color: var(--bulma-danger, #f14668);
+  background-color: #fff5f5;
+}
+
+/* Responsive nhỏ hơn */
+@media (max-width: 480px) {
+  .otp-input {
+    width: 2.4rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+}
