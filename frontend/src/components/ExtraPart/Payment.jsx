@@ -98,7 +98,7 @@ export function Payment({ method }) {
                 }
             }
 
-            async function sendOTP(obj) {
+            async function requestOTP(obj) {
                 try {
                     const res = await axios.post("http://localhost:5000/api/requestOTP", { obj });
                     console.log(res.data);
@@ -121,11 +121,15 @@ export function Payment({ method }) {
             }
 
             const obj = {
-                receiver: order.email,
+                receiver: {
+                    fullname:order.fullName,
+                    email:order.email,
+                },
                 contactType: "email",
             };
+            console.log("Thông tin gửi mail OTP:",obj);
 
-            const responseOTP = await sendOTP(obj);
+            const responseOTP = await requestOTP(obj);
             if (responseOTP.code !== 0) {
                 console.warn("Mã OTP ko thể gửi đi:", response.message);
             }

@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { sendOtpViaMail } = require("../utils/mailer");
+const { sendOtpViaMail, sendOTPMail } = require("../utils/mailer");
 const { generateOrderCode, hashCode, generateOTP } = require("../utils/generator");
 
 let otpStore = {};
@@ -51,7 +51,7 @@ exports.requestOTP = async (req, res) => {
         };
 
         if (obj.contactType === "email") {
-            await sendOtpViaMail(obj.receiver, otp.otp);
+            await sendOTPMail(obj.receiver, otp.otp);
             res.json({ code: 0, message: "Đã gửi OTP về email" });
         }
 

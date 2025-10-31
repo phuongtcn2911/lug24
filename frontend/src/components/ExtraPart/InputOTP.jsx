@@ -122,7 +122,9 @@ export function InputOTP() {
         setError("");
 
         const obj = {
-            receiver: order.email,
+            receiver: {
+                fullname:order.fullName,
+                email:order.email},
             contactType: "email",
         }
 

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Xác thực mã OTP</title>
+</head>
+
+<body style="background:#f5f5f5;font-family:Roboto,sans-serif;padding:1.5rem;margin:0;">
+
+    <!-- TABLE CHÍNH -->
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center"
+        style="max-width:450px;margin:auto;box-shadow:0 1px 4px rgba(0,0,0,0.08);border-radius:0 0 10px 10px;max-width:450px;">
+
+        <!-- HEADER -->
+        <tr>
+            <td style="background:#fcd00b;padding:20px 0;text-align:center;"></td>
+        </tr>
+
+        <!-- DẢI SỌC -->
+        <tr>
+            <td style="height:6px;background:repeating-linear-gradient(-45deg,#262629 0 10px,#fcd00b 10px 20px);"></td>
+        </tr>
+    </table>
+
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center"
+        style="background: white;max-width:450px;box-shadow:0 1px 4px rgba(0,0,0,0.08);max-width:450px;">
+        <tr>
+            <td>
+                <!-- Tiêu đề -->
+                <div style="text-align:center;margin:30px;">
+                    <img src="https://drive.google.com/thumbnail?sz=h150&id=1FUg4jZeFy0PBHf9XvY1Q4QZrtQGrj6NJ"
+                        alt="Logo Lug24" style="max-width:150px;">
+                    <h1 style="font-weight:normal;color:#434343;margin:15px 0 0;line-height:1.4;text-align:center;">
+                        Xác thực OTP
+                    </h1>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p style="text-align: center; margin: auto;">Mã xác nhận của bạn là</p>
+                <!-- Mã OTP -->
+                <div style="text-align:center; margin:20px 0;">
+                    <table align="center" cellpadding="0" cellspacing="6" style="margin:auto;">
+                        <tr>
+                            {{#each otpDigits}}
+                            <td style="width:40px;height:50px;background:#e7ebf6;
+                 font-size:24px;font-weight:bold;text-align:center;border-radius:6px;">
+                                {{this}}
+                            </td>
+                            {{/each}}
+                        </tr>
+                    </table>
+                </div>
+
+                <p style="text-align: center; margin-bottom: 4px;">Mã xác nhận sẽ hết hạn trong <span><strong
+                            style="color: #F38B01;">05</strong></span> phút</p>
+                <p style="text-align: center; margin:0 0 20px 0; color: #F38B01; "><strong>Không chia sẻ mã OTP này với
+                        bất kỳ ai</strong></p>
+
+                <p style="font-size:13px;margin:0; padding: 20px; text-align: center; font-weight: bold;">
+                    Liên hệ <a href="#" style="color:#f1c232;">support@lug24.vn</a> (Thứ 2 - Chủ Nhật, 08:00 - 23:00)
+                    hoặc hotline 1900.6408 nếu bạn cần
+                    được hỗ trợ
+                </p>
+
+
+
+            </td>
+        </tr>
+
+    </table>
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center"
+        style="background: #fcd00b;max-width:450px;margin-bottom:15px;box-shadow:0 1px 4px rgba(0,0,0,0.08);border-radius:0 0 10px 10px;max-width:450px;padding:10px">
+        <tr>
+            <td>
+                <p style="font-size:12px;color:#8f8f8f;line-height:20px;margin:0; text-align: center;">
+                    Email này được gửi đến quý khách <span style="text-transform: uppercase;">{{fullname}}</span> vì đã đặt tủ tại Lug24.<br>
+                    © 2025 Lug24. Bảo lưu mọi quyền.
+                </p>
+            </td>
+        </tr>
+    </table>
+
+
+</body>
