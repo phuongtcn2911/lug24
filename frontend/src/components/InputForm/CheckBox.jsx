@@ -1,4 +1,4 @@
-import "./Checkbox.css";
+import "./CheckBox.css";
 
 export default function Checkbox({ children, isChecked, onChange }) {
 
