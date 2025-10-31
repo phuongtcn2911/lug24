@@ -12,9 +12,9 @@ import failPayment from '../assets/img/failPayment.png'
 import cancelPayment from '../assets/img/cancelPayment.png'
 import pendingPayment from '../assets/img/pendingPayment.png'
 import tapToPay from '../assets/img/TapToPay.png'
-import otp from '../assets/img/otp.jpg'
-import openLocker from '../assets/img/Open Locker.png'
-import closeLocker from '../assets/img/Close Locker.png'
+import otp from '../assets/img/OTP.jpg'
+import openLocker from '../assets/img/OpenLocker.png'
+import closeLocker from '../assets/img/CloseLocker.png'
 import dayjs from 'dayjs'
 
 
