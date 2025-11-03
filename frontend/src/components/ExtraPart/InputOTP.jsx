@@ -35,6 +35,7 @@ export function InputOTP() {
             (async () => {
                 async function verifyOTP(obj) {
                     try {
+                        
                         const res = await axios.post("http://localhost:5000/api/verifyOTP", obj);
                         console.log(res.data);
                         return res.data;
@@ -48,6 +49,7 @@ export function InputOTP() {
                     receiver: order.email,
                     otp: otp.join(""),
                 }
+                
                 const response = await verifyOTP(obj);
                 if (response.code == 0) {
                     setError("");

@@ -40,12 +40,13 @@ exports.sendOTP = async (req, res) => {
 exports.requestOTP = async (req, res) => {
     try {
         const obj = req.body?.obj;
+        console.log("Request OTP:",obj);
         // console.log(obj.receiver, obj.contactType);
         if (!obj.receiver) return res.status(400).json({ error: "Thiếu thông tin người nhận" });
 
         const otp = generateOTP();
 
-        otpStore[obj.receiver] = {
+        otpStore[obj.receiver.email] = {
             hash: otp.hashOTP,
             expire: Date.now() + 5 * 60 * 1000, //OTP sẽ hết hạn trong vòng 5 phút
         };
@@ -64,7 +65,7 @@ exports.requestOTP = async (req, res) => {
 
 exports.verifyOTP = (req, res) => {
     const obj = req.body;
-
+ 
     if (!obj?.receiver || !obj?.otp)
         return res.status(400).json({ code: -1, message: "Thiếu tham số" });
 

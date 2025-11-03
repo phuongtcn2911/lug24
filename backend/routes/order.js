@@ -8,6 +8,7 @@ router.post("/bookABox",orderController.bookABox);
 router.post('/cancelABox',orderController.cancelABox);
 router.post('/savePayment',orderController.savePayment);
 router.post('/confirmPayment',orderController.confirmPayment);
+router.post('/sendReceipt',orderController.sendReceipt);
 
 
 module.exports=router;

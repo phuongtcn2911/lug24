@@ -9,7 +9,7 @@ import * as Transition from "../components/Transition.jsx"
 import ButtonList from "../components/InputForm/ButtonList.jsx";
 import { Header } from "../components/ExtraPart/Header.jsx";
 import DiscountPart from "../components/InputForm/DiscountPart.jsx";
-import { Lockers } from "../data/Data.js";
+// import { Lockers } from "../data/Data.js";
 import CurrencyFormat from "../data/CurrencyFormat.jsx";
 import { OrderContext } from "../data/OrderContext.jsx";
 import RadioButton from "..//components/InputForm/RadioButton.jsx"
@@ -88,9 +88,9 @@ function SendParcel() {
     // Khi mount, load dữ liệu từ context
     useEffect(function () {
         startTimer();
-        if (order.sizeIndex !== undefined && Lockers[order.sizeIndex]) {
+        if (order.sizeIndex !== undefined && Data.Lockers[order.sizeIndex]) {
             setSizeIndex(order.sizeIndex);
-            setSizeLetter(Lockers[order.sizeIndex].size);
+            setSizeLetter(Data.Lockers[order.sizeIndex].size);
             setRentalTime(order.rentalTime);
             setMaxRentalTime(order.maxRentalTime);
         }
@@ -105,7 +105,7 @@ function SendParcel() {
     useEffect(function () {
         if (order.sizeIndex === undefined) return; // tránh chạy khi context chưa sẵn sàng
 
-        const currentLocker = Lockers[order.sizeIndex];
+        const currentLocker = Data.Lockers[order.sizeIndex];
         if (!currentLocker) return;
 
         let newSubTotal = 0;
@@ -161,8 +161,8 @@ function SendParcel() {
 
     function changeButton({ group, index }) {
         if (group == "grpSize") {
-            setSizeLetter(Lockers[index].size);
-            setUnitPrice(Lockers[index].price);
+            setSizeLetter(Data.Lockers[index].size);
+            setUnitPrice(Data.Lockers[index].price);
             setSizeIndex(index);
             setOrder((order) => ({ ...order, sizeIndex: index }));
         }

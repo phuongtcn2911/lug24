@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { LockerStatus,Timer } from "../../data/Data"
+import { LockerStatus, Timer } from "../../data/Data"
 import { LanguageContext } from "../../data/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { OrderContext } from "../../data/OrderContext";
@@ -11,8 +11,8 @@ export default function LockerStatusScreen() {
     const { order, resetOrder } = useContext(OrderContext);
     const [secs, setSecs] = useState(Timer.lockerStatusDur);
     const { progress, changeStep, changeStatus } = useContext(PaymentProgressContext);
-    const [title, setTitle]=useState(Languages[lang].lockerStatus[progress.status].title);
-    
+    const [title, setTitle] = useState(Languages[lang].lockerStatus[progress.status].title);
+
 
     const nav = useNavigate();
 
@@ -31,7 +31,7 @@ export default function LockerStatusScreen() {
             (async () => {
                 const response = await openLocker(order.lockerID);
                 if (response.code !== 0) {
-                    console.warn("Không thể mở tủ:", response.message);
+                    console.warn("Từ phía server <-> frontend: Không thể mở tủ:", response.message);
                 }
             })();
         }
@@ -39,18 +39,26 @@ export default function LockerStatusScreen() {
 
     useEffect(() => {
         if (secs == 0) {
-            console.log("Status: ",progress.status);
+            console.log("Status: ", progress.status);
             if (progress.status == 1) {
                 resetOrder();
                 nav("/");
             }
-            else if(progress.status==0||progress.status==2){
+            else if (progress.status == 0 || progress.status == 2) {
                 nav("/ConfirmCheckIn");
             }
         }
     }, [secs, nav]);
 
     function getBackStatus(statusNo) {
+        if(!order) return;
+
+        (async () => { 
+            const response=await sendReceipt(order,order.email?"email":"zalo");
+            if(response.code!==0){
+                 console.warn("Từ phía server <-> frontend: Không thể gửi mail", response.message);
+            }
+        })();
         changeStep(4);
         changeStatus(statusNo);
     }
@@ -61,26 +69,33 @@ export default function LockerStatusScreen() {
             console.log(res.data);
             return res.data;
         } catch (err) {
-            console.error("Không thể mở tủ", err.message);
+            console.error("Phía server trả lời: Không thể mở tủ", err.message);
             return { code: -1, message: "Cannot open a box" };
         }
     }
 
-    useEffect(()=>{
-        
-        const editTitle=String(title).replace("#","#"+order.lockerID);
+    useEffect(() => {
+
+        const editTitle = String(title).replace("#", "#" + order.lockerID);
         setTitle(editTitle);
 
-    },[]);
+    }, []);
 
+    async function sendReceipt(obj,contactType) {
+        var orderOBJ={
+            order:obj,
+            contactType:contactType,
+        };
 
-
-    // function changeStep(stepNo) {
-    //     setProgress((prev) => {
-    //         return { ...prev, step: stepNo };
-    //     });
-    // }
-
+        try {
+            const res = await axios.post("http://localhost:5000/api/sendReceipt", {obj:orderOBJ});
+            console.log(res.data);
+            return res.data;
+        } catch (err) {
+            console.error("Phía server trả lời: Không thể gửi hóa đơn về mail", err.message);
+            return { code: -1, message: "Cannot send receipt mail" };
+        }
+    }
 
     return (
         <>

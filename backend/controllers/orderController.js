@@ -1,6 +1,8 @@
 const axios = require("axios");
 const { response } = require("express");
-const{generateOrderCode}=require("../utils/generator");
+const { generateOrderCode } = require("../utils/generator");
+const { sendReceiptEmail } = require("../utils/mailer");
+
 
 const apiURL = process.env.SMARTLOCKER_API;
 const apiSelfURL = process.env.SMARTLOCKER_SELF_API;
@@ -193,3 +195,22 @@ exports.dropOffPackage = async (req, res) => {
     });
   }
 };
+
+exports.sendReceipt= async (req, res) => {
+  try {
+    const obj=req.body?.obj;
+    console.log("Server nhận OBJ Hóa đơn: ",obj);
+    if (!obj) {
+      return res.status(400).json({ error: "Từ phía Server(Controller) nhận OBJ: Thiếu tham số đơn hàng" });
+    }
+
+    if (obj.contactType === "email") {
+            await sendReceiptEmail(obj.order);
+            res.json({ code: 0, message: "Từ phía Server(Controller->Mailer) phản hồi: Đã gửi receipt về email" });
+        }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Từ phía Server(Controller->Mailer) phản hồi: Không thể gửi hóa đơn về mail" });
+  }
+
+}
