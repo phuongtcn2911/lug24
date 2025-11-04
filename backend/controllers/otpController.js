@@ -1,15 +1,13 @@
 import axios from "axios";
 import { sendOTPMail } from "../utils/mailer.js";
 import { generateOrderCode, hashCode, generateOTP } from "../utils/generator.js";
+import { getSmartLockerConfig } from "../config.js";
 
 let otpStore = {};
 
-const apiURL = process.env.SMARTLOCKER_API;
-const apiKey = process.env.SMARTLOCKER_TOKEN;
-const deviceNo = process.env.DEVICE_NO;
-
 export async function sendOTP(req, res) {
     try {
+        const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
         const orderCode = req.body?.orderCode || req.query?.orderCode;
 
         if (!orderCode) {
