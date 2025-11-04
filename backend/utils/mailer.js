@@ -80,7 +80,7 @@ async function sendReceiptEmail(obj) {
       checkIn: {
         date: new Date(obj.checkIn).toLocaleDateString('vi-VN',{
           day:'2-digit',
-          month:'2-digit',
+          month:'short',
           year:'numeric'
         }).replace(',',''),
         time:new Date(obj.checkIn).toLocaleTimeString('en-US',{
@@ -91,7 +91,7 @@ async function sendReceiptEmail(obj) {
       checkOut: {
         date: new Date(obj.checkOut).toLocaleDateString('vi-VN',{
           day:'2-digit',
-          month:'2-digit',
+          month:'short',
           year:'numeric'
         }).replace(',',''),
         time:new Date(obj.checkOut).toLocaleTimeString('en-US',{

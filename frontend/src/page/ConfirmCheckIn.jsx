@@ -9,6 +9,7 @@ import * as Data from "../data/Data"
 import CurrencyFormat from "../data/CurrencyFormat";
 import * as  DateStringFormat from "../data/DateStringFormat";
 import axios from "axios";
+import api from "../config/axios";
 
 
 export default function ConfirmCheckIn() {
@@ -19,15 +20,15 @@ export default function ConfirmCheckIn() {
     const [locker, setLocker] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
-    
+
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if(order.lockerID===undefined||order.lockerID===null){
+        if (order.lockerID === undefined || order.lockerID === null) {
             getLockerID();
         }
-        else{
+        else {
             setLocker(order.lockerID);
         }
     }, [order.lockerID]);
@@ -55,15 +56,16 @@ export default function ConfirmCheckIn() {
         }));
     };
 
-    const getOrderCode = async () => {
-        const res = await fetch('http://localhost:5000/api/generate-order-code');
-        const data = await res.json();
-        setOrderCode(data.orderCode);
-    }
+    // const getOrderCode = async () => {
+    //     const res = await fetch('http://localhost:5000/api/generate-order-code');
+    //     const data = await res.json();
+    //     setOrderCode(data.orderCode);
+    // }
 
     const getLockerID = async () => {
         let sizeID = order.sizeIndex == 0 ? 1 : 3;
-        const res = await axios.get('http://localhost:5000/api/getAvailableBox', { params: { size: sizeID } });
+        const res = await api.get('api/getAvailableBox', { params: { size: sizeID } });
+        // const res = await axios.get('http://localhost:5000/api/getAvailableBox', { params: { size: sizeID } });
         console.log("Get available box:", res.data);
         setLocker(res.data.value.box.boxNo);
     }
@@ -74,7 +76,8 @@ export default function ConfirmCheckIn() {
 
         async function bookABox(obj) {
             try {
-                const res = await axios.post('http://localhost:5000/api/bookABox', { obj });
+                const res = await api.post('api/bookABox', { params: { obj } });
+                // const res = await axios.post('http://localhost:5000/api/bookABox', { obj });
                 console.log("Order: ", res.data);
                 return res.data;
             } catch (err) {
@@ -85,7 +88,8 @@ export default function ConfirmCheckIn() {
 
         async function confirmPayment(bill) {
             try {
-                const res = await axios.post('http://localhost:5000/api/confirmPayment', { bill });
+                const res = await api.get('api/confirmPayment', { params: { bill } });
+                // const res = await axios.post('http://localhost:5000/api/confirmPayment', { bill });
                 console.log("Order: ", res.data);
                 return res.data;
             } catch (err) {
@@ -94,8 +98,8 @@ export default function ConfirmCheckIn() {
             }
         }
 
-        if (order.orderID!=undefined||order.orderID!=null) {
-            console.log("Order ID: ",order.orderID);
+        if (order.orderID != undefined || order.orderID != null) {
+            console.log("Order ID: ", order.orderID);
             navigate("/OrderResult");
             return;
         }
@@ -110,10 +114,10 @@ export default function ConfirmCheckIn() {
             };
             console.log("Sending order object:", obj);
             const response = await bookABox(obj);
-            let orderCode="";
+            let orderCode = "";
 
             if (response.code === 0) {
-                orderCode=response.value.orderCode;
+                orderCode = response.value.orderCode;
 
                 setOrder(prev => ({
                     ...prev,
@@ -130,7 +134,7 @@ export default function ConfirmCheckIn() {
                 money: order.total,
             };
             console.log("Bill Confirm:", bill);
-            const response_stp2=await confirmPayment(bill);
+            const response_stp2 = await confirmPayment(bill);
 
             if (response_stp2.code === 0) {
                 navigate("/OrderResult");

@@ -24,6 +24,6 @@ app.use('/api',otpRoutes)
 //   res.json({ orderCode: code });
 // });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server running on port ${port}`);
+// });

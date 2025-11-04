@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { OrderContext } from "../../data/OrderContext";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import axios from "axios";
+import api from "../../config/axios";
 
 export default function LockerStatusScreen() {
     const { lang, Languages } = useContext(LanguageContext);
@@ -51,12 +52,12 @@ export default function LockerStatusScreen() {
     }, [secs, nav]);
 
     function getBackStatus(statusNo) {
-        if(!order) return;
+        if (!order) return;
 
-        (async () => { 
-            const response=await sendReceipt(order,order.email?"email":"zalo");
-            if(response.code!==0){
-                 console.warn("Từ phía server <-> frontend: Không thể gửi mail", response.message);
+        (async () => {
+            const response = await sendReceipt(order, order.email ? "email" : "zalo");
+            if (response.code !== 0) {
+                console.warn("Từ phía server <-> frontend: Không thể gửi mail", response.message);
             }
         })();
         changeStep(4);
@@ -65,7 +66,8 @@ export default function LockerStatusScreen() {
 
     async function openLocker(lockerID) {
         try {
-            const res = await axios.post("http://localhost:5000/api/openBox", { boxNo: lockerID });
+            const res = await api.post('api/openBox', { boxNo: lockerID });
+            // const res = await axios.post("http://localhost:5000/api/openBox", { boxNo: lockerID });
             console.log(res.data);
             return res.data;
         } catch (err) {
@@ -81,14 +83,15 @@ export default function LockerStatusScreen() {
 
     }, []);
 
-    async function sendReceipt(obj,contactType) {
-        var orderOBJ={
-            order:obj,
-            contactType:contactType,
+    async function sendReceipt(obj, contactType) {
+        var orderOBJ = {
+            order: obj,
+            contactType: contactType,
         };
 
         try {
-            const res = await axios.post("http://localhost:5000/api/sendReceipt", {obj:orderOBJ});
+            const res = await api.post('api/sendReceipt', { obj: orderOBJ });
+            // const res = await axios.post("http://localhost:5000/api/sendReceipt", { obj: orderOBJ });
             console.log(res.data);
             return res.data;
         } catch (err) {

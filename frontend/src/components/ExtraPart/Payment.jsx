@@ -6,12 +6,14 @@ import InfoLabel from "../InputForm/InfoLabel";
 import { Timer, TapToPay } from "../../data/Data";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import axios from "axios";
+import api from "../../config/axios"
 import { TimerContext } from "../../data/TimerContext";
 
 export async function cancelTransaction(orderCode) {
     async function cancelABox(orderCode) {
         try {
-            const res = await axios.post("http://localhost:5000/api/cancelABox", { orderCode });
+            const res = await api.post('api/cancelABox', { orderCode });
+            // const res = await axios.post("http://localhost:5000/api/cancelABox", { orderCode });
             console.log(res.data);
             return res.data;
         } catch (err) {
@@ -89,7 +91,8 @@ export function Payment({ method }) {
         (async () => {
             async function savePayment(obj) {
                 try {
-                    const res = await axios.post("http://localhost:5000/api/savePayment", { obj });
+                    const res = await api.post('api/savePayment', { obj });
+                    // const res = await axios.post("http://localhost:5000/api/savePayment", { obj });
                     console.log(res.data);
                     return res.data;
                 } catch (err) {
@@ -100,7 +103,8 @@ export function Payment({ method }) {
 
             async function requestOTP(obj) {
                 try {
-                    const res = await axios.post("http://localhost:5000/api/requestOTP", { obj });
+                    const res = await api.post('api/requestOTP', { obj });
+                    // const res = await axios.post("http://localhost:5000/api/requestOTP", { obj });
                     console.log(res.data);
                     return res.data;
                 } catch (err) {
@@ -122,12 +126,12 @@ export function Payment({ method }) {
 
             const obj = {
                 receiver: {
-                    fullname:order.fullName,
-                    email:order.email,
+                    fullname: order.fullName,
+                    email: order.email,
                 },
                 contactType: "email",
             };
-            console.log("Thông tin gửi mail OTP:",obj);
+            console.log("Thông tin gửi mail OTP:", obj);
 
             const responseOTP = await requestOTP(obj);
             if (responseOTP.code !== 0) {
@@ -178,8 +182,8 @@ export function Payment({ method }) {
                     <div className="field p-3 has-text-left">
                         <a className="help" onClick={() => cancelBookABox()}>{Languages[lang].labelCancelTransaction}</a>
                         <a className="help" onClick={() => changePaymentMethod()}>Thay đổi phương thức thanh toán</a>
-                        <a className="help" onClick={() => createPayment()}>Demo thành công</a>
-                        <a className="help" onClick={() => failPayment()}>Demo thất bại</a><br />
+                        {/* <a className="help" onClick={() => createPayment()}>Demo thành công</a> */}
+                        {/* <a className="help" onClick={() => failPayment()}>Demo thất bại</a><br /> */}
                     </div>
 
 

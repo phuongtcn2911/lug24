@@ -19,6 +19,7 @@ import validator from "validator"
 import { ReceiptTurkishLiraIcon, Timer } from "lucide-react";
 import axios from "axios";
 import { TimerContext } from "../data/TimerContext.jsx";
+import api from "../config/axios.js";
 
 
 function SendParcel() {
@@ -51,7 +52,7 @@ function SendParcel() {
     }
 
     async function countAvailableBox(size) {
-        const res = await axios.get('http://localhost:5000/api/countAvailableBox', { params: { size } });
+        const res = await api.get('api/countAvailableBox', { params: { size } });
         console.log("Get available box:", res.data);
         return res.data;
     }

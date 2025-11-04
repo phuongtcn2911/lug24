@@ -6,10 +6,12 @@ import { LanguageContext } from "../../data/LanguageContext";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import { OrderContext } from "../../data/OrderContext";
 import axios from "axios";
+import api from "../../config/axios";
 
 export async function sendingOTP(obj) {
     try {
-        const res = await axios.post("http://localhost:5000/api/requestOTP", { obj });
+        const res = await api.post('api/requestOTP', { obj });
+        // const res = await axios.post("http://localhost:5000/api/requestOTP", { obj });
         console.log(res.data);
         return res.data;
     } catch (err) {
@@ -35,8 +37,8 @@ export function InputOTP() {
             (async () => {
                 async function verifyOTP(obj) {
                     try {
-                        
-                        const res = await axios.post("http://localhost:5000/api/verifyOTP", obj);
+                        const res = await api.get('api/verifyOTP', obj);
+                        // const res = await axios.post("http://localhost:5000/api/verifyOTP", obj);
                         console.log(res.data);
                         return res.data;
                     } catch (err) {
@@ -49,7 +51,7 @@ export function InputOTP() {
                     receiver: order.email,
                     otp: otp.join(""),
                 }
-                
+
                 const response = await verifyOTP(obj);
                 if (response.code == 0) {
                     setError("");
@@ -76,7 +78,7 @@ export function InputOTP() {
         let timer;
         if (resendTimer > 0) {
             timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
-        } else if (resendTimer == 0&&!isReactive) {
+        } else if (resendTimer == 0 && !isReactive) {
             setIsReactive(true);
         }
         return () => clearTimeout(timer);
@@ -117,7 +119,7 @@ export function InputOTP() {
 
     const resendOTP = async () => {
         console.log(resendTimer);
-        if (!isReactive ) return;
+        if (!isReactive) return;
 
         // setResendTimer(Timer.resendOTP);
         // setIsReactive(false);
@@ -125,8 +127,9 @@ export function InputOTP() {
 
         const obj = {
             receiver: {
-                fullname:order.fullName,
-                email:order.email},
+                fullname: order.fullName,
+                email: order.email
+            },
             contactType: "email",
         }
 
@@ -163,7 +166,7 @@ export function InputOTP() {
 
             </div>
             <p className="help is-danger">{error}</p>
-            <a  disabled={!isReactive}
+            <a disabled={!isReactive}
                 style={{ pointerEvents: !isReactive ? "not-allowed" : "auto" }}
                 onClick={resendOTP}>
                 {!isReactive
