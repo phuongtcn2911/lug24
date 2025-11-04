@@ -64,7 +64,7 @@ export default function ConfirmCheckIn() {
 
     const getLockerID = async () => {
         let sizeID = order.sizeIndex == 0 ? 1 : 3;
-        const res = await api.get('api/getAvailableBox', { params: { size: sizeID } });
+        const res = await api.post('api/getAvailableBox', { size: sizeID });
         // const res = await axios.get('http://localhost:5000/api/getAvailableBox', { params: { size: sizeID } });
         console.log("Get available box:", res.data);
         setLocker(res.data.value.box.boxNo);
@@ -76,7 +76,7 @@ export default function ConfirmCheckIn() {
 
         async function bookABox(obj) {
             try {
-                const res = await api.post('api/bookABox', { params: { obj } });
+                const res = await api.post('api/bookABox', { obj });
                 // const res = await axios.post('http://localhost:5000/api/bookABox', { obj });
                 console.log("Order: ", res.data);
                 return res.data;
@@ -88,7 +88,7 @@ export default function ConfirmCheckIn() {
 
         async function confirmPayment(bill) {
             try {
-                const res = await api.get('api/confirmPayment', { params: { bill } });
+                const res = await api.post('api/confirmPayment', { bill });
                 // const res = await axios.post('http://localhost:5000/api/confirmPayment', { bill });
                 console.log("Order: ", res.data);
                 return res.data;

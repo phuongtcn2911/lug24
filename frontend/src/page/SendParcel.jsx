@@ -52,7 +52,7 @@ function SendParcel() {
     }
 
     async function countAvailableBox(size) {
-        const res = await api.get('api/countAvailableBox', { params: { size } });
+        const res = await api.post('api/countAvailableBox', { size });
         console.log("Get available box:", res.data);
         return res.data;
     }
