@@ -1,6 +1,6 @@
-const axios = require("axios");
-const { sendOtpViaMail, sendOTPMail } = require("../utils/mailer");
-const { generateOrderCode, hashCode, generateOTP } = require("../utils/generator");
+import axios from "axios";
+import { sendOTPMail } from "../utils/mailer.js";
+import { generateOrderCode, hashCode, generateOTP } from "../utils/generator.js";
 
 let otpStore = {};
 
@@ -8,7 +8,7 @@ const apiURL = process.env.SMARTLOCKER_API;
 const apiKey = process.env.SMARTLOCKER_TOKEN;
 const deviceNo = process.env.DEVICE_NO;
 
-exports.sendOTP = async (req, res) => {
+export async function sendOTP(req, res) {
     try {
         const orderCode = req.body?.orderCode || req.query?.orderCode;
 
@@ -17,7 +17,7 @@ exports.sendOTP = async (req, res) => {
         }
 
         const data = {
-            oType: '1002',
+            oType: "1002",
             apiKey: apiKey,
             param: {
                 orderCode: orderCode
@@ -37,10 +37,10 @@ exports.sendOTP = async (req, res) => {
     }
 };
 
-exports.requestOTP = async (req, res) => {
+export async function requestOTP(req, res) {
     try {
         const obj = req.body?.obj;
-        console.log("Request OTP:",obj);
+        console.log("Request OTP:", obj);
         // console.log(obj.receiver, obj.contactType);
         if (!obj.receiver) return res.status(400).json({ error: "Thiếu thông tin người nhận" });
 
@@ -56,14 +56,13 @@ exports.requestOTP = async (req, res) => {
             res.json({ code: 0, message: "Đã gửi OTP về email" });
         }
 
-
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Không thể gửi OTP" });
     }
 };
 
-exports.verifyOTP = (req, res) => {
+export async function verifyOTP (req, res) {
     const obj = req.body;
  
     if (!obj?.receiver || !obj?.otp)
@@ -80,4 +79,3 @@ exports.verifyOTP = (req, res) => {
     delete otpStore[obj.receiver];
     return res.json({ code: 0, message: "Xác thực OTP thành công" });
 };
-

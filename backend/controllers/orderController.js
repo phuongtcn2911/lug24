@@ -1,42 +1,35 @@
-const axios = require("axios");
-const { response } = require("express");
-const { generateOrderCode } = require("../utils/generator");
-const { sendReceiptEmail } = require("../utils/mailer");
-
+import axios from "axios";
+import { generateOrderCode } from "../utils/generator.js";
+import { sendReceiptEmail } from "../utils/mailer.js";
 
 const apiURL = process.env.SMARTLOCKER_API;
 const apiSelfURL = process.env.SMARTLOCKER_SELF_API;
 const apiKey = process.env.SMARTLOCKER_TOKEN;
 const deviceNo = process.env.DEVICE_NO;
 
-
-
-exports.generateOrderCode = async (req, res) => {
+export async function generateOrderCodeHandler(req, res) {
   const orderCode = generateOrderCode();
-  res.json({ orderCode: orderCode });
-};
+  res.json({ orderCode });
+}
 
-exports.bookABox = async (req, res) => {
+export async function bookABox(req, res) {
   try {
     const obj = req.body?.obj || req.query?.obj;
-
-    if (!obj) {
-      return res.status(400).json({ error: "Thiếu tham số đơn hàng" });
-    }
+    if (!obj) return res.status(400).json({ error: "Thiếu tham số đơn hàng" });
 
     const data = {
       oType: "1007",
-      apiKey: apiKey,
+      apiKey,
       param: {
-        userId: '',
-        deviceNo: deviceNo,
+        userId: "",
+        deviceNo,
         boxNo: obj.boxNo,
         trackNo: obj.trackNo,
         mobile: obj.mobile,
         email: obj.email,
-        dropoffCode: '',
-        pinCode: '',
-      }
+        dropoffCode: "",
+        pinCode: "",
+      },
     };
 
     const response = await axios.post(apiURL, data, {
@@ -44,29 +37,22 @@ exports.bookABox = async (req, res) => {
     });
 
     res.json(response.data);
-
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ err: "Không thể kết nối tới máy chủ AITUO" });
   }
-};
+}
 
-exports.cancelABox = async (req, res) => {
+export async function cancelABox(req, res) {
   try {
-
     const orderCode = req.body?.orderCode;
-
-
-    if (!orderCode) {
+    if (!orderCode)
       return res.status(400).json({ code: -1, message: "Thiếu orderCode" });
-    }
 
     const data = {
       oType: "1008",
-      apiKey: apiKey,
-      param: {
-        orderCode: orderCode,
-      },
+      apiKey,
+      param: { orderCode },
     };
 
     const response = await axios.post(apiURL, data, {
@@ -75,9 +61,7 @@ exports.cancelABox = async (req, res) => {
     });
 
     console.log("Kết quả từ server AITUO:", response.data);
-
     res.json(response.data);
-
   } catch (err) {
     console.error("Lỗi khi gọi AITUO:", err.message);
     res.status(500).json({
@@ -86,23 +70,21 @@ exports.cancelABox = async (req, res) => {
       detail: err.message,
     });
   }
-};
+}
 
-exports.confirmPayment = async (req, res) => {
+export async function confirmPayment(req, res) {
   try {
     const bill = req.body?.bill;
-
-    if (!bill) {
+    if (!bill)
       return res.status(400).json({ code: -1, message: "Thiếu tham số obj" });
-    }
 
     const data = {
       oType: "1015",
-      apiKey: apiKey,
+      apiKey,
       param: {
         orderCode: bill.orderCode,
         setPayment: bill.setPayment,
-        money: bill.money
+        money: bill.money,
       },
     };
 
@@ -111,7 +93,6 @@ exports.confirmPayment = async (req, res) => {
     });
 
     res.json(response.data);
-
   } catch (err) {
     console.error("Lỗi khi gọi AITUO:", err.message);
     res.status(500).json({
@@ -120,24 +101,23 @@ exports.confirmPayment = async (req, res) => {
       detail: err.message,
     });
   }
-};
+}
 
-exports.savePayment = async (req, res) => {
+export async function savePayment(req, res) {
   try {
     const obj = req.body?.obj;
     console.log(obj);
 
-    if (!obj) {
+    if (!obj)
       return res.status(400).json({ code: -1, message: "Thiếu tham số obj" });
-    }
 
     const data = {
       oType: "1001",
-      apiKey: apiKey,
+      apiKey,
       param: {
         orderCode: obj.orderCode,
         type: obj.type,
-        money: obj.money
+        money: obj.money,
       },
     };
 
@@ -146,7 +126,6 @@ exports.savePayment = async (req, res) => {
     });
 
     res.json(response.data);
-
   } catch (err) {
     console.error("Lỗi khi gọi AITUO:", err.message);
     res.status(500).json({
@@ -155,21 +134,19 @@ exports.savePayment = async (req, res) => {
       detail: err.message,
     });
   }
-};
+}
 
-exports.dropOffPackage = async (req, res) => {
+export async function dropOffPackage(req, res) {
   try {
     const obj = req.body?.obj;
-
-    if (!obj) {
+    if (!obj)
       return res.status(400).json({ error: "Thiếu tham số đơn hàng" });
-    }
 
     const data = {
       oType: "1001",
       tid: obj.orderCode,
       userId: "",
-      deviceNo: deviceNo,
+      deviceNo,
       boxNo: obj.boxNo,
       orderCode: obj.orderCode,
       trackNo: "",
@@ -177,15 +154,13 @@ exports.dropOffPackage = async (req, res) => {
       mobile: "",
       email: "",
       address: "",
-    }
+    };
 
     const response = await axios.post(apiSelfURL, data, {
       headers: { "Content-Type": "application/json" },
     });
 
     res.json(response.data);
-
-
   } catch (err) {
     console.error("Lỗi khi gọi AITUO:", err.message);
     res.status(500).json({
@@ -194,23 +169,34 @@ exports.dropOffPackage = async (req, res) => {
       detail: err.message,
     });
   }
-};
+}
 
-exports.sendReceipt= async (req, res) => {
+export async function sendReceipt(req, res) {
   try {
-    const obj=req.body?.obj;
-    console.log("Server nhận OBJ Hóa đơn: ",obj);
-    if (!obj) {
-      return res.status(400).json({ error: "Từ phía Server(Controller) nhận OBJ: Thiếu tham số đơn hàng" });
-    }
+    const obj = req.body?.obj;
+    console.log("Server nhận OBJ Hóa đơn: ", obj);
+
+    if (!obj)
+      return res
+        .status(400)
+        .json({
+          error:
+            "Từ phía Server(Controller) nhận OBJ: Thiếu tham số đơn hàng",
+        });
 
     if (obj.contactType === "email") {
-            await sendReceiptEmail(obj.order);
-            res.json({ code: 0, message: "Từ phía Server(Controller->Mailer) phản hồi: Đã gửi receipt về email" });
-        }
+      await sendReceiptEmail(obj.order);
+      res.json({
+        code: 0,
+        message:
+          "Từ phía Server(Controller->Mailer) phản hồi: Đã gửi receipt về email",
+      });
+    }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Từ phía Server(Controller->Mailer) phản hồi: Không thể gửi hóa đơn về mail" });
+    res.status(500).json({
+      error:
+        "Từ phía Server(Controller->Mailer) phản hồi: Không thể gửi hóa đơn về mail",
+    });
   }
-
 }

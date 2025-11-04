@@ -1,10 +1,27 @@
-const nodemailer = require("nodemailer");
-const fs = require('fs').promises;
-const path = require('path');
-const { env } = require("process");
-const hbs = require('nodemailer-express-handlebars').default;
-const { generateQRCode } = require("../utils/qrcode");
-const { buffer } = require("stream/consumers");
+// utils/mailer.js
+import nodemailer from "nodemailer";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+import { config } from "dotenv";
+import hbs from "nodemailer-express-handlebars";
+import { generateQRCode } from "../utils/qrcode.js";
+
+config();
+
+// Chuyển __dirname sang cú pháp tương thích ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+
+// const nodemailer = require("nodemailer");
+// const hbs = require('nodemailer-express-handlebars').default;
+// const fs = require('fs').promises;
+// const path = require('path');
+// const { env } = require("process");
+// const { generateQRCode } = require("../utils/qrcode");
+// const { buffer } = require("stream/consumers");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -14,7 +31,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-transporter.use('compile', hbs({
+transporter.use(
+  'compile', 
+  hbs({
   viewEngine: {
     extname: '.hbs',
     layoutsDir: path.join(__dirname, '../template'),
@@ -36,7 +55,7 @@ transporter.use('compile', hbs({
 
 // }
 
-async function sendOTPMail(receiver, otp) {
+export async function sendOTPMail(receiver, otp) {
   console.log(receiver);
   const otpDigits = otp.toString().split('');
   await transporter.sendMail({
@@ -52,7 +71,7 @@ async function sendOTPMail(receiver, otp) {
   console.log("Từ công cụ soạn mail phản hồi: Đã soạn và phát lệnh gửi mail OTP");
 }
 
-async function sendReceiptEmail(obj) {
+export async function sendReceiptEmail(obj) {
   console.log("Nhận hóa đơn", obj);
   //Tạo mã QR và set lệnh gửi mail
   var data = {
@@ -132,4 +151,5 @@ async function sendReceiptEmail(obj) {
 
 }
 
-module.exports = { sendOTPMail, sendReceiptEmail };
+
+// module.exports = { sendOTPMail, sendReceiptEmail };

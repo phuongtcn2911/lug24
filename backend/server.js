@@ -1,29 +1,33 @@
-// server.js
-require('dotenv').config();
-const express = require('express');
-const cors=require('cors');
+// server.js (phiên bản ESM - chạy được cả local và Vercel)
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
+// Import các nhóm API (nhớ thêm .js ở cuối)
+import lockerRoutes from "./routes/locker.js";
+import orderRoutes from "./routes/order.js";
+import otpRoutes from "./routes/otp.js";
+
+// Cấu hình môi trường
+dotenv.config();
+
+// Khởi tạo app
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = process.env.PORT;
+// Gắn nhóm API
+app.use("/api", lockerRoutes);
+app.use("/api", orderRoutes);
+app.use("/api", otpRoutes);
 
+// Khi chạy trên local (không phải production) thì listen cổng
+if (process.env.NODE_ENV !== "production") {
+  const port = process.env.PORT || 5000;
+  app.listen(port, () => {
+    console.log(`✅ Local backend running on port ${port}`);
+  });
+}
 
-//Import các nhóm API
-const lockerRoutes=require('./routes/locker');
-const orderRoutes=require('./routes/order');
-const otpRoutes=require("./routes/otp");
-app.use('/api',lockerRoutes);
-app.use('/api',orderRoutes);
-app.use('/api',otpRoutes)
-
-// // Tạo route API
-// app.get('/api/generate-order-code', (req, res) => {
-//   const code = generateOrderCode();
-//   res.json({ orderCode: code });
-// });
-
-// app.listen(port, () => {
-//   console.log(`Server running on port ${port}`);
-// });
+// Khi deploy lên Vercel thì export app (Serverless dùng cái này)
+export default app;
