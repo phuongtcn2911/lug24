@@ -62,6 +62,7 @@ export async function requestOTP(req, res) {
 
 export async function verifyOTP (req, res) {
     const obj = req.body;
+    console.log(obj);
  
     if (!obj?.receiver || !obj?.otp)
         return res.status(400).json({ code: -1, message: "Thiếu tham số" });

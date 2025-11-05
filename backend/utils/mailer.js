@@ -1,6 +1,5 @@
 // utils/mailer.js
 import nodemailer from "nodemailer";
-import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import { config } from "dotenv";
@@ -26,22 +25,22 @@ const __dirname = path.dirname(__filename);
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.EMAIL_NOREPLY,
+    pass: process.env.EMAIL_NOREPLY_PWD,
   },
 });
 
 transporter.use(
-  'compile', 
+  'compile',
   hbs({
-  viewEngine: {
-    extname: '.hbs',
-    layoutsDir: path.join(__dirname, '../template'),
-    defaultLayout: false,
-  },
-  viewPath: path.join(__dirname, '../template'),
-  extName: '.hbs',
-}));
+    viewEngine: {
+      extname: '.hbs',
+      layoutsDir: path.join(__dirname, '../template'),
+      defaultLayout: false,
+    },
+    viewPath: path.join(__dirname, '../template'),
+    extName: '.hbs',
+  }));
 
 // async function sendOtpViaMail(receiver, otp) {
 //   const mailOptions = {
@@ -59,13 +58,15 @@ export async function sendOTPMail(receiver, otp) {
   console.log(receiver);
   const otpDigits = otp.toString().split('');
   await transporter.sendMail({
-    from: `'LUG24 - Smart Locker' <${process.env.EMAIL_USER}>`,
+    from: "LUG24 - Smart Locker <noreply@vizi24.com>",
     to: receiver.email,
     subject: "Xác thực mã OTP",
+    replyTo: process.env.EMAIL_CS,
     template: "OTP_Mail",
     context: {
       otpDigits,
       fullname: receiver.fullname,
+      mailCS: process.env.EMAIL_CS,
     },
   });
   console.log("Từ công cụ soạn mail phản hồi: Đã soạn và phát lệnh gửi mail OTP");
@@ -73,6 +74,7 @@ export async function sendOTPMail(receiver, otp) {
 
 export async function sendReceiptEmail(obj) {
   console.log("Nhận hóa đơn", obj);
+  const orderID = String(obj.orderID).slice(-6);
   //Tạo mã QR và set lệnh gửi mail
   var data = {
     customer: {
@@ -81,11 +83,11 @@ export async function sendReceiptEmail(obj) {
       fullname: obj.fullName,
     },
     locker: {
-      box:{
-        boxNo:obj.lockerID,
-        boxSize:obj.sizeIndex,
+      box: {
+        boxNo: obj.lockerID,
+        boxSize: obj.sizeIndex,
       },
-      lockerID: env.DEVICE_NO,
+      lockerID: process.env.DEVICE_NO,
       locationName: "DOUP Healthy Food",
       locationAddress: "54/1 Lê Quang Định, phường Bình Thạnh, TP.HCM, Việt Nam",
       locationPhone: "+84 111 1111",
@@ -95,55 +97,59 @@ export async function sendReceiptEmail(obj) {
       }
     },
     order: {
-      orderID: obj.orderID,
+      orderID: orderID,
       checkIn: {
-        date: new Date(obj.checkIn).toLocaleDateString('vi-VN',{
-          day:'2-digit',
-          month:'short',
-          year:'numeric'
-        }).replace(',',''),
-        time:new Date(obj.checkIn).toLocaleTimeString('en-US',{
-          hour:'2-digit',
-          minute:'2-digit',
-          hour12:true
-        })}        ,
+        date: new Date(obj.checkIn).toLocaleDateString('vi-VN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        }).replace(',', ''),
+        time: new Date(obj.checkIn).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        })
+      },
       checkOut: {
-        date: new Date(obj.checkOut).toLocaleDateString('vi-VN',{
-          day:'2-digit',
-          month:'short',
-          year:'numeric'
-        }).replace(',',''),
-        time:new Date(obj.checkOut).toLocaleTimeString('en-US',{
-          hour:'2-digit',
-          minute:'2-digit',
-          hour12:true
-        })},
+        date: new Date(obj.checkOut).toLocaleDateString('vi-VN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        }).replace(',', ''),
+        time: new Date(obj.checkOut).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        })
+      },
       maxDuration: obj.maxRentalTime,
     }
   }
 
   var qrLink = await generateQRCode(data);
-  const base64Data=qrLink.replace(/^data:image\/png;base64,/, "");
-  const buffer=Buffer.from(base64Data,"base64");
+  const base64Data = qrLink.replace(/^data:image\/png;base64,/, "");
+  const buffer = Buffer.from(base64Data, "base64");
+
 
   await transporter.sendMail({
-    from: `'LUG24 - Smart Locker' ${process.env.EMAIL_USER}`,
+    from: "LUG24 - Smart Locker <noreply@vizi24.com>",
     to: data.customer.email,
-    subject: `[LUG24] - Phiếu thanh toán tủ - Mã đặt tủ <${data.order.orderID}>`,
+    subject: `[LUG24] - Phiếu thanh toán tủ - Mã đặt tủ <${orderID}>`,
     template: "Receipt_Mail",
     context: {
       customer: data.customer,
       locker: data.locker,
       order: data.order,
-      qrCodeLink:"qr-code-embedded",
+      qrCodeLink: "qr-code-embedded",
+      mailCS: process.env.EMAIL_CS,
     },
-    attachments:[
+    attachments: [
       {
-        filename:"orderQR.png",
-        content:buffer,
-        cid:"qr-code-embedded"
+        filename: "orderQR.png",
+        content: buffer,
+        cid: "qr-code-embedded"
       }
-      
+
     ]
   });
   console.log("Từ công cụ soạn mail phản hồi: Đã soạn và phát lệnh gửi mail Hóa đơn");

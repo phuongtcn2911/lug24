@@ -10,6 +10,7 @@ import cors from "cors";
 import lockerRoutes from "./routes/locker.js";
 import orderRoutes from "./routes/order.js";
 import otpRoutes from "./routes/otp.js";
+import paymentRoutes from "./routes/payment.js";
 
 // Khởi tạo app
 const app = express();
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use("/api", lockerRoutes);
 app.use("/api", orderRoutes);
 app.use("/api", otpRoutes);
+app.use("/api",paymentRoutes);
 
 // Khi chạy trên local (không phải production) thì listen cổng
 if (process.env.NODE_ENV !== "production") {
