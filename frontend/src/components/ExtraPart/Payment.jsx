@@ -182,8 +182,8 @@ export function Payment({ method }) {
                     <div className="field p-3 has-text-left">
                         <a className="help" onClick={() => cancelBookABox()}>{Languages[lang].labelCancelTransaction}</a>
                         <a className="help" onClick={() => changePaymentMethod()}>Thay đổi phương thức thanh toán</a>
-                        {/* <a className="help" onClick={() => createPayment()}>Demo thành công</a> */}
-                        {/* <a className="help" onClick={() => failPayment()}>Demo thất bại</a><br /> */}
+                        <a className="help" onClick={() => createPayment()}>Demo thành công</a>
+                        <a className="help" onClick={() => failPayment()}>Demo thất bại</a><br />
                     </div>
 
 

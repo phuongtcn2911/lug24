@@ -37,7 +37,7 @@ export function InputOTP() {
             (async () => {
                 async function verifyOTP(obj) {
                     try {
-                        const res = await api.get('api/verifyOTP', obj);
+                        const res = await api.post('api/verifyOTP', obj);
                         // const res = await axios.post("http://localhost:5000/api/verifyOTP", obj);
                         console.log(res.data);
                         return res.data;
