@@ -2,8 +2,10 @@ import axios from "axios";
 import { sendOTPMail } from "../utils/mailer.js";
 import { generateOrderCode, hashCode, generateOTP } from "../utils/generator.js";
 import { getSmartLockerConfig } from "../config.js";
+import { config } from "dotenv";
 
 let otpStore = {};
+config();
 
 export async function sendOTP(req, res) {
     try {

@@ -14,33 +14,47 @@ const client = new SePayPgClient({
 export async function createPaymentSePay(req, res) {
     try {
         const obj = req.body?.obj;
-        console.log("Order từ FrontEnd: ", obj);
 
-        if (!obj.receiver) return res.status(400).json({ error: "Thiếu thông tin hóa đơn như yêu cầu của SePay" });
+        if (!obj) return res.status(400).json({ error: "Thiếu thông tin hóa đơn như yêu cầu của SePay" });
 
         const apiCheckOutURL = client.checkout.initCheckoutUrl();
+        console.log("apiCheckOutURL: ", apiCheckOutURL);
 
-        const data = client.checkout.initOneTimePaymentFields({
+        const successURL=`${process.env.FRONTEND_URL}/OrderResult?status=success`;
+        const errorURL=`${process.env.FRONTEND_URL}/OrderResult?status=error`;
+        const cancelURL=`${process.env.FRONTEND_URL}/OrderResult?status=cancel`;
+
+
+        const pkg = {
             operation: 'PURCHASE',
             payment_method: 'BANK_TRANSFER',
-            order_invoice_number: `LUG${String(obj.orderID).slice(-6)}`,
-            order_amount: obj.total,
+            order_invoice_number: obj.order.subID,
+            order_amount: obj.order.total,
             currency: 'VND',
-            order_description: obj.description,
-        });
+            order_description: obj.transaction.description,
+            success_url: successURL,
+            error_url: errorURL,
+            cancel_url: cancelURL,
+        }
+        
+        const data = client.checkout.initOneTimePaymentFields(pkg);
 
         const response = await axios.post(apiCheckOutURL, data, {
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": `Bearer ${process.env.SEPAY_SECRET_KEY}`
+            },
         });
 
+        console.log("Liên kết thanh toán SePay: ",response.request.res.responseUrl);
+
         res.json({
-            checkout_url: response.data.checkout_url,
-            transaction_id: response.data.transaction_id
+            checkout_url: response.request.res.responseUrl,
         });
 
     }
     catch (err) {
-        console.log("Phía SePay phản hồi về Backend: Có lỗi giao dịch");
+        console.log("Phía SePay phản hồi về Backend: Có lỗi giao dịch: ", err.message);
         return res.status(500).json({ code: 1, message: "Chưa hoàn tất thanh toán với SePay" });
     }
 
