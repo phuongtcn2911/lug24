@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { Header } from "../components/ExtraPart/Header";
 import InfoLabel from "../components/InputForm/InfoLabel";
 import RadioButton from "../components/InputForm/RadioButton";
@@ -19,15 +19,20 @@ export default function ConfirmCheckIn() {
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
+    const orderRef = useRef(order);
+
+    useEffect(() => {
+        orderRef.current = order;
+    }, [order]);
 
     // Lấy lockerID nếu chưa có
     useEffect(() => {
-        if (order.locker.lockerID === undefined || order.locker.lockerID === null) {
+        if (order.locker.id === undefined || order.locker.id === null) {
             getLockerID();
         } else {
-            setLocker(order.locker.lockerID);
+            setLocker(order.locker.id);
         }
-    }, [order.locker.lockerID]);
+    }, [order.locker.id]);
 
     useEffect(() => {
         if (!locker) return;
@@ -35,7 +40,7 @@ export default function ConfirmCheckIn() {
             ...prev,
             locker: {
                 ...prev.locker,
-                lockerID: locker,
+                id: locker,
             },
         }));
     }, [locker]);
@@ -50,6 +55,13 @@ export default function ConfirmCheckIn() {
             }
         }));
     }, [selectedValue]);
+
+    useEffect(() => {
+        if (order.transaction.checkoutURL) {
+            window.location.href = order.transaction.checkoutURL;
+        }
+        return <p>Đang chuyển đến trang thanh toán SePay...</p>;
+    }, [order.transaction.checkoutURL]);
 
     const changeValue = (groupName, value) => {
         setSelectedValue(prev => ({
@@ -94,7 +106,19 @@ export default function ConfirmCheckIn() {
             }
         }
 
-        if (order.order.id) {
+        async function makeSepayTransaction(obj) {
+            try {
+                console.log("BackEnd nhận OBJ để thiết lập chuyển cho Sepay: ", obj)
+                const res = await api.post('api/createPaymentSePay', { obj });
+                console.log("Transact: ", res.data);
+                return res.data;
+            } catch (err) {
+                console.error("FrontEnd nhận phản hồi từ BackEnd: Không tạo được giao dịch", err.message);
+                return { code: -1, message: "Network error" };
+            }
+        }
+
+        if (orderRef.current.order.id) {
             console.log("Order ID: ", order.order.id);
             navigate("/OrderResult");
             return;
@@ -103,40 +127,73 @@ export default function ConfirmCheckIn() {
         setIsLoading(true);
         try {
             const obj = {
-                boxNo: order.locker.lockerID,
-                trackNo: order.customer.fullName,
-                mobile: order.customer.mobile,
-                email: order.customer.email
+                boxNo: locker,
+                trackNo: orderRef.current.customer.fullName,
+                mobile: orderRef.current.customer.mobile,
+                email: orderRef.current.customer.email
             };
             console.log("Sending order object:", obj);
             const response = await bookABox(obj);
             let orderCode = "";
 
             if (response.code === 0) {
-                const newSubID=`LUG${String(response.value.orderCode).slice(-6)}`;
-                setOrder(prev => ({
-                    ...prev,
+                const newSubID = `LUG${String(response.value.orderCode).slice(-6)}`;
+                const description = `${Languages[lang].defaultBankingMsg} ${newSubID}`;
+
+                orderRef.current = {
+                    ...orderRef.current,
                     order: {
-                        ...prev.order,
+                        ...orderRef.current.order,
                         id: response.value.orderCode,
-                        subID:newSubID,
+                        subID: newSubID,
+                    },
+                    transaction: {
+                        ...orderRef.current.transaction,
+                        description: description,
                     }
-                }));
-            } 
+                };
+
+                setOrder(orderRef.current);
+            }
+            else {
+                setError(response.message);
+                return;
+            }
 
             const bill = {
                 orderCode: response.value.orderCode,
                 setPayment: 0,
-                money: order.order.total,
+                money: orderRef.current.order.total,
             };
             console.log("Bill Confirm:", bill);
             const response_stp2 = await confirmPayment(bill);
 
-            if (response_stp2.code === 0) {
-                navigate("/OrderResult");
-            } else {
+            if (response_stp2.code !== 0) {
                 setError(response_stp2.message);
+                return;
+
             }
+
+            const response_stp3 = await makeSepayTransaction(orderRef.current);
+
+            if (response_stp3?.code !== 1) {
+                orderRef.current = {
+                    ...orderRef.current = {
+                        ...orderRef.current,
+                        transaction: {
+                            ...orderRef.current.transaction,
+                            checkoutURL: response_stp3?.checkout_url
+                        }
+                    }
+                }
+                setOrder(orderRef.current);
+            }
+            else {
+                setError(response_stp3?.message);
+                return;
+            }
+
+
         } catch (err) {
             setError("Có lỗi khi tạo đơn hàng! Vui lòng thử lại sau!");
             console.log(err);

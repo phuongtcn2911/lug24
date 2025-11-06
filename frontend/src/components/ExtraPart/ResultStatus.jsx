@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+
 import "./CSS/ResultStatus.css";
 import * as Data from "../../data/Data"
 import { LanguageContext } from "../../data/LanguageContext";
@@ -14,14 +15,24 @@ import {InputOTP} from "./InputOTP";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import LockerStatusScreen from "./LockerStatusScreen";
 
-export default function ResultStatus() {
+export default function ResultStatus({status}) {
     const { lang, Languages } = useContext(LanguageContext);
     const { order } = useContext(OrderContext); // order mới nested
     const { progress, changeStatus } = useContext(PaymentProgressContext);
 
-    function getResult(status) {
-        changeStatus(status);
-    }
+    useEffect(()=>{
+        if(status==="success"){
+            changeStatus(1);
+        }
+        else if(status==="failed"){
+            changeStatus(2);
+        }
+    },[status]);
+
+
+    // function getResult(status) {
+    //     changeStatus(status);
+    // }
 
     return (
         <div className="order-card">
@@ -30,7 +41,9 @@ export default function ResultStatus() {
                 <AnimatePresence mode="wait">
                     {progress.status == -1 ? (
                         <Transition.SwipeLeft key="payment">
-                            <Payment method={order.transaction.paymentMethod}></Payment>
+                            {order.transaction.paymentMethod==0?
+                            (<Payment method={order.transaction.paymentMethod}></Payment>):
+                            (<SePayTransaction checkoutURL={order.transaction.checkoutURL}></SePayTransaction>)}
                         </Transition.SwipeLeft>
                     ) : progress.step == 1 ? (
                         <Transition.SwipeLeft key="resultScreen">

@@ -48,6 +48,7 @@ export const defaultOrder={
     },
     transaction:{
         uuid:undefined,
+        qrURL:undefined,
         checkoutURL:undefined,
         paymentMethod:undefined,
         description:""

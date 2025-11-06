@@ -85,7 +85,7 @@ export const OTP=otp;
 export const LockerStatus=[openLocker,closeLocker];
 export const Timer={
     sessionDur:900,
-    transactDur:10,
+    transactDur:180,
     lockerStatusDur:10,
     ordStatusDur:5,
     checkAvlBoxPing:10,
