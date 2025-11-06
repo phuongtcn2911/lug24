@@ -25,7 +25,7 @@ import api from "../config/axios.js";
 function SendParcel() {
     const { lang, Languages } = useContext(LanguageContext);
     const { order, setOrder } = useContext(OrderContext);
-    const {startTimer}=useContext(TimerContext);
+    const { startTimer } = useContext(TimerContext);
 
     const [showMobile, setShowMobile] = useState(false);
     const [sizeLetter, setSizeLetter] = useState();
@@ -66,8 +66,8 @@ function SendParcel() {
                     countAvailableBox(1),
                     countAvailableBox(3),
                 ]);
-               
-                if(isMounted){
+
+                if (isMounted) {
                     setAvailableBoxes([smallAmt, largeAmt]);
                     console.log("Available boxes:", [smallAmt, largeAmt]);
                 }
@@ -78,10 +78,10 @@ function SendParcel() {
 
         fetchBoxes();
 
-        const interval=setInterval(fetchBoxes, Data.Timer.checkAvlBoxPing*1000);
+        const interval = setInterval(fetchBoxes, Data.Timer.checkAvlBoxPing * 1000);
 
-        return()=>{
-            isMounted=false;
+        return () => {
+            isMounted = false;
             clearInterval(interval);
         }
     }, [location.pathname]);
@@ -89,24 +89,24 @@ function SendParcel() {
     // Khi mount, load dữ liệu từ context
     useEffect(function () {
         startTimer();
-        if (order.sizeIndex !== undefined && Data.Lockers[order.sizeIndex]) {
-            setSizeIndex(order.sizeIndex);
-            setSizeLetter(Data.Lockers[order.sizeIndex].size);
-            setRentalTime(order.rentalTime);
-            setMaxRentalTime(order.maxRentalTime);
+        if (order.locker.sizeIndex !== undefined && Data.Lockers[order.locker.sizeIndex]) {
+            setSizeIndex(order.locker.sizeIndex);
+            setSizeLetter(Data.Lockers[order.locker.sizeIndex].size);
+            setRentalTime(order.order.rentalTime);
+            setMaxRentalTime(order.order.maxRentalTime);
         }
-        if (order.discountCode) {
+        if (order.order.discountCode) {
             // Giả sử bạn đã lưu discount trước đó
-            setDiscount(order.discountCode || 0); // nếu lưu giá trị discount trong context
+            setDiscount(order.order.discountCode || 0); // nếu lưu giá trị discount trong context
         }
         console.log(isValidTime);
     }, []);
 
     // Tự động tính toán subtotal, tax, total khi các giá trị thay đổi
     useEffect(function () {
-        if (order.sizeIndex === undefined) return; // tránh chạy khi context chưa sẵn sàng
+        if (order.locker.sizeIndex === undefined) return; // tránh chạy khi context chưa sẵn sàng
 
-        const currentLocker = Data.Lockers[order.sizeIndex];
+        const currentLocker = Data.Lockers[order.locker.sizeIndex];
         if (!currentLocker) return;
 
         let newSubTotal = 0;
@@ -115,7 +115,7 @@ function SendParcel() {
         if (isValidTime) {
             if (maxRentalTime > 0 && maxRentalTime <= Data.Promotion.rentalTime) {
                 newUnitPrice = 0;
-                newSubTotal = Data.Promotion.lockers[order.sizeIndex].price;
+                newSubTotal = Data.Promotion.lockers[order.locker.sizeIndex].price;
             }
             else if (maxRentalTime > Data.Promotion.rentalTime) {
                 newUnitPrice = currentLocker.price;
@@ -134,12 +134,15 @@ function SendParcel() {
 
         setOrder(prev => ({
             ...prev,
-            subTotal: newSubTotal,
-            discount,
-            rentalTime: rentalTime,
-            maxRentalTime: maxRentalTime,
-            tax: newTax,
-            total: newTotal,
+            order: {
+                ...prev.order,
+                subTotal: newSubTotal,
+                discountPrice:discount,
+                rentalTime: rentalTime,
+                maxRentalTime: maxRentalTime,
+                tax: newTax,
+                total: newTotal,
+            }
         }));
 
     }, [unitPrice, rentalTime, maxRentalTime, discount, sizeIndex, isValidTime]);
@@ -152,7 +155,7 @@ function SendParcel() {
         else {
             setIsDisabledSubmit(true);
         }
-    }, [order.fullName, order.email, order.mobile, order.maxRentalTime, order.rentalTime, order.sizeIndex, isAgreement]);
+    }, [order.customer.fullName, order.customer.email, order.customer.mobile, order.order.maxRentalTime, order.order.rentalTime, order.locker.sizeIndex, isAgreement]);
 
 
     function changeOtherMethod(e) {
@@ -165,7 +168,14 @@ function SendParcel() {
             setSizeLetter(Data.Lockers[index].size);
             setUnitPrice(Data.Lockers[index].price);
             setSizeIndex(index);
-            setOrder((order) => ({ ...order, sizeIndex: index }));
+            setOrder((prev) => ({ 
+                ...prev, 
+                locker:{
+                    ...prev.locker,
+                    sizeIndex: index,
+                    sizeLetter:Data.Lockers[index].size, 
+                }
+            }));
         }
     }
 
@@ -175,35 +185,62 @@ function SendParcel() {
     }
 
     function getFullNameValue(value) {
-        setOrder(prev => ({ ...prev, fullName: value }));
+        setOrder(prev => ({
+            ...prev,
+            customer: {
+                ...prev.customer,
+                fullName: value
+            }
+        }));
     }
 
     function getMobileValue(value) {
-        setOrder(prev => ({ ...prev, mobile: value }));
+        setOrder(prev => ({
+            ...prev,
+            customer: {
+                ...prev.customer,
+                mobile: value
+            }
+        }));
     }
 
     function getEmailValue(value) {
-        setOrder(prev => ({ ...prev, email: value }));
+        setOrder(prev => ({
+            ...prev,
+            customer: {
+                ...prev.customer,
+                email: value
+            }
+        }));
     }
 
     function getDiscountCode(value) {
-        setOrder(prev => ({ ...prev, discountCode: value }));
-    }
-
-    function getInOutTime(checkIn, checkOut) {
         setOrder(prev => ({
             ...prev,
-            checkIn: checkIn,
-            checkOut: checkOut
-        }))
+            order: {
+                ...prev.order,
+                discountCode: value
+            }
+        }));
+    }
 
+    function getInOutTime(checkIn, checkOut,finalCheckOut) {
+        setOrder(prev => ({
+            ...prev,
+            order: {
+                ...prev.order,
+                checkIn: checkIn,
+                checkOut: checkOut,
+                finalCheckOut:finalCheckOut,
+            }
+        }));
     }
 
     function isValidForm() {
-        const hasName = order.fullName?.trim() !== "";
-        const hasValidEmail = order.email?.trim() !== "" && validator.isEmail(order.email);
-        const hasValidMobile = order.mobile?.trim() !== "" && validator.isMobilePhone(order.mobile, "vi-VN");
-        const hasSize = order.sizeIndex != undefined;
+        const hasName = order.customer.fullName?.trim() !== "";
+        const hasValidEmail = order.customer.email?.trim() !== "" && validator.isEmail(order.customer.email);
+        const hasValidMobile = order.customer.mobile?.trim() !== "" && validator.isMobilePhone(order.customer.mobile, "vi-VN");
+        const hasSize = order.locker.sizeIndex != undefined;
 
         const validContact = hasValidEmail || hasValidMobile;
         return hasName && validContact && isAgreement && isValidTime && hasSize;
@@ -229,7 +266,7 @@ function SendParcel() {
                                         label={Languages[lang].labelRenterName}
                                         type="text"
                                         transmitData={getFullNameValue}
-                                        value={order.fullName || ""}></TextInput>
+                                        value={order.customer.fullName || ""}></TextInput>
                                     <AnimatePresence mode="wait">
                                         {showMobile ? (
                                             <Transition.SwipeLeft key="mobile">
@@ -237,7 +274,7 @@ function SendParcel() {
                                                     label={Languages[lang].labelRenterPhone}
                                                     type="tel"
                                                     transmitData={getMobileValue}
-                                                    value={order.mobile || ""}></TextInput>
+                                                    value={order.customer.mobile || ""}></TextInput>
                                             </Transition.SwipeLeft>
                                         ) : (
                                             <Transition.SwipeLeft key="email">
@@ -245,7 +282,7 @@ function SendParcel() {
                                                     label={Languages[lang].labelRenterEmail}
                                                     type="email"
                                                     transmitData={getEmailValue}
-                                                    value={order.email || ""}></TextInput>
+                                                    value={order.customer.email || ""}></TextInput>
                                             </Transition.SwipeLeft>
                                         )}
                                     </AnimatePresence>
@@ -260,7 +297,7 @@ function SendParcel() {
                                     topic={Languages[lang].labelChooseSize}
                                     group="grpSize"
                                     changeButton={changeButton}
-                                    savedSelectedIndex={order.sizeIndex}
+                                    savedSelectedIndex={order.locker.sizeIndex}
                                     amountList={availableBoxes}></ButtonList>
                                 <RentalTime topic={Languages[lang].labelRentalTime}
                                     arrayList={Languages[lang].rentalTimeChoices}
@@ -314,7 +351,7 @@ function SendParcel() {
                                 <DiscountPart
                                     getDiscountPrice={getDiscount}
                                     transmitData={getDiscountCode}
-                                    savedValue={order.discountCode || ""}></DiscountPart>
+                                    savedValue={order.order.discountCode || ""}></DiscountPart>
 
                                 <div className="section-box">
                                     <div className="columns is-mobile">

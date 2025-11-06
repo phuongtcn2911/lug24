@@ -2,24 +2,57 @@ import { createContext, useState, useEffect } from "react";
 import{Promotion} from '../data/Data';
 
 export const OrderContext = createContext();
-export const defaultOrder = {
-    orderID:undefined,
-    lockerID:undefined,
-    fullName: "",
-    mobile: "",
-    email: "",
-    sizeIndex: undefined,
-    rentalTime: Promotion.rentalTime,
-    maxRentalTime:Promotion.rentalTime,
-    discountCode: "",
-    subTotal: 0,
-    discount: 0,
-    total: 0,
-    tax: 0,
-    checkIn:null,
-    checkOut:null,
-    paymentMethod:undefined
-};
+// export const defaultOrder = {
+//     orderID:undefined,
+//     lockerID:undefined,
+//     fullName: "",
+//     mobile: "",
+//     email: "",
+//     sizeIndex: undefined,
+//     rentalTime: Promotion.rentalTime,
+//     maxRentalTime:Promotion.rentalTime,
+//     discountCode: "",
+//     subTotal: 0,
+//     discount: 0,
+//     total: 0,
+//     tax: 0,
+//     checkIn:null,
+//     checkOut:null,
+//     paymentMethod:undefined,
+//     description:""
+// };
+export const defaultOrder={
+    customer:{
+        fullName:"",
+        mobile:"",
+        email:"",
+    },
+    locker:{
+        id:undefined,
+        sizeIndex:undefined,
+        sizeLetter:''
+    },
+    order:{
+        id:undefined,
+        subID:undefined,
+        rentalTime:Promotion.rentalTime,
+        maxRentalTime:Promotion.rentalTime,
+        checkIn:null,
+        checkOut:null,
+        finalCheckOut:null,
+        discountCode:"",
+        discountPrice:0,
+        subTotal:0,
+        tax:0,
+        total:0,
+    },
+    transaction:{
+        uuid:undefined,
+        checkoutURL:undefined,
+        paymentMethod:undefined,
+        description:""
+    }
+}
 
 export function OrderProvider({ children }) {
     const [order, setOrder] = useState(defaultOrder);

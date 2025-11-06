@@ -169,12 +169,13 @@ export function LanguageProvider({ children }) {
                     "Lưu ý về thời gian hoạt động tại cơ sở ký gửi có thể ảnh hưởng đến việc lấy hàng của quý khách."
                 ]
             },
+            labelChangePaymentMethod:"Thay đổi phương thức thanh toán",
             paymentMethod: ["Thanh toán chạm", "Quét mã QR"],
             progressStatus: ["Thanh toán", "Nhập mã OTP", "Mở tủ", "Hoàn tất"],
             orderStatus: ["Chờ thanh toán", "Thanh toán thành công", "Thanh toán thất bại", "Đơn hàng đã bị hủy"],
             orderInfo: ["Mã đơn hàng", "Tổng đơn hàng", "Thời gian lấy hàng"],
             labelPaymentDirection: ["Đặt thẻ vào khu vực quét", "Quét QR để thanh toán"],
-            defaultBankingMsg: "Lug24 - Thanh toán hóa đơn số #",
+            defaultBankingMsg: "Lug24 - Thanh toán hóa đơn",
             labelEndTransaction: "Giao dịch sẽ kết thúc trong",
             labelMessage: "Nội dung",
             labelCancelTransaction: "Hủy giao dịch",
@@ -199,6 +200,7 @@ export function LanguageProvider({ children }) {
                 }
             ],
             labelLockerID: "Mã tủ",
+            labelUpdate:"Tính năng này đang được cập nhật ...",
 
         },
         {
@@ -360,11 +362,12 @@ export function LanguageProvider({ children }) {
                 ]
             },
             paymentMethod: ["Tap to Pay", "QR Code Payment"],
+            labelChangePaymentMethod:"Change another payment method",
             progressStatus: ["Payment", "Enter OTP", "Open locker", "Complete"],
             orderStatus: ["Pending Payment", "Payment Successful", "Payment Failed", "Order Cancelled"],
             orderInfo: ["Order ID", "Order Total", "Pickup Time"],
             labelPaymentDirection: ["Place your card on the reader", "Scan QR to pay"],
-            defaultBankingMsg: "Lug24 - Payment for order #",
+            defaultBankingMsg: "Lug24 - Payment for order",
             labelEndTransaction: "The transaction will expire in",
             labelMessage: "Message",
             labelCancelTransaction: "Cancel transaction",
@@ -389,6 +392,7 @@ export function LanguageProvider({ children }) {
                 }
             ],
             labelLockerID: "Locker n.o",
+            labelUpdate:"This function is under constructing ...",
         }
     ];
 
