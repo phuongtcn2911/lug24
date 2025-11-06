@@ -1,18 +1,16 @@
 import axios from "axios";
-import { getSmartLockerConfig } from "../config.js";
+// import { getSmartLockerConfig } from "../config.js";
+import { config } from "dotenv";
+
+config();
+
+const apiURL = process.env.SMARTLOCKER_API;
+const apiKey = process.env.SMARTLOCKER_TOKEN;
+const deviceNo = process.env.DEVICE_NO;
 
 
-// const apiURL = process.env.SMARTLOCKER_API;
-// const apiKey = process.env.SMARTLOCKER_TOKEN;
-// const deviceNo = process.env.DEVICE_NO;
-
-
-export async function getAvailableBox(req,res) {
+export async function getAvailableBox(req, res) {
     try {
-        const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
-        if (!apiURL || !apiKey || !deviceNo) {
-            return res.status(500).json({ err: "Thiếu cấu hình API hoặc DEVICE_NO" });
-        }
 
         const size = req.body?.size;
 
@@ -41,12 +39,9 @@ export async function getAvailableBox(req,res) {
     }
 }
 
-export async function countAvailableBox(req,res) {
+export async function countAvailableBox(req, res) {
     try {
-        const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
-        if (!apiURL || !apiKey || !deviceNo) {
-            return res.status(500).json({ err: "Thiếu cấu hình API hoặc DEVICE_NO" });
-        }
+
 
         const size = req.body?.size;
         if (!size) {
@@ -76,12 +71,9 @@ export async function countAvailableBox(req,res) {
     }
 }
 
-export async function openBox(req,res) {
+export async function openBox(req, res) {
     try {
-        const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
-        if (!apiURL || !apiKey || !deviceNo) {
-            return res.status(500).json({ err: "Thiếu cấu hình API hoặc DEVICE_NO" });
-        }
+
         const boxNo = req.body?.boxNo;
         console.log(req.body);
         if (!boxNo) {

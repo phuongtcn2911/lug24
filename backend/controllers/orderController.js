@@ -1,8 +1,14 @@
 import axios from "axios";
 import { generateOrderCode } from "../utils/generator.js";
 import { sendReceiptEmail } from "../utils/mailer.js";
-import { getSmartLockerConfig } from "../config.js";
+import { config } from "dotenv";
+// import { getSmartLockerConfig } from "../config.js";
 
+config();
+
+const apiURL = process.env.SMARTLOCKER_API;
+const apiKey = process.env.SMARTLOCKER_TOKEN;
+const deviceNo = process.env.DEVICE_NO;
 
 // export async function generateOrderCodeHandler(req, res) {
 //   const orderCode = generateOrderCode();
@@ -11,7 +17,7 @@ import { getSmartLockerConfig } from "../config.js";
 
 export async function bookABox(req, res) {
   try {
-    const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
+    // const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
     const obj = req.body?.obj || req.query?.obj;
     if (!obj) return res.status(400).json({ error: "Thiếu tham số đơn hàng" });
 
@@ -43,8 +49,10 @@ export async function bookABox(req, res) {
 
 export async function cancelABox(req, res) {
   try {
-    const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
-    const orderCode = req.body?.orderCode;
+    // const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
+    
+    const orderCode = req.body?.orderID;
+    // console.log("OrderCode đc nhận tại backend",orderCode);
     if (!orderCode)
       return res.status(400).json({ code: -1, message: "Thiếu orderCode" });
 
@@ -73,7 +81,7 @@ export async function cancelABox(req, res) {
 
 export async function confirmPayment(req, res) {
   try {
-    const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
+    // const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
     const bill = req.body?.bill;
     if (!bill)
       return res.status(400).json({ code: -1, message: "Thiếu tham số obj" });
@@ -105,7 +113,7 @@ export async function confirmPayment(req, res) {
 
 export async function savePayment(req, res) {
   try {
-    const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
+    // const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
     const obj = req.body?.obj;
     console.log(obj);
 
@@ -139,7 +147,7 @@ export async function savePayment(req, res) {
 
 export async function dropOffPackage(req, res) {
   try {
-    const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
+    // const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
     const obj = req.body?.obj;
     if (!obj)
       return res.status(400).json({ error: "Thiếu tham số đơn hàng" });
@@ -175,7 +183,7 @@ export async function dropOffPackage(req, res) {
 
 export async function sendReceipt(req, res) {
   try {
-    const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
+    // const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
     const obj = req.body?.obj;
     console.log("Server nhận OBJ Hóa đơn: ", obj);
 
