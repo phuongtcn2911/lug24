@@ -27,7 +27,7 @@ export default function ResultStatus({status}) {
         else if(status==="failed"){
             changeStatus(2);
         }
-    },[status]);
+    },[]);
 
 
     // function getResult(status) {
@@ -41,9 +41,7 @@ export default function ResultStatus({status}) {
                 <AnimatePresence mode="wait">
                     {progress.status == -1 ? (
                         <Transition.SwipeLeft key="payment">
-                            {order.transaction.paymentMethod==0?
-                            (<Payment method={order.transaction.paymentMethod}></Payment>):
-                            (<SePayTransaction checkoutURL={order.transaction.checkoutURL}></SePayTransaction>)}
+                            <Payment method={order.transaction.paymentMethod}></Payment>
                         </Transition.SwipeLeft>
                     ) : progress.step == 1 ? (
                         <Transition.SwipeLeft key="resultScreen">
