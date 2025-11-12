@@ -2,6 +2,7 @@ import { SePayPgClient } from "sepay-pg-node";
 import { config } from "dotenv";
 import crypto from "crypto"
 import axios from "axios";
+import { error } from "console";
 
 config();
 
@@ -18,7 +19,7 @@ export async function createPaymentSePay(req, res) {
         if (!obj) return res.status(400).json({ error: "Thiếu thông tin hóa đơn như yêu cầu của SePay" });
 
         const apiCheckOutURL = client.checkout.initCheckoutUrl();
-        console.log("apiCheckOutURL: ", apiCheckOutURL);
+        // console.log("apiCheckOutURL: ", apiCheckOutURL);
 
         const successURL=`${process.env.FRONTEND_URL}/OrderResult?status=success`;
         const errorURL=`${process.env.FRONTEND_URL}/OrderResult?status=error`;
@@ -50,7 +51,7 @@ export async function createPaymentSePay(req, res) {
             },
         });
 
-        console.log("Liên kết thanh toán SePay: ",response.request.res.responseUrl);
+        // console.log("Liên kết thanh toán SePay: ",response.request.res.responseUrl);
 
         res.json({
             checkout_url: response.request.res.responseUrl,
@@ -61,9 +62,8 @@ export async function createPaymentSePay(req, res) {
         console.log("Phía SePay phản hồi về Backend: Có lỗi giao dịch: ", err.message);
         return res.status(500).json({ code: 1, message: "Chưa hoàn tất thanh toán với SePay" });
     }
-
-
 }
+
 
 export async function confirmPaymentSePay(req, res) {
     try {

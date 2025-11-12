@@ -195,7 +195,7 @@ export async function sendReceipt(req, res) {
             "Từ phía Server(Controller) nhận OBJ: Thiếu tham số đơn hàng",
         });
 
-    if (obj.contactType === "email") {
+    if (obj.contactType === "Email") {
       await sendReceiptEmail(obj.order);
       res.json({
         code: 0,

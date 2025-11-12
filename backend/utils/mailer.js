@@ -74,18 +74,18 @@ export async function sendOTPMail(receiver, otp) {
 
 export async function sendReceiptEmail(obj) {
   console.log("Nhận hóa đơn", obj);
-  const orderID = String(obj.orderID).slice(-6);
+ 
   //Tạo mã QR và set lệnh gửi mail
   var data = {
     customer: {
-      phone: obj.mobile,
-      email: obj.email,
-      fullname: obj.fullName,
+      phone: obj.customer.mobile,
+      email: obj.customer.email,
+      fullname: obj.customer.fullName,
     },
     locker: {
       box: {
-        boxNo: obj.lockerID,
-        boxSize: obj.sizeIndex,
+        boxNo: obj.locker.id,
+        boxSize: obj.locker.sizeLetter,
       },
       lockerID: process.env.DEVICE_NO,
       locationName: "DOUP Healthy Food",
@@ -97,32 +97,32 @@ export async function sendReceiptEmail(obj) {
       }
     },
     order: {
-      orderID: orderID,
+      orderID: obj.order.subID,
       checkIn: {
-        date: new Date(obj.checkIn).toLocaleDateString('vi-VN', {
+        date: new Date(obj.order.checkIn).toLocaleDateString('vi-VN', {
           day: '2-digit',
           month: 'short',
           year: 'numeric'
         }).replace(',', ''),
-        time: new Date(obj.checkIn).toLocaleTimeString('en-US', {
+        time: new Date(obj.order.checkIn).toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
           hour12: true
         })
       },
       checkOut: {
-        date: new Date(obj.checkOut).toLocaleDateString('vi-VN', {
+        date: new Date(obj.order.checkOut).toLocaleDateString('vi-VN', {
           day: '2-digit',
           month: 'short',
           year: 'numeric'
         }).replace(',', ''),
-        time: new Date(obj.checkOut).toLocaleTimeString('en-US', {
+        time: new Date(obj.order.checkOut).toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
           hour12: true
         })
       },
-      maxDuration: obj.maxRentalTime,
+      maxDuration: obj.order.maxRentalTime,
     }
   }
 
@@ -134,7 +134,7 @@ export async function sendReceiptEmail(obj) {
   await transporter.sendMail({
     from: "LUG24 - Smart Locker <noreply@vizi24.com>",
     to: data.customer.email,
-    subject: `[LUG24] - Phiếu thanh toán tủ - Mã đặt tủ <${orderID}>`,
+    subject: `[LUG24] - Phiếu thanh toán tủ - Mã đặt tủ <${obj.order.subID}>`,
     template: "Receipt_Mail",
     context: {
       customer: data.customer,
@@ -149,7 +149,6 @@ export async function sendReceiptEmail(obj) {
         content: buffer,
         cid: "qr-code-embedded"
       }
-
     ]
   });
   console.log("Từ công cụ soạn mail phản hồi: Đã soạn và phát lệnh gửi mail Hóa đơn");

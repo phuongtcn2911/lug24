@@ -51,7 +51,7 @@ export async function requestOTP(req, res) {
             expire: Date.now() + 5 * 60 * 1000, //OTP sẽ hết hạn trong vòng 5 phút
         };
 
-        if (obj.contactType === "email") {
+        if (obj.contactType === "Email") {
             await sendOTPMail(obj.receiver, otp.otp);
             res.json({ code: 0, message: "Đã gửi OTP về email" });
         }
