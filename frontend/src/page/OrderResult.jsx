@@ -5,26 +5,28 @@ import ProgressBar from "../components/ExtraPart/ProgressBar"
 import SupportPart from "../components/ExtraPart/SupportPart";
 import ResultStatus from "../components/ExtraPart/ResultStatus";
 
-import {PaymentProgressProvider } from "../data/PaymentProgressContext";
+
+
 
 export default function OrderResult() {
     const [step, setStep] = useState(1);
 
-    
-    const location=useLocation();
 
-    const queryParams=new URLSearchParams(location.search);
-    const status=queryParams.get("status");
+    const location = useLocation();
+
+    const queryParams = new URLSearchParams(location.search);
+    const status = queryParams.get("status");
+
+
+
+
 
     return (
         <>
-            <Header link="/ConfirmCheckIn" isBackEnable={false}></Header>
-            <PaymentProgressProvider>
-                <ProgressBar  />
-                <ResultStatus status={status}/>
-                <SupportPart />
-            </PaymentProgressProvider>
-
+            <Header link="/ConfirmCheckIn" isBackEnable={false} />
+            <ProgressBar />
+            <ResultStatus status={status} />
+            <SupportPart />
         </>
     );
 }

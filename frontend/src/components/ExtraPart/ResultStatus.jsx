@@ -9,25 +9,35 @@ import * as DateStringFormat from "../../data/DateStringFormat";
 import { AnimatePresence } from "framer-motion";
 import * as Transition from "../../components/Transition"
 
-import {Payment} from "./Payment";
+import {Payment,cancelBookABox,afterPayment} from "./Payment";
 import OrderStatusScreen from "./OrderStatusScreen";
 import {InputOTP} from "./InputOTP";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import LockerStatusScreen from "./LockerStatusScreen";
+import { TimerContext } from "../../data/TimerContext";
 
 export default function ResultStatus({status}) {
     const { lang, Languages } = useContext(LanguageContext);
-    const { order } = useContext(OrderContext); // order mới nested
-    const { progress, changeStatus } = useContext(PaymentProgressContext);
+    const { order,resetOrder } = useContext(OrderContext); // order mới nested
+    const { progress, changeStatus,changeStep,resetProgress } = useContext(PaymentProgressContext);
+    const {startTimer}=useContext(TimerContext);
 
     useEffect(()=>{
+        console.log(status);
+        startTimer();       
+       
         if(status==="success"){
-            changeStatus(1);
+            changeStatus(1); 
+            changeStep(1);
+            console.log("Tiến hành lưu giao dịch trên AITUIO và gửi OTP về mail");
+            afterPayment(order,0,changeStatus);
         }
-        else if(status==="failed"){
-            changeStatus(2);
+        else if(status==="cancel"){
+            console.log("Tiến hành hủy giao dịch trên AITUIO");
+            cancelBookABox(order.order.id,resetOrder,changeStatus,resetProgress);
+            console.log("Đã đi lệnh hủy");
         }
-    },[]);
+    },[status]);
 
 
     // function getResult(status) {
@@ -83,88 +93,3 @@ export default function ResultStatus({status}) {
         </div>
     );
 }
-
-
-// export default function ResultStatus() {
-//     const { lang, Languages } = useContext(LanguageContext);
-//     const { order } = useContext(OrderContext);
-//     const { progress, changeStatus } = useContext(PaymentProgressContext);
-
-//     // const [orderStatus, setOrderStatus] = useState(-1);
-
-
-
-//     function getResult(status) {
-//         changeStatus(status);
-//     }
-
- 
-
-//     return (
-
-//         <div className="order-card">
-//             {/* PHẦN TRÊN */}
-//             <div className="order-header">
-//                 <AnimatePresence mode="wait">
-//                     {   progress.status == -1 ?
-//                         (
-//                             <Transition.SwipeLeft key="payment">
-//                                 <Payment method={order.paymentMethod}></Payment>
-//                             </Transition.SwipeLeft>
-//                         ) :
-//                         progress.step == 1 ?
-//                         (
-//                             <Transition.SwipeLeft key="resultScreen">
-//                                 <OrderStatusScreen></OrderStatusScreen>
-//                             </Transition.SwipeLeft>
-//                         ) :
-//                         progress.step == 2 ?
-//                         (
-//                             <Transition.SwipeLeft key="otp">
-//                                 <InputOTP />
-//                             </Transition.SwipeLeft>
-//                         ) :
-//                         progress.step == 3 ? 
-//                         (
-//                             <Transition.SwipeLeft key="lockerOpenScreen">
-//                                 <LockerStatusScreen></LockerStatusScreen>
-//                             </Transition.SwipeLeft>
-//                         ): 
-//                         progress.step == 4 ? 
-//                         (
-//                             <Transition.SwipeLeft key="lockerCloseScreen">
-//                                 <LockerStatusScreen></LockerStatusScreen>
-//                             </Transition.SwipeLeft>
-//                         ):null
-//                     }
-
-//                 </AnimatePresence>
-
-
-
-
-
-//             </div>
-
-//             {/* PHẦN DƯỚI */}
-//             <div className="order-body has-background-warning">
-//                 {/* <hr className="divider" /> */}
-//                 <div className="columns is-mobile is-multiline  p-4">
-//                     {Languages[lang].orderInfo.map(function (e, i) {
-//                         return (
-//                             <div className="column is-4">
-//                                 <p className="has-text-grey-dark is-size-7 mb-1">{String(e).toUpperCase()}</p>
-//                                 <p className="has-text-weight-semibold">{
-//                                     i == 0 ? 
-//                                         `LUG${String(order.orderID).slice(-6)}`
-//                                     :i == 1 ? 
-//                                         CurrencyFormat(order.total) 
-//                                     :DateStringFormat.DateStringFormatWithoutWeekDay(order.checkOut)}</p>
-//                             </div>
-//                         );
-//                     })}
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }

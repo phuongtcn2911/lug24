@@ -27,10 +27,10 @@ export default function LockerStatusScreen() {
         }
         else {
             // Gọi async đúng cách
-            if (!order || !order.lockerID) return;
+            if (!order || !order.locker.id) return;
 
             (async () => {
-                const response = await openLocker(order.lockerID);
+                const response = await openLocker(order.locker.id);
                 if (response.code !== 0) {
                     console.warn("Từ phía server <-> frontend: Không thể mở tủ:", response.message);
                 }
@@ -55,7 +55,7 @@ export default function LockerStatusScreen() {
         if (!order) return;
 
         (async () => {
-            const response = await sendReceipt(order, order.email ? "email" : "zalo");
+            const response = await sendReceipt(order, order.customer.email ? "Email" : "Zalo");
             if (response.code !== 0) {
                 console.warn("Từ phía server <-> frontend: Không thể gửi mail", response.message);
             }
@@ -78,7 +78,7 @@ export default function LockerStatusScreen() {
 
     useEffect(() => {
 
-        const editTitle = String(title).replace("#", "#" + order.lockerID);
+        const editTitle = String(title).replace("#", "#" + order.locker.id);
         setTitle(editTitle);
 
     }, []);

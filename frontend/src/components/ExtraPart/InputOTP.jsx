@@ -48,7 +48,7 @@ export function InputOTP() {
                 }
 
                 const obj = {
-                    receiver: order.email,
+                    receiver: order.customer.email,
                     otp: otp.join(""),
                 }
 
@@ -127,10 +127,11 @@ export function InputOTP() {
 
         const obj = {
             receiver: {
-                fullname: order.fullName,
-                email: order.email
+                fullname: order.customer.fullName,
+                email: order.customer.email,
+                mobile:order.customer.mobile,
             },
-            contactType: "email",
+            contactType: order.customer.email!=""?"Email":"Zalo",
         }
 
         const responseOTP = await sendingOTP(obj);

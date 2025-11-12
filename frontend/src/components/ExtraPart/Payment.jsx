@@ -24,11 +24,65 @@ export async function cancelTransaction(orderID) {
     }
 }
 
+export async function cancelBookABox(orderID, resetOrder,resetProgress, changeStatus) {
+    const response = await cancelTransaction(orderID);
+    console.log(response);
+    if (response.code !== 0) {
+        console.warn("Tủ có thể chưa huỷ thành công:", response.message);
+    }
+    resetOrder();
+    resetProgress();
+    changeStatus(3);
+}
+
+export async function savePayment(order, paymentType) {
+    try {
+        const bill = {
+            orderCode: order.order.id,
+            type: paymentType,
+            money: order.order.total,
+        }
+        await api.post("api/savePayment", { obj: bill });
+    }
+    catch (err) {
+        console.log("Giai đoạn lưu thanh toán bị lỗi: ", err);
+    }
+
+}
+
+export async function sendOTP(order) {
+    try {
+        const otpObj = {
+            receiver: {
+                fullname: order.customer.fullName,
+                email: order.customer.email,
+                mobile: order.customer.mobile
+            },
+            contactType: order.customer.email!=""?"Email":"Zalo",
+        };
+        await api.post("api/requestOTP", { obj: otpObj });
+    }
+    catch (err) {
+        console.log("Giai đoạn gửi OTP bị lỗi: ", err);
+    }
+
+}
+
+export async function afterPayment(order, paymentType,changeStatus) {
+    (async () => {
+        await savePayment(order, paymentType);
+        await sendOTP(order);
+        console.log("Đã gửi mail OTP");
+        changeStatus(1);
+    })();
+
+}
+
 export function Payment({ method }) {
     const { order, setOrder, resetOrder } = useContext(OrderContext);
     const { lang, Languages } = useContext(LanguageContext);
     const { remaining } = useContext(TimerContext);
-    const { changeStatus } = useContext(PaymentProgressContext);
+    const { changeStatus,resetProgress } = useContext(PaymentProgressContext);
 
     const [msg, setMsg] = useState("");
     const [timeLeft, setTimeLeft] = useState(Timer.transactDur);
@@ -74,7 +128,7 @@ export function Payment({ method }) {
     // Timer hết → hủy giao dịch
     useEffect(() => {
         if (timeLeft === 0 && order?.order?.id) {
-            cancelBookABox();
+            cancelBookABox(orderID, resetOrder,resetProgress, changeStatus);
         }
     }, [timeLeft, order]);
 
@@ -82,23 +136,23 @@ export function Payment({ method }) {
     useEffect(() => {
         if (remaining === 0 && order?.order?.id) {
             console.log("Hủy giao dịch do hết thời gian của phiên giao dịch");
-            cancelBookABox();
+            cancelBookABox(orderID, resetOrder,resetProgress, changeStatus);
         }
     }, [remaining, order]);
 
-    // Hủy đặt tủ thủ công
-    async function cancelBookABox() {
+    // // Hủy đặt tủ thủ công
+    // async function cancelBookABox() {
 
-        (async () => {
-            const response = await cancelTransaction(order?.order?.id);
+    //     (async () => {
+    //         const response = await cancelTransaction(order?.order?.id);
 
-            if (response.code !== 0) {
-                console.warn("Tủ có thể chưa huỷ thành công:", response.message);
-            }
-        })();
-        resetOrder();
-        changeStatus(3);
-    }
+    //         if (response.code !== 0) {
+    //             console.warn("Tủ có thể chưa huỷ thành công:", response.message);
+    //         }
+    //     })();
+    //     resetOrder();
+    //     changeStatus(3);
+    // }
 
     // async function makeSepayTransaction(obj) {
     //     try {
@@ -113,30 +167,30 @@ export function Payment({ method }) {
     // }
 
     // Demo thanh toán thành công
-    function afterPayment() {
-        (async () => {
-            try {
-                const bill = {
-                    orderCode: order.order.id,
-                    type: 0,
-                    money: order.order.total,
-                };
-                await api.post("api/savePayment", { obj: bill });
+    // function afterPayment() {
+    //     (async () => {
+    //         try {
+    //             const bill = {
+    //                 orderCode: order.order.id,
+    //                 type: 0,
+    //                 money: order.order.total,
+    //             };
+    //             await api.post("api/savePayment", { obj: bill });
 
-                const obj = {
-                    receiver: {
-                        fullname: order.customer.fullName,
-                        email: order.customer.email,
-                    },
-                    contactType: "email",
-                };
-                await api.post("api/requestOTP", { obj });
-                changeStatus(1);
-            } catch (err) {
-                console.error(err.message);
-            }
-        })();
-    }
+    //             const obj = {
+    //                 receiver: {
+    //                     fullname: order.customer.fullName,
+    //                     email: order.customer.email,
+    //                 },
+    //                 contactType: "email",
+    //             };
+    //             await api.post("api/requestOTP", { obj });
+    //             changeStatus(1);
+    //         } catch (err) {
+    //             console.error(err.message);
+    //         }
+    //     })();
+    // }
 
     function failPayment() {
         changeStatus(2);
@@ -154,7 +208,7 @@ export function Payment({ method }) {
 
         socket.on("payment_success", (data) => {
             if (data?.orderID === order?.order?.subID) {
-                afterPayment();
+               afterPayment(order, 0,changeStatus);
             }
         });
 

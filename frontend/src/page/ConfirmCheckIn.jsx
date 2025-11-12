@@ -9,10 +9,13 @@ import * as Data from "../data/Data";
 import CurrencyFormat from "../data/CurrencyFormat";
 import * as DateStringFormat from "../data/DateStringFormat";
 import api from "../config/axios";
+import { PaymentProgressContext } from "../data/PaymentProgressContext";
 
 export default function ConfirmCheckIn() {
     const { lang, Languages } = useContext(LanguageContext);
     const { order, setOrder } = useContext(OrderContext);
+    const { changeStep, changeStatus } = useContext(PaymentProgressContext);
+
     const [selectedValue, setSelectedValue] = useState({ paymentMethods: 0 });
     const [locker, setLocker] = useState();
     const [isLoading, setIsLoading] = useState(false);
@@ -56,13 +59,6 @@ export default function ConfirmCheckIn() {
         }));
     }, [selectedValue]);
 
-    useEffect(() => {
-        if (order.transaction.checkoutURL) {
-            window.location.href = order.transaction.checkoutURL;
-        }
-        return <p>Đang chuyển đến trang thanh toán SePay...</p>;
-    }, [order.transaction.checkoutURL]);
-
     const changeValue = (groupName, value) => {
         setSelectedValue(prev => ({
             ...prev,
@@ -70,7 +66,7 @@ export default function ConfirmCheckIn() {
         }));
     };
 
-    // Lấy lockerID từ API
+      // Lấy lockerID từ API
     const getLockerID = async () => {
         let sizeID = order.locker.sizeIndex === 0 ? 1 : 3;
         try {
@@ -81,6 +77,13 @@ export default function ConfirmCheckIn() {
             console.error("Không lấy được lockerID", err.message);
         }
     };
+
+    useEffect(() => {
+        if (order.transaction.checkoutURL) {
+            window.location.href = order.transaction.checkoutURL;
+        }
+        return <p>Đang chuyển đến trang thanh toán SePay...</p>;
+    }, [order.transaction.checkoutURL]);
 
     const createAnOrder = async () => {
 
@@ -124,6 +127,7 @@ export default function ConfirmCheckIn() {
             return;
         }
 
+        setError("");
         setIsLoading(true);
         try {
             const obj = {
@@ -187,6 +191,7 @@ export default function ConfirmCheckIn() {
                     }
                 }
                 setOrder(orderRef.current);
+                localStorage.setItem("order",JSON.stringify(orderRef.current));
             }
             else {
                 setError(response_stp3?.message);

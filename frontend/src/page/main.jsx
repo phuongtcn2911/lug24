@@ -6,6 +6,7 @@ import App from './App.jsx'
 import { LanguageProvider } from '../data/LanguageContext.jsx';
 import { OrderProvider } from '../data/OrderContext.jsx';
 import { TimerProvider } from '../data/TimerContext.jsx';
+import { PaymentProgressProvider } from '../data/PaymentProgressContext.jsx';
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
 
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')).render(
     <TimerProvider>
       <LanguageProvider>
         <OrderProvider>
-          <App />
+          <PaymentProgressProvider>
+            <App />
+          </PaymentProgressProvider>
         </OrderProvider>
       </LanguageProvider>
     </TimerProvider>
