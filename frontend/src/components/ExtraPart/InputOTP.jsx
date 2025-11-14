@@ -20,6 +20,24 @@ export async function sendingOTP(obj) {
     }
 }
 
+export async function sendOTP(order,langIndex) {
+    try {
+        const otpObj = {
+            receiver: {
+                fullname: order.customer.fullName,
+                email: order.customer.email,
+                mobile: order.customer.mobile
+            },
+            contactType: order.customer.email != "" ? "Email" : "Zalo",
+            lang:langIndex===0?"vi":"en",
+        };
+        await api.post("api/requestOTP", { obj: otpObj });
+    }
+    catch (err) {
+        console.log("Giai đoạn gửi OTP bị lỗi: ", err);
+    }
+}
+
 export function InputOTP() {
     const [otp, setOTP] = useState(["", "", "", "", "", ""]);
     const inputsRef = useRef([]);
@@ -124,20 +142,9 @@ export function InputOTP() {
         // setResendTimer(Timer.resendOTP);
         // setIsReactive(false);
         setError("");
+        sendOTP(order,lang);
 
-        const obj = {
-            receiver: {
-                fullname: order.customer.fullName,
-                email: order.customer.email,
-                mobile:order.customer.mobile,
-            },
-            contactType: order.customer.email!=""?"Email":"Zalo",
-        }
-
-        const responseOTP = await sendingOTP(obj);
-        if (responseOTP.code !== 0) {
-            setError(responseOTP.message);
-        }
+       
     };
 
 

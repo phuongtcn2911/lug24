@@ -14,12 +14,12 @@ import { PaymentProgressContext } from "../data/PaymentProgressContext";
 export default function ConfirmCheckIn() {
     const { lang, Languages } = useContext(LanguageContext);
     const { order, setOrder } = useContext(OrderContext);
-    const { changeStep, changeStatus } = useContext(PaymentProgressContext);
-
+    
     const [selectedValue, setSelectedValue] = useState({ paymentMethods: 0 });
     const [locker, setLocker] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
+    const [isRedirecting, setIsRedirecting] = useState(false);
 
     const navigate = useNavigate();
     const orderRef = useRef(order);
@@ -66,7 +66,7 @@ export default function ConfirmCheckIn() {
         }));
     };
 
-      // Lấy lockerID từ API
+    // Lấy lockerID từ API
     const getLockerID = async () => {
         let sizeID = order.locker.sizeIndex === 0 ? 1 : 3;
         try {
@@ -80,9 +80,10 @@ export default function ConfirmCheckIn() {
 
     useEffect(() => {
         if (order.transaction.checkoutURL) {
+            setIsRedirecting(true);
             window.location.href = order.transaction.checkoutURL;
         }
-        return <p>Đang chuyển đến trang thanh toán SePay...</p>;
+        // return <p>Đang chuyển đến trang thanh toán SePay...</p>;
     }, [order.transaction.checkoutURL]);
 
     const createAnOrder = async () => {
@@ -191,7 +192,7 @@ export default function ConfirmCheckIn() {
                     }
                 }
                 setOrder(orderRef.current);
-                localStorage.setItem("order",JSON.stringify(orderRef.current));
+                localStorage.setItem("order", JSON.stringify(orderRef.current));
             }
             else {
                 setError(response_stp3?.message);
@@ -210,6 +211,11 @@ export default function ConfirmCheckIn() {
     return (
         <>
             <Header link="/SendParcel" isBackEnable={true} />
+            {isRedirecting && (
+                <div className="notification is-info">
+                    Đang chuyển đến trang thanh toán SePay...
+                </div>
+            )}
 
             <article className="message is-warning">
                 <div className="message-body">

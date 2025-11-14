@@ -17,7 +17,7 @@ import LockerStatusScreen from "./LockerStatusScreen";
 import { TimerContext } from "../../data/TimerContext";
 
 export default function ResultStatus({status}) {
-    const { lang, Languages } = useContext(LanguageContext);
+    const { lang, Languages,resetLanguage } = useContext(LanguageContext);
     const { order,resetOrder } = useContext(OrderContext); // order mới nested
     const { progress, changeStatus,changeStep,resetProgress } = useContext(PaymentProgressContext);
     const {startTimer}=useContext(TimerContext);
@@ -36,6 +36,7 @@ export default function ResultStatus({status}) {
             console.log("Tiến hành hủy giao dịch trên AITUIO");
             cancelBookABox(order.order.id,resetOrder,changeStatus,resetProgress);
             console.log("Đã đi lệnh hủy");
+            resetLanguage();
         }
     },[status]);
 

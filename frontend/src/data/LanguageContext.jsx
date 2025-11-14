@@ -1,10 +1,10 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { WorkingTime } from "../data/Data";
 
 export const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
-    const [lang, setLang] = useState(0); // 0 = VN, 1 = EN
+    const [lang, setLang] = useState(checkStoredLanguage); // 0 = VN, 1 = EN
     const [flag, setFlag] = useState("flagVN");
 
     function changeLanguage() {
@@ -17,6 +17,30 @@ export function LanguageProvider({ children }) {
             setFlag("flagVN");
         }
     }
+
+    function checkStoredLanguage() {
+        const storeLang = sessionStorage.getItem("language");
+        if (storeLang) {
+            return JSON.parse(storeLang);
+        }
+        else {
+            return 0;
+        }
+    }
+
+    function resetLanguage(){
+        setLang(0);
+        sessionStorage.removeItem("language");
+    }
+
+
+    useEffect(() => {
+        sessionStorage.setItem("language", JSON.stringify(lang));
+    }, [lang]);
+
+
+
+
 
     const Languages = [
         {
@@ -44,7 +68,7 @@ export function LanguageProvider({ children }) {
             labelDiscount: "Giảm giá",
             labelTax: "Thuế (nếu có)",
             labelTotal: "Tổng cộng",
-            labelSessionDuration:"Giao dịch sẽ kết thúc trong",
+            labelSessionDuration: "Giao dịch sẽ kết thúc trong",
             btnCheckout: "Thanh toán",
             alertEmpty: "Thông tin không được bỏ trống",
             alertEmailInvalid: "Email không đúng",
@@ -55,8 +79,8 @@ export function LanguageProvider({ children }) {
                 "Cơ sở ký gửi chỉ hoạt động trong khung giờ từ " + String(WorkingTime.open.hour()).padStart(2, '0') + ":" + String(WorkingTime.open.minute()).padStart(2, '0') +
                 " đến " + String(WorkingTime.closed.hour()).padStart(2, '0') + ":" + String(WorkingTime.closed.minute()).padStart(2, '0') + ". Vui lòng chọn lại khung giờ lấy hàng."
             ],
-            alertOutOfLocker:"Tất cả tủ ký gửi đều đã đầy. Vui lòng quay lại sau.",
-            btnConfirm: "Tôi chấp nhận các điều khoản dịch vụ",
+            alertOutOfLocker: "Tất cả tủ ký gửi đều đã đầy. Vui lòng quay lại sau.",
+            labConfirm: "Tôi chấp nhận các điều khoản dịch vụ",
             btnReservation: "Đặt tủ",
             houseRule: [
                 {
@@ -85,7 +109,8 @@ export function LanguageProvider({ children }) {
             rentalTimeChoices: ["Giá dùng thử: 4 giờ", "Chọn thời gian lấy hàng"],
             labelCheckInTime: "Thời gian gửi hàng",
             labelCheckOutTime: "Thời gian lấy hàng",
-            msgConfirm: ["Bằng việc chọn", "\"Đặt tủ\"", "bạn đã đồng ý với ", "Điều khoản dịch vụ", "của Lug24. Quý khách có thể nhận được thông báo qua Email/SMS."],
+            msgConfirm: ["Bằng việc chọn", "\"Xác nhận\"", "quý khách đã đồng ý với ", "Điều khoản dịch vụ", "của Lug24. Bạn có thể nhận được thông báo qua Email/SMS."],
+            btnConfirm: "Xác nhận",
             terms: {
                 title: "Điều khoản sử dụng dịch vụ",
                 contents: [
@@ -169,7 +194,7 @@ export function LanguageProvider({ children }) {
                     "Lưu ý về thời gian hoạt động tại cơ sở ký gửi có thể ảnh hưởng đến việc lấy hàng của quý khách."
                 ]
             },
-            labelChangePaymentMethod:"Thay đổi phương thức thanh toán",
+            labelChangePaymentMethod: "Thay đổi phương thức thanh toán",
             paymentMethod: ["Thanh toán chạm", "Quét mã QR"],
             progressStatus: ["Thanh toán", "Nhập mã OTP", "Mở tủ", "Hoàn tất"],
             orderStatus: ["Chờ thanh toán", "Thanh toán thành công", "Thanh toán thất bại", "Đơn hàng đã bị hủy"],
@@ -200,7 +225,7 @@ export function LanguageProvider({ children }) {
                 }
             ],
             labelLockerID: "Mã tủ",
-            labelUpdate:"Tính năng này đang được cập nhật ...",
+            labelUpdate: "Tính năng này đang được cập nhật ...",
 
         },
         {
@@ -229,7 +254,7 @@ export function LanguageProvider({ children }) {
             labelDiscount: "Discount",
             labelTax: "Tax (if capable)",
             labelTotal: "Total",
-            labelSessionDuration:"The session will end in",
+            labelSessionDuration: "The session will end in",
             btnCheckout: "Checkout",
             alertEmpty: "This field is required",
             alertEmailInvalid: "Invalid email",
@@ -242,9 +267,9 @@ export function LanguageProvider({ children }) {
                 " and " + String(WorkingTime.closed.hour()).padStart(2, '0') + ":" + String(WorkingTime.closed.minute()).padStart(2, '0') +
                 ". Please select another pickup time.",
             ],
-            alertOutOfLocker:"All storage lockers are full. Please come back later.",
+            alertOutOfLocker: "All storage lockers are full. Please come back later.",
 
-            btnConfirm: "I agree to the Terms and Conditions",
+            labConfirm: "I agree to the Terms and Conditions",
             houseRule: [
                 {
                     title: "Checked luggage regulations",
@@ -273,7 +298,8 @@ export function LanguageProvider({ children }) {
             labelCheckInTime: "Check-in Time",
             labelCheckOutTime: "Check-out Time",
             btnReservation: "Book a locker",
-            msgConfirm: ["By selecting", "\"Book a Locker\"", " you agree to Lug24’s", "Terms of Service", ". You may also receive notifications via Email/SMS."],
+            msgConfirm: ["By selecting", "\"Confirmation\"", " you agree to Lug24’s", "Terms of Service", ". You may also receive notifications via Email/SMS."],
+            btnConfirm: "Confirmation",
             terms: {
                 title: "User's Terms and Conditions",
                 contents: [
@@ -362,7 +388,7 @@ export function LanguageProvider({ children }) {
                 ]
             },
             paymentMethod: ["Tap to Pay", "QR Code Payment"],
-            labelChangePaymentMethod:"Change another payment method",
+            labelChangePaymentMethod: "Change another payment method",
             progressStatus: ["Payment", "Enter OTP", "Open locker", "Complete"],
             orderStatus: ["Pending Payment", "Payment Successful", "Payment Failed", "Order Cancelled"],
             orderInfo: ["Order ID", "Order Total", "Pickup Time"],
@@ -392,12 +418,12 @@ export function LanguageProvider({ children }) {
                 }
             ],
             labelLockerID: "Locker n.o",
-            labelUpdate:"This function is under constructing ...",
+            labelUpdate: "This function is under constructing ...",
         }
     ];
 
     return (
-        <LanguageContext.Provider value={{ lang, setLang, flag, setFlag, Languages, changeLanguage }}>
+        <LanguageContext.Provider value={{ lang, setLang, flag, setFlag, Languages, changeLanguage,resetLanguage }}>
             {children}
         </LanguageContext.Provider>
     );

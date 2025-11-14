@@ -137,7 +137,7 @@ function SendParcel() {
             order: {
                 ...prev.order,
                 subTotal: newSubTotal,
-                discountPrice:discount,
+                discountPrice: discount,
                 rentalTime: rentalTime,
                 maxRentalTime: maxRentalTime,
                 tax: newTax,
@@ -155,9 +155,9 @@ function SendParcel() {
         else {
             setIsDisabledSubmit(true);
         }
-    }, [order.customer.fullName, order.customer.email, order.customer.mobile, order.order.maxRentalTime, order.order.rentalTime, order.locker.sizeIndex, isAgreement]);
+    }, [order.customer.fullName, order.customer.email, order.customer.mobile, order.order.maxRentalTime, order.order.rentalTime, order.locker.sizeIndex]);
 
-
+  
     function changeOtherMethod(e) {
         e.preventDefault();
         setShowMobile(!showMobile);
@@ -168,12 +168,12 @@ function SendParcel() {
             setSizeLetter(Data.Lockers[index].size);
             setUnitPrice(Data.Lockers[index].price);
             setSizeIndex(index);
-            setOrder((prev) => ({ 
-                ...prev, 
-                locker:{
+            setOrder((prev) => ({
+                ...prev,
+                locker: {
                     ...prev.locker,
                     sizeIndex: index,
-                    sizeLetter:Data.Lockers[index].size, 
+                    sizeLetter: Data.Lockers[index].size,
                 }
             }));
         }
@@ -224,14 +224,14 @@ function SendParcel() {
         }));
     }
 
-    function getInOutTime(checkIn, checkOut,finalCheckOut) {
+    function getInOutTime(checkIn, checkOut, finalCheckOut) {
         setOrder(prev => ({
             ...prev,
             order: {
                 ...prev.order,
                 checkIn: checkIn,
                 checkOut: checkOut,
-                finalCheckOut:finalCheckOut,
+                finalCheckOut: finalCheckOut,
             }
         }));
     }
@@ -241,9 +241,9 @@ function SendParcel() {
         const hasValidEmail = order.customer.email?.trim() !== "" && validator.isEmail(order.customer.email);
         const hasValidMobile = order.customer.mobile?.trim() !== "" && validator.isMobilePhone(order.customer.mobile, "vi-VN");
         const hasSize = order.locker.sizeIndex != undefined;
-
+        // && isAgreement
         const validContact = hasValidEmail || hasValidMobile;
-        return hasName && validContact && isAgreement && isValidTime && hasSize;
+        return hasName && validContact && isValidTime && hasSize;
     }
 
     function handleBooking(e) {
@@ -390,25 +390,12 @@ function SendParcel() {
                                             <p className="subtitle is-5 has-text-right is-bold">{CurrencyFormat(total)}</p>
                                         </div>
                                     </div>
-                                    <div className="columns is-mobile">
-                                        <div className="column">
-                                            <Checkbox isChecked={isAgreement} onChange={setIsAgreement}>
-                                                <span>{Languages[lang].msgConfirm[0]} </span>
-                                                <span><strong>{Languages[lang].msgConfirm[1]} </strong></span>
-                                                <span>{Languages[lang].msgConfirm[2]} </span>
-                                                <span>
-                                                    <a onClick={showMsg}>{Languages[lang].msgConfirm[3]} </a>
-                                                </span>
-                                                <span>{Languages[lang].msgConfirm[4]} </span>
-                                            </Checkbox>
-                                        </div>
 
-                                    </div>
                                     <div className="columns is-mobile">
                                         <div className="column">
                                             <button className="button is-warning is-rounded is-fullwidth"
                                                 disabled={isDisabledSubmit}
-                                                onClick={handleBooking}
+                                                onClick={showMsg}
                                             >
                                                 <span className="icon">
                                                     <i className="fa-solid fa-warehouse"></i>
@@ -458,6 +445,30 @@ function SendParcel() {
                                                     );
                                                 })}
                                             </section>
+                                            <footer className="modal-card-foot" style={{ flexDirection: "column", alignItems: "stretch" }}>
+                                                <div className="block">
+                                                    <Checkbox isChecked={isAgreement} onChange={setIsAgreement}>
+                                                        <span>{Languages[lang].msgConfirm[0]} </span>
+                                                        <span><strong>{Languages[lang].msgConfirm[1]} </strong></span>
+                                                        <span>{Languages[lang].msgConfirm[2]} </span>
+                                                        <span><strong>{Languages[lang].msgConfirm[3]}</strong> </span>
+                                                        <span>{Languages[lang].msgConfirm[4]} </span>
+                                                    </Checkbox>
+
+                                                </div>
+
+                                                <button className="button is-warning is-rounded"
+                                                    disabled={!isAgreement}
+                                                    onClick={handleBooking}
+                                                >
+                                                    <span className="icon">
+                                                       <i class="fa-solid fa-clipboard-check"></i>
+                                                    </span>
+                                                    <span>{Languages[lang].btnConfirm}</span>
+                                                </button>
+
+
+                                            </footer>
                                         </div>
                                     </div>
                                 </div>

@@ -6,7 +6,7 @@ import { OrderContext } from "../../data/OrderContext";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 
 export default function OrderStatusScreen() {
-    const { lang, Languages } = useContext(LanguageContext);
+    const { lang, Languages,resetLanguage } = useContext(LanguageContext);
     const { resetOrder } = useContext(OrderContext);
     const [secs, setSecs] = useState(Timer.ordStatusDur);
     const { progress,changeStep } = useContext(PaymentProgressContext);
@@ -32,6 +32,7 @@ export default function OrderStatusScreen() {
             }
             else {
                 resetOrder();
+                resetLanguage();
                 nav("/");
             }
         }

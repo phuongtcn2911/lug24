@@ -87,6 +87,7 @@ export default function LockerStatusScreen() {
         var orderOBJ = {
             order: obj,
             contactType: contactType,
+            lang:lang==0?"vi":"en",
         };
 
         try {

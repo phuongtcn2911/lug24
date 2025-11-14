@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { LanguageContext } from "../../data/LanguageContext";
 import { TimerContext } from "../../data/TimerContext.jsx";
 import * as Data from "../../data/Data.js";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cancelTransaction } from "../ExtraPart/Payment.jsx";
 import { OrderContext } from "../../data/OrderContext.jsx";
 
@@ -10,6 +10,8 @@ export function Header({ link, isBackEnable }) {
     const { lang, Languages } = useContext(LanguageContext);
     const { remaining, stopTimer, resetTimer } = useContext(TimerContext);
     const { order, resetOrder } = useContext(OrderContext);
+
+    const navigate=useNavigate();
 
     function resetNewSS() {
         if (link === "/") {
@@ -23,6 +25,7 @@ export function Header({ link, isBackEnable }) {
                 })();
             }
         }
+        navigate(link);
     }
 
     return (
@@ -31,7 +34,7 @@ export function Header({ link, isBackEnable }) {
                 <div className="level-left">
                     <div className="level-item">
                         {isBackEnable == true ?
-                            <Link to={link}>
+                            
                                 <button className="button is-warning"
                                     onClick={resetNewSS}>
                                     <span className="icon">
@@ -39,7 +42,7 @@ export function Header({ link, isBackEnable }) {
                                     </span>
                                     <span>{Languages[lang].btnBack}</span>
                                 </button>
-                            </Link>
+                         
                             : null}
                     </div>
                 </div>

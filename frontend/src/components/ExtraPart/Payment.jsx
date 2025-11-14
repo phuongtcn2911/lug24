@@ -8,6 +8,7 @@ import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import api from "../../config/axios";
 import { TimerContext } from "../../data/TimerContext";
 import { io } from "socket.io-client";
+import { sendOTP } from "./InputOTP";
 
 export async function cancelTransaction(orderID) {
     try {
@@ -24,7 +25,7 @@ export async function cancelTransaction(orderID) {
     }
 }
 
-export async function cancelBookABox(orderID, resetOrder,resetProgress, changeStatus) {
+export async function cancelBookABox(orderID, resetOrder, resetProgress, changeStatus) {
     const response = await cancelTransaction(orderID);
     console.log(response);
     if (response.code !== 0) {
@@ -50,28 +51,12 @@ export async function savePayment(order, paymentType) {
 
 }
 
-export async function sendOTP(order) {
-    try {
-        const otpObj = {
-            receiver: {
-                fullname: order.customer.fullName,
-                email: order.customer.email,
-                mobile: order.customer.mobile
-            },
-            contactType: order.customer.email!=""?"Email":"Zalo",
-        };
-        await api.post("api/requestOTP", { obj: otpObj });
-    }
-    catch (err) {
-        console.log("Giai đoạn gửi OTP bị lỗi: ", err);
-    }
 
-}
 
-export async function afterPayment(order, paymentType,changeStatus) {
+export async function afterPayment(order, paymentType, changeStatus,langIndex) {
     (async () => {
         await savePayment(order, paymentType);
-        await sendOTP(order);
+        await sendOTP(order,langIndex);
         console.log("Đã gửi mail OTP");
         changeStatus(1);
     })();
@@ -82,41 +67,12 @@ export function Payment({ method }) {
     const { order, setOrder, resetOrder } = useContext(OrderContext);
     const { lang, Languages } = useContext(LanguageContext);
     const { remaining } = useContext(TimerContext);
-    const { changeStatus,resetProgress } = useContext(PaymentProgressContext);
+    const { changeStatus, resetProgress } = useContext(PaymentProgressContext);
 
     const [msg, setMsg] = useState("");
     const [timeLeft, setTimeLeft] = useState(Timer.transactDur);
 
-    // // Tạo message ngân hàng
-    // useEffect(() => {
-    //     if (order?.order?.subID && Languages[lang]) {
-    //         const text = `${Languages[lang].defaultBankingMsg} ${order.order.subID}`;
-    //         setMsg(text);
-
-    //         // Cập nhật transaction.description
-    //         setOrder((prev) => ({
-    //             ...prev,
-    //             transaction: {
-    //                 ...prev.transaction,
-    //                 description: text,
-    //             },
-    //         }));
-    //     }
-    // }, [order?.order?.subID, lang]);
-
-    // useEffect(() => {
-    //     if (!order.transaction.description || order.transaction.uuid) return;
-    //     setOrder((prev) => ({
-    //         ...prev,
-    //         transaction: {
-    //             ...prev.transaction,
-    //             qrURL:BankAccount.makeQRCode(order.order.total,order.transaction.description),
-    //         },
-    //     }));
-    // }, [order.transaction.description]);
-
-    // Timer giảm
-    useEffect(() => {
+   useEffect(() => {
         const timer = setInterval(() => {
             setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
         }, 1000);
@@ -128,7 +84,7 @@ export function Payment({ method }) {
     // Timer hết → hủy giao dịch
     useEffect(() => {
         if (timeLeft === 0 && order?.order?.id) {
-            cancelBookABox(orderID, resetOrder,resetProgress, changeStatus);
+            cancelBookABox(order?.order?.id, resetOrder, resetProgress, changeStatus);
         }
     }, [timeLeft, order]);
 
@@ -136,61 +92,9 @@ export function Payment({ method }) {
     useEffect(() => {
         if (remaining === 0 && order?.order?.id) {
             console.log("Hủy giao dịch do hết thời gian của phiên giao dịch");
-            cancelBookABox(orderID, resetOrder,resetProgress, changeStatus);
+            cancelBookABox(order?.order?.id, resetOrder, resetProgress, changeStatus);
         }
     }, [remaining, order]);
-
-    // // Hủy đặt tủ thủ công
-    // async function cancelBookABox() {
-
-    //     (async () => {
-    //         const response = await cancelTransaction(order?.order?.id);
-
-    //         if (response.code !== 0) {
-    //             console.warn("Tủ có thể chưa huỷ thành công:", response.message);
-    //         }
-    //     })();
-    //     resetOrder();
-    //     changeStatus(3);
-    // }
-
-    // async function makeSepayTransaction(obj) {
-    //     try {
-    //         console.log("BackEnd nhận OBJ để thiết lập chuyển cho Sepay: ", obj)
-    //         const res = await api.post('api/createPaymentSePay', { obj });
-    //         console.log("Transact: ", res.data);
-    //         return res.data;
-    //     } catch (err) {
-    //         console.error("FrontEnd nhận phản hồi từ BackEnd: Không tạo được giao dịch", err.message);
-    //         return { code: -1, message: "Network error" };
-    //     }
-    // }
-
-    // Demo thanh toán thành công
-    // function afterPayment() {
-    //     (async () => {
-    //         try {
-    //             const bill = {
-    //                 orderCode: order.order.id,
-    //                 type: 0,
-    //                 money: order.order.total,
-    //             };
-    //             await api.post("api/savePayment", { obj: bill });
-
-    //             const obj = {
-    //                 receiver: {
-    //                     fullname: order.customer.fullName,
-    //                     email: order.customer.email,
-    //                 },
-    //                 contactType: "email",
-    //             };
-    //             await api.post("api/requestOTP", { obj });
-    //             changeStatus(1);
-    //         } catch (err) {
-    //             console.error(err.message);
-    //         }
-    //     })();
-    // }
 
     function failPayment() {
         changeStatus(2);
@@ -208,7 +112,7 @@ export function Payment({ method }) {
 
         socket.on("payment_success", (data) => {
             if (data?.orderID === order?.order?.subID) {
-               afterPayment(order, 0,changeStatus);
+                afterPayment(order, 0, changeStatus,lang);
             }
         });
 
@@ -244,10 +148,8 @@ export function Payment({ method }) {
                     <InfoLabel label={Languages[lang].labelMessage} children={msg} />
 
                     <div className="field p-3 has-text-left">
-                        <a className="help" onClick={() => cancelBookABox()}>{Languages[lang].labelCancelTransaction}</a>
+                        <a className="help" onClick={() => cancelBookABox(order.order.id, resetOrder, resetProgress, changeStatus)}>{Languages[lang].labelCancelTransaction}</a>
                         <a className="help" onClick={changePaymentMethod}>{Languages[lang].labelChangePaymentMethod}</a>
-                        {/* <a className="help" onClick={createPayment}>Demo thành công</a>
-                        <a className="help" onClick={failPayment}>Demo thất bại</a> */}
                     </div>
                 </div>
 
