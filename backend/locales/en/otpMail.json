@@ -1,0 +1,21 @@
+{
+    "otpSubject": "OTP Verification",
+    "otpHeader": "OTP Verification",
+
+    "otpContent_0": "Your verification code is",
+    "otpContent_1": "The code will expire in",
+    "otpContent_2": "minutes",
+    "otpContent_3": "Do NOT share this code with anyone under any circumstances.",
+
+    "otpSupportNote_0": "Note:",
+    "otpSupportNote_1": "This is an automated email. Please do not reply to this email.",
+    "otpSupportNote_2": "If you need support, please contact",
+    "otpSupportNote_3": "(Monday - Sunday, 08:00 - 23:00)",
+    "otpSupportNote_4": "or hotline",
+    "otpSupportNote_5": "1900.XXXX",
+    
+    "otpFooter_0": "Sincerely",
+    "otpFooter_1": "The Lug24 Development Team"
+
+    
+}

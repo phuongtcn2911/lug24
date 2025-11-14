@@ -196,7 +196,7 @@ export async function sendReceipt(req, res) {
         });
 
     if (obj.contactType === "Email") {
-      await sendReceiptEmail(obj.order);
+      await sendReceiptEmail(obj.order,obj.lang);
       res.json({
         code: 0,
         message:

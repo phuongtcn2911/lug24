@@ -4,6 +4,7 @@ dotenv.config();
 
 // server.js (phiên bản ESM - chạy được cả local và Vercel)
 import express from "express";
+
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
@@ -13,11 +14,13 @@ import lockerRoutes from "./routes/locker.js";
 import orderRoutes from "./routes/order.js";
 import otpRoutes from "./routes/otp.js";
 import paymentRoutes from "./routes/payment.js";
+import i18next,{middleware as i18nextMiddleware} from "./routes/i18n.js"
 
 // Khởi tạo app
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(i18nextMiddleware.handle(i18next));
 
 
 // Gắn nhóm API

@@ -43,6 +43,8 @@ export async function requestOTP(req, res) {
         console.log("Request OTP:", obj);
         // console.log(obj.receiver, obj.contactType);
         if (!obj.receiver) return res.status(400).json({ error: "Thiếu thông tin người nhận" });
+        else if(!obj.contactType) return res.status(400).json({ error: "Thiếu phương thức gửi đi" });
+        else if(!obj.lang) return res.status(400).json({ error: "Thiếu ngôn ngữ gửi đi" });
 
         const otp = generateOTP();
 
@@ -52,7 +54,7 @@ export async function requestOTP(req, res) {
         };
 
         if (obj.contactType === "Email") {
-            await sendOTPMail(obj.receiver, otp.otp);
+            await sendOTPMail(obj.receiver, otp.otp,obj.lang);
             res.json({ code: 0, message: "Đã gửi OTP về email" });
         }
 

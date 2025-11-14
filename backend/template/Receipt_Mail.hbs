@@ -3,17 +3,14 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Phiếu thanh toán Lug24</title>
+  <title>{{subject}}</title>
 </head>
 
 <body style="background:#f5f5f5;font-family:Roboto,sans-serif;padding:1.5rem;margin:0;">
 
   <p style="font-size: 14pt;">
     <i>
-      Thư điện tử này là bảo mật và có thể đã đăng ký bảo mật về pháp lý. Trong trường hợp Quý khách không phải là nguời
-      nhận thư, Quý khách không được phép sao chép, chuyển, tiết lộ hoặc sử dụng bất kỳ nội dung nào của thư điện tử.
-      Trong trường hợp Quý khách nhận thư bị lỗi, vui lòng xóa thư và tất cả các bản sao trong hệ thống của Quý khách.
-      Xin vui lòng không hồi âm về địa chỉ thư điện tử này. Vui lòng liên hệ Trung tâm dịch vụ Khách Hàng
+      {{warning}}
     </i>
   </p>
 
@@ -43,16 +40,14 @@
           <img src="https://drive.google.com/thumbnail?sz=h150&id=1FUg4jZeFy0PBHf9XvY1Q4QZrtQGrj6NJ" alt="Logo Lug24"
             style="max-width:150px;">
           <h1 style="font-weight:normal;color:#434343;margin:15px 0 0;line-height:1.4;text-align:center;">
-            Phiếu thanh toán tủ thuê của quý khách trong thư này!
+            {{title}}
           </h1>
         </div>
 
         <div style="color:#434343;">
-          <p><strong style="font-size:18px;">Kính gửi quý khách {{customer.fullname}},</strong></p>
-          <p style="font-size:15px;margin:0">Lug24h liên hệ để xác nhận yêu cầu đặt tủ của quý khách đã thành công.</p>
-          <p style="font-size:15px;margin:0">Phiếu thanh toán tủ thuê và biên nhận thanh toán của quý khách được đính
-            kèm trong tập tin bên dưới.
-          </p>
+          <p><strong style="font-size:18px;">{{greeting_0}} {{customer.fullname}},</strong></p>
+          <p style="font-size:15px;margin:0">{{greeting_1}}</p>
+          <p style="font-size:15px;margin:0">{{greeting_2}}</p>
         </div>
 
         <!-- QR -->
@@ -60,10 +55,10 @@
           <img src="cid:{{qrCodeLink}}" width="50%">
         </div>
 
-      <div style="margin:20px 0;">
-          <h2 style="margin:0;text-transform:uppercase;"><strong>Thông tin ký gửi</strong></h2>
-          <p style="font-size: 12pt; margin:4px 0;">Mã đặt tủ: <strong>{{order.orderID}}</strong></p>
-          <p style="margin: auto;">Đặt và thanh toán bởi Lug24</p>
+        <div style="margin:20px 0;">
+          <h2 style="margin:0;text-transform:uppercase;"><strong>{{parcelInfo}}</strong></h2>
+          <p style="font-size: 12pt; margin:4px 0;">{{orderID}}: <strong>{{order.orderID}}</strong></p>
+          <p style="margin: auto;">{{paymentByLug}}</p>
         </div>
 
 
@@ -72,7 +67,7 @@
 
         <div style="margin:20px 0;">
           <!-- Thông tin khách -->
-          <p style="font-size: 12pt;margin: auto;">Tên khách:<br>
+          <p style="font-size: 12pt;margin: auto;">{{customerName}}:<br>
           <h2 style="margin: 0px;font-weight:bold;color:#f1c232;text-transform:uppercase;">{{customer.fullname}}</h2>
           </p>
 
@@ -81,14 +76,14 @@
           <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:20px;">
             <tr>
               <td valign="top" style="border-left:3px solid #FCD00B;padding-left:8px;width:50%;">
-                <p style="margin:0;font-size:14pt;">Nhận tủ</p>
+                <p style="margin:0;font-size:14pt;">{{dropOff}}</p>
                 <p style="font-weight:bold;margin:0;">{{order.checkIn.date}}</p>
-                <p style="font-size:13px;color:#E28A1B;margin:0;">từ {{order.checkIn.time}}</p>
+                <p style="font-size:13px;color:#E28A1B;margin:0;">{{from}} {{order.checkIn.time}}</p>
               </td>
               <td valign="top" style="border-left:3px solid #FCD00B;padding-left:8px;width:50%;">
-                <p style="margin:0;font-size:14pt;">Trả tủ</p>
+                <p style="margin:0;font-size:14pt;">{{pickUp}}</p>
                 <p style="font-weight:bold;margin:0;">{{order.checkOut.date}}</p>
-                <p style="font-size:13px;color:#E28A1B;margin:0;">đến {{order.checkOut.time}}</p>
+                <p style="font-size:13px;color:#E28A1B;margin:0;">{{to}} {{order.checkOut.time}}</p>
               </td>
             </tr>
           </table>
@@ -96,14 +91,14 @@
           <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:20px;font-size:12pt;">
             <tr>
               <td valign="top" style="padding-left:3px;width:50%;">
-                <p style="margin:4px 0;">Cỡ tủ</p>
-                <p style="margin:4px 0;">Số tủ</p>
-                <p style="margin:4px 0;">Thời gian lưu trữ tối đa</p>
+                <p style="margin:4px 0;">{{lockerSize}}</p>
+                <p style="margin:4px 0;">{{lockerNo}}</p>
+                <p style="margin:4px 0;">{{maxStorageTime}}</p>
               </td>
               <td valign="top" style="padding-left:8px;width:50%;">
                 <p style="margin:4px 0;"><strong>{{locker.box.boxSize}}</strong></p>
                 <p style="margin:4px 0;"><strong>#{{locker.box.boxNo}}</strong></p>
-                <p style="margin:4px 0;"><strong>{{order.maxDuration}} giờ</strong></p>
+                <p style="margin:4px 0;"><strong>{{order.maxDuration}} {{hour}}</strong></p>
               </td>
             </tr>
           </table>
@@ -112,8 +107,8 @@
 
         <!-- Thông tin cơ sở -->
         <div style="margin:20px 0;">
-          <h2 style="margin:0;text-transform:uppercase;"><strong>Cơ sở ký gửi</strong></h2>
-          <p style="font-size: 12pt; margin:4px 0;">Mã hệ tủ Lug24: <strong>{{locker.lockerID}}</strong></p>
+          <h2 style="margin:0;text-transform:uppercase;"><strong>{{campusInfo}}</strong></h2>
+          <p style="font-size: 12pt; margin:4px 0;">{{campusID}}: <strong>{{locker.lockerID}}</strong></p>
         </div>
 
 
@@ -122,8 +117,8 @@
         <div style="margin:20px 0;">
           <h2 style="margin:4px 0;"><strong>{{locker.locationName}}</strong></h2>
           <p style="font-size: 10pt;margin:4px 0 15px;color:#737374;">{{locker.locationAddress}}</p>
-          <p style="font-size: 10pt;margin:4px 0;color:#737374;">Điện thoại: {{locker.locationPhone}}</p>
-          <p style="font-size: 10pt;margin:4px 0;color:#737374;">Thời gian hoạt động:
+          <p style="font-size: 10pt;margin:4px 0;color:#737374;">{{phone}}: {{locker.locationPhone}}</p>
+          <p style="font-size: 10pt;margin:4px 0;color:#737374;">{{locationWorkingTime}}:
             {{locker.locationWorkingTime.open}}
             -
             {{locker.locationWorkingTime.closed}}</p>
@@ -135,9 +130,9 @@
     style="background: white;max-width:500px;border-radius:10px 10px 0 0;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
     <tr>
       <td style="padding:24px;">
-        <h2 style="margin:0 0 5px;">Bạn cần giúp đỡ?</h2>
+        <h2 style="margin:0 0 5px;"> {{supportNote_0}}</h2>
         <p style="margin:0 0 15px;font-size:12px;">
-          Cung cấp mã đặt tủ của bạn <strong>{{order.orderID}}</strong> khi liên hệ với chúng tôi.
+          {{supportNote_1}} <strong>{{order.orderID}}</strong> {{supportNote_2}}
         </p>
 
         <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:20px;font-size:14pt;">
@@ -146,15 +141,15 @@
               <img
                 src="https://d1gnmtcb0vp69g.cloudfront.net/imageResource/2023/10/18/1697613869675-93ceb77ecff437a05160504458f4c5b6.png"
                 style="width:20px;height:20px;vertical-align:middle;margin-right:6px;">
-              <a href="mailto:{{mailCS}}" style="color:#f1c232;font-weight:bold;text-decoration:none;vertical-align:middle;">Liên hệ
-                chúng tôi</a>
+              <a href="mailto:{{mailCS}}"
+                style="color:#f1c232;font-weight:bold;text-decoration:none;vertical-align:middle;">{{contactUs}}</a>
             </td>
             <td>
               <img
                 src="https://d1gnmtcb0vp69g.cloudfront.net/imageResource/2023/10/18/1697613876012-122ea15fea882d69d3184faa634cd6fd.png"
                 style="width:20px;height:20px;vertical-align:middle;margin-right:6px;">
-              <a href="#" style="color:#f1c232;font-weight:bold;text-decoration:none;vertical-align:middle;">Đến trung
-                tâm hỗ trợ</a>
+              <a href="#"
+                style="color:#f1c232;font-weight:bold;text-decoration:none;vertical-align:middle;">{{helpCenter}}</a>
             </td>
           </tr>
         </table>
@@ -166,9 +161,12 @@
     style="max-width:500px;margin:auto;background:#fcd00b;padding:10px;text-align:center; border-radius:0 0 10px 10px;">
     <tr>
       <td>
-        <p style="font-size:12px;color:#8f8f8f;line-height:20px;margin:0;">
-          Email này được gửi đến quý khách {{customer.fullname}} vì đã đặt tủ tại Lug24.<br>
-          © 2025 Lug24. Bảo lưu mọi quyền.
+        <p style="font-size:12px;color:#8f8f8f;line-height:20px; text-align: center; padding-inline:20px">
+          {{mailSignature_0}}<span style="text-transform: uppercase;"> {{customer.fullname}}</span>
+          {{mailSignature_1}}</p>
+        <p style="font-size:12px;color:#8f8f8f;line-height:20px; text-align: center;">
+          {{mailSignature_2}}
+        </p>
         </p>
       </td>
     </tr>

@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { config } from "dotenv";
 import hbs from "nodemailer-express-handlebars";
 import { generateQRCode } from "../utils/qrcode.js";
+import i18next from "../routes/i18n.js";
 
 config();
 
@@ -54,27 +55,51 @@ transporter.use(
 
 // }
 
-export async function sendOTPMail(receiver, otp) {
+export async function sendOTPMail(receiver, otp, lang = "vi") {
   console.log(receiver);
   const otpDigits = otp.toString().split('');
+  //dict (dictionary) lấy tất cả mẫu câu theo ngôn ngữ lang nằm trong t
+  const dict = i18next.getFixedT(lang);
+
   await transporter.sendMail({
     from: "LUG24 - Smart Locker <noreply@vizi24.com>",
     to: receiver.email,
-    subject: "Xác thực mã OTP",
+    subject: dict("otpSubject", { ns: "otpMail" }),
     replyTo: process.env.EMAIL_CS,
     template: "OTP_Mail",
     context: {
       otpDigits,
       fullname: receiver.fullname,
       mailCS: process.env.EMAIL_CS,
+
+      otpHeader: dict("otpHeader", { ns: "otpMail" }),
+      otpContent_0: dict("otpContent_0", { ns: "otpMail" }),
+      otpContent_1: dict("otpContent_1", { ns: "otpMail" }),
+      otpContent_2: dict("otpContent_2", { ns: "otpMail" }),
+      otpContent_3: dict("otpContent_3", { ns: "otpMail" }),
+
+      otpSupportNote_0: dict("otpSupportNote_0", { ns: "otpMail" }),
+      otpSupportNote_1: dict("otpSupportNote_1", { ns: "otpMail" }),
+      otpSupportNote_2: dict("otpSupportNote_2", { ns: "otpMail" }),
+      otpSupportNote_3: dict("otpSupportNote_3", { ns: "otpMail" }),
+      otpSupportNote_4: dict("otpSupportNote_4", { ns: "otpMail" }),
+      otpSupportNote_5: dict("otpSupportNote_5", { ns: "otpMail" }),
+
+      otpFooter_0: dict("otpFooter_0", { ns: "otpMail" }),
+      otpFooter_1: dict("otpFooter_1", { ns: "otpMail" }),
+
+      mailSignature_0: dict("mailSignature_0"),
+      mailSignature_1: dict("mailSignature_1"),
+      mailSignature_2: dict("mailSignature_2"),
     },
   });
   console.log("Từ công cụ soạn mail phản hồi: Đã soạn và phát lệnh gửi mail OTP");
 }
 
-export async function sendReceiptEmail(obj) {
+export async function sendReceiptEmail(obj, lang = "vi") {
   console.log("Nhận hóa đơn", obj);
- 
+  const dict = i18next.getFixedT(lang);
+
   //Tạo mã QR và set lệnh gửi mail
   var data = {
     customer: {
@@ -134,7 +159,7 @@ export async function sendReceiptEmail(obj) {
   await transporter.sendMail({
     from: "LUG24 - Smart Locker <noreply@vizi24.com>",
     to: data.customer.email,
-    subject: `[LUG24] - Phiếu thanh toán tủ - Mã đặt tủ <${obj.order.subID}>`,
+    subject: `${dict("subject", { ns: "receiptMail" })} <${obj.order.subID}>`,
     template: "Receipt_Mail",
     context: {
       customer: data.customer,
@@ -142,6 +167,37 @@ export async function sendReceiptEmail(obj) {
       order: data.order,
       qrCodeLink: "qr-code-embedded",
       mailCS: process.env.EMAIL_CS,
+
+      header: dict("header", { ns: "receiptMail" }),
+      warning: dict("warning", { ns: "receiptMail" }),
+      title: dict("title", { ns: "receiptMail" }),
+      greeting_0: dict("greeting_0", { ns: "receiptMail" }),
+      greeting_1: dict("greeting_1", { ns: "receiptMail" }),
+      greeting_2: dict("greeting_2", { ns: "receiptMail" }),
+      parcelInfo: dict("parcelInfo", { ns: "receiptMail" }),
+      orderID: dict("orderID", { ns: "receiptMail" }),
+      paymentByLug: dict("paymentByLug", { ns: "receiptMail" }),
+      customerName: dict("customerName", { ns: "receiptMail" }),
+      dropOff: dict("dropOff", { ns: "receiptMail" }),
+      from: dict("from", { ns: "receiptMail" }),
+      pickUp: dict("pickUp", { ns: "receiptMail" }),
+      to: dict("to", { ns: "receiptMail" }),
+      lockerSize: dict("lockerSize", { ns: "receiptMail" }),
+      lockerNo: dict("lockerNo", { ns: "receiptMail" }),
+      maxStorageTime: dict("maxStorageTime", { ns: "receiptMail" }),
+      hour: dict("hour", { ns: "receiptMail" }),
+      campusInfo: dict("campusInfo", { ns: "receiptMail" }),
+      campusID: dict("campusID", { ns: "receiptMail" }),
+      phone: dict("phone", { ns: "receiptMail" }),
+      locationWorkingTime: dict("locationWorkingTime", { ns: "receiptMail" }),
+      contactUs: dict("contactUs", { ns: "receiptMail" }),
+      helpCenter: dict("helpCenter", { ns: "receiptMail" }),
+      supportNote_0: dict("supportNote_0", { ns: "receiptMail" }),
+      supportNote_1: dict("supportNote_1", { ns: "receiptMail" }),
+      supportNote_2: dict("supportNote_2", { ns: "receiptMail" }),
+      mailSignature_0: dict("mailSignature_0"),
+      mailSignature_1: dict("mailSignature_1"),
+      mailSignature_2: dict("mailSignature_2"),
     },
     attachments: [
       {

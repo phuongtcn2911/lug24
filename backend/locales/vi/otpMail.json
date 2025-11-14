@@ -1,0 +1,19 @@
+{
+    "otpSubject":"Xác thực mã OTP",
+    "otpHeader":"Xác thực OTP",
+
+    "otpContent_0":"Mã xác thực của bạn là",
+    "otpContent_1":"Mã xác thực sẽ hết hạn trong",
+    "otpContent_2":"phút",
+    "otpContent_3":"Tuyệt đối KHÔNG chia sẻ mã xác thực cho bất kỳ ai dưới bất kỳ hình thức nào.",
+
+    "otpSupportNote_0": "Lưu ý:",
+    "otpSupportNote_1": "Đây là email tự động. Quý khách vui lòng không phản hồi (reply) email này.",
+    "otpSupportNote_2": "Trong trường hợp cần hỗ trợ, quý khách vui lòng liên hệ",
+    "otpSupportNote_3": "(Thứ 2 - Chủ Nhật, 08:00 - 23:00)",
+    "otpSupportNote_4":  "hoặc hotline",
+    "otpSupportNote_5": "1900.XXXX",
+    
+    "otpFooter_0":"Trân trọng",
+    "otpFooter_1":"Đội ngũ phát triển Lug24"
+}
