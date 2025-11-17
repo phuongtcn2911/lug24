@@ -7,7 +7,7 @@ import { cancelTransaction } from "../ExtraPart/Payment.jsx";
 import { OrderContext } from "../../data/OrderContext.jsx";
 
 export function Header({ link, isBackEnable }) {
-    const { lang, Languages } = useContext(LanguageContext);
+    const { lang, Languages,resetLanguage } = useContext(LanguageContext);
     const { remaining, stopTimer, resetTimer } = useContext(TimerContext);
     const { order, resetOrder } = useContext(OrderContext);
 
@@ -17,6 +17,7 @@ export function Header({ link, isBackEnable }) {
         if (link === "/") {
             stopTimer();
             resetTimer();
+            resetLanguage();
             if (order?.orderID) {
                 (async () => {
                     const response = await cancelTransaction(order.orderID);

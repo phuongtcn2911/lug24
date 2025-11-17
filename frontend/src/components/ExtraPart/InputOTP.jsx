@@ -66,7 +66,7 @@ export function InputOTP() {
                 }
 
                 const obj = {
-                    receiver: order.customer.email,
+                    receiver: order.customer.email||order.customer.mobile,
                     otp: otp.join(""),
                 }
 

@@ -4,7 +4,7 @@ import { WorkingTime } from "../data/Data";
 export const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
-    const [lang, setLang] = useState(checkStoredLanguage); // 0 = VN, 1 = EN
+    const [lang, setLang] = useState(checkStoredLanguage()); // 0 = VN, 1 = EN
     const [flag, setFlag] = useState("flagVN");
 
     function changeLanguage() {
@@ -30,6 +30,7 @@ export function LanguageProvider({ children }) {
 
     function resetLanguage(){
         setLang(0);
+        setFlag("flagVN");
         sessionStorage.removeItem("language");
     }
 

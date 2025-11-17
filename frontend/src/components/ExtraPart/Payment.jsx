@@ -57,7 +57,7 @@ export async function afterPayment(order, paymentType, changeStatus,langIndex) {
     (async () => {
         await savePayment(order, paymentType);
         await sendOTP(order,langIndex);
-        console.log("Đã gửi mail OTP");
+        console.log("Đã gửi mail OTP bằng ngôn ngữ ", langIndex);
         changeStatus(1);
     })();
 
