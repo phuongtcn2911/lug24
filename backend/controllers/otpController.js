@@ -3,6 +3,7 @@ import { sendOTPMail } from "../utils/mailer.js";
 import { generateOrderCode, hashCode, generateOTP } from "../utils/generator.js";
 import { getSmartLockerConfig } from "../config.js";
 import { config } from "dotenv";
+import { sendOTPZalo } from "./zaloController.js";
 
 let otpStore = {};
 config();
@@ -48,14 +49,18 @@ export async function requestOTP(req, res) {
 
         const otp = generateOTP();
 
-        otpStore[obj.receiver.email] = {
+        otpStore[obj.receiver.email||obj.receiver.mobile] = {
             hash: otp.hashOTP,
             expire: Date.now() + 5 * 60 * 1000, //OTP sẽ hết hạn trong vòng 5 phút
         };
 
         if (obj.contactType === "Email") {
             await sendOTPMail(obj.receiver, otp.otp,obj.lang);
-            res.json({ code: 0, message: "Đã gửi OTP về email" });
+            res.json({ code: 0, message: "Đã gửi OTP về Email" });
+        }
+        else if(obj.contactType==="Zalo"){
+            await sendOTPZalo(obj.receiver,otp.otp,obj.lang);
+            res.json({ code: 0, message: "Đã gửi OTP về Zalo" });
         }
 
     } catch (err) {
@@ -64,9 +69,11 @@ export async function requestOTP(req, res) {
     }
 };
 
+
 export async function verifyOTP (req, res) {
     const obj = req.body;
-    console.log(obj);
+    console.log("Input Data:", obj);
+    console.log("Store Data:",otpStore);
  
     if (!obj?.receiver || !obj?.otp)
         return res.status(400).json({ code: -1, message: "Thiếu tham số" });
@@ -76,6 +83,7 @@ export async function verifyOTP (req, res) {
     if (Date.now() > record.expire) return res.json({ code: 2, message: "OTP đã hết hạn" });
 
     const hashedInput = hashCode(obj.otp);
+    console.log("Input hash: ", hashedInput);
     if (hashedInput !== record.hash) {
         return res.json({ code: 1, message: "OTP không đúng" });
     }

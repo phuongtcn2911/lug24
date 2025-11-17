@@ -17,3 +17,7 @@ export function generateOTP() {
   const hashOTP = hashCode(otp);
   return { otp, hashOTP };
 }
+
+export function macCode(app_sc,app_id,timestamp,body){
+  return crypto.createHmac("sha256",app_sc).update(app_id+timestamp+JSON.stringify(body)).digest("hex");
+}

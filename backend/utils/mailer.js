@@ -96,6 +96,8 @@ export async function sendOTPMail(receiver, otp, lang = "vi") {
   console.log("Từ công cụ soạn mail phản hồi: Đã soạn và phát lệnh gửi mail OTP");
 }
 
+
+
 export async function sendReceiptEmail(obj, lang = "vi") {
   console.log("Nhận hóa đơn", obj);
   const dict = i18next.getFixedT(lang);
