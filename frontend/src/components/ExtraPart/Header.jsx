@@ -12,6 +12,8 @@ export function Header({ link, isBackEnable }) {
     const { order, resetOrder } = useContext(OrderContext);
 
     const navigate=useNavigate();
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
 
     function resetNewSS() {
         if (link === "/") {
@@ -56,7 +58,7 @@ export function Header({ link, isBackEnable }) {
                             <span className="is-size-6 has-text-weight-medium">{Languages[lang].labelSessionDuration}</span>
                         </span>
                         <span class="tag is-warning is-large ">
-                            <span className="is-size-6 has-text-weight-medium">{remaining}</span>
+                            <span className="is-size-6 has-text-weight-medium">{`${String(minutes).padStart(2,0)}:${String(seconds).padStart(2,0)}`}</span>
                         </span>
                     </div>
                 </div>
