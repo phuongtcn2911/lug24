@@ -1,36 +1,44 @@
 // backend/utils/i18n.js
 import i18next from "i18next";
+import fs from "fs";
+import path from "path";
 
-// import JSON trực tiếp (ESM + Node >= 18)
-import otpMailVi from "../locales/vi/otpMail.json" assert { type: "json" };
-import receiptMailVi from "../locales/vi/receiptMail.json" assert { type: "json" };
-import translationVi from "../locales/vi/translation.json" assert { type: "json" };
+// Hàm load JSON từ file
+function loadLocaleJSON(lng, ns) {
+  try {
+    const filePath = path.resolve(`./locales/${lng}/${ns}.json`);
+    const fileContent = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(fileContent);
+  } catch (err) {
+    console.error(`Không thể load locales/${lng}/${ns}.json`, err);
+    return {};
+  }
+}
 
-import otpMailEn from "../locales/en/otpMail.json" assert { type: "json" };
-import receiptMailEn from "../locales/en/receiptMail.json" assert { type: "json" };
-import translationEn from "../locales/en/translation.json" assert { type: "json" };
-
-// Khởi tạo i18next với resources nhúng trực tiếp
+// Khởi tạo i18next
 i18next.init({
+  fallbackLng: "vi",
+  lng: "vi", // mặc định
+  ns: ["otpMail", "receiptMail", "translation"],
+  defaultNS: "translation",
   resources: {
     vi: {
-      otpMail: otpMailVi,
-      receiptMail: receiptMailVi,
-      translation: translationVi,
+      otpMail: loadLocaleJSON("vi", "otpMail"),
+      receiptMail: loadLocaleJSON("vi", "receiptMail"),
+      translation: loadLocaleJSON("vi", "translation"),
     },
     en: {
-      otpMail: otpMailEn,
-      receiptMail: receiptMailEn,
-      translation: translationEn,
+      otpMail: loadLocaleJSON("en", "otpMail"),
+      receiptMail: loadLocaleJSON("en", "receiptMail"),
+      translation: loadLocaleJSON("en", "translation"),
     },
   },
-  fallbackLng: "vi",
-  defaultNS: "translation",
-  ns: ["otpMail", "receiptMail", "translation"],
-  interpolation: {
-    escapeValue: false, // cần cho HBS để render HTML
-  },
 });
+
+// Hàm lấy translator cố định theo ngôn ngữ
+export function getTranslator(lang = "vi") {
+  return i18next.getFixedT(lang);
+}
 
 export default i18next;
 

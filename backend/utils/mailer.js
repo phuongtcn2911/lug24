@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 import { config } from "dotenv";
 import hbs from "nodemailer-express-handlebars";
 import { generateQRCode } from "../utils/qrcode.js";
-import i18next from "../routes/i18n.js";
+import { getTranslator } from "../routes/i18n.js";
 
 config();
 
@@ -59,7 +59,7 @@ export async function sendOTPMail(receiver, otp, lang = "vi") {
   console.log(receiver);
   const otpDigits = otp.toString().split('');
   //dict (dictionary) lấy tất cả mẫu câu theo ngôn ngữ lang nằm trong t
-  const dict = i18next.getFixedT(lang);
+  const dict = getTranslator(lang);
 
   await transporter.sendMail({
     from: "LUG24 - Smart Locker <noreply@vizi24.com>",
@@ -100,7 +100,7 @@ export async function sendOTPMail(receiver, otp, lang = "vi") {
 
 export async function sendReceiptEmail(obj, lang = "vi") {
   console.log("Nhận hóa đơn", obj);
-  const dict = i18next.getFixedT(lang);
+  const dict = getTranslator(lang);
 
   //Tạo mã QR và set lệnh gửi mail
   var data = {
