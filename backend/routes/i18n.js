@@ -10,7 +10,7 @@ const _dirname=path.dirname(_filename);
  i18next.use(Backend).use(middleware.LanguageDetector).init({
     fallbackLng:"vi",
     backend:{
-        loadPath:path.join(_dirname,"../locales/{{lng}}/{{ns}}.json"),
+        loadPath:path.resolve(_dirname,"../locales/{{lng}}/{{ns}}.json"),
     },
     preload:["vi","en"],
     ns:["otpMail","receiptMail","translation"],
