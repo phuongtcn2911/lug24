@@ -43,3 +43,21 @@
   font-size: 16px;
   color: #333;
 }
+
+.custom-checkbox-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.custom-checkbox-item.disabled * {
+  cursor: not-allowed !important;
+}
+
+.custom-checkbox-box.disabled {
+  background-color: #ccc !important;
+  border-color: #999 !important;
+}
+
+.custom-checkbox-label.disabled {
+  cursor: not-allowed !important;
+}

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { LanguageContext } from "../data/LanguageContext.jsx";
 import * as Data from '../data/Data.js'
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -43,6 +43,10 @@ function SendParcel() {
     const [isValidTime, setIsValidTime] = useState(true);
     const [availableBoxes, setAvailableBoxes] = useState([]);
 
+    //Phần cuộn chân trang điều khoản
+    const contentRef=useRef(null);
+    const [isScrollEnd,setIsScrollEnd]=useState(false);
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -56,6 +60,19 @@ function SendParcel() {
         console.log("Get available box:", res.data);
         return res.data;
     }
+
+    //Sự kiện dò chân trang
+    useEffect(()=>{
+        const endList=contentRef.current;
+        if(!endList) return;
+
+        const handleScroll=()=>{
+            const atBottom=endList.scrollTop+endList.clientHeight>=endList.scrollHeight-2;
+            if(atBottom)setIsScrollEnd(true);
+        };
+        endList.addEventListener("scroll",handleScroll);
+        return()=>endList.removeEventListener("scroll",handleScroll);
+    },[]);
 
     useEffect(function () {
         let isMounted = true;
@@ -413,7 +430,7 @@ function SendParcel() {
                                                 <button className="delete has-background-warning-dark" aria-label="close"
                                                     onClick={(e) => { e.preventDefault(); setShowMsg(false) }}></button>
                                             </header>
-                                            <section className="modal-card-body has-background-warning-light">
+                                            <section ref={contentRef} className="modal-card-body has-background-warning-light">
                                                 {Languages[lang].terms.contents.map(function (e, i) {
                                                     return (
                                                         <div className="content" key={"p" + i}>
@@ -447,7 +464,7 @@ function SendParcel() {
                                             </section>
                                             <footer className="modal-card-foot" style={{ flexDirection: "column", alignItems: "stretch" }}>
                                                 <div className="block">
-                                                    <Checkbox isChecked={isAgreement} onChange={setIsAgreement}>
+                                                    <Checkbox isChecked={isAgreement} onChange={setIsAgreement} disabled={!isScrollEnd}>
                                                         <span>{Languages[lang].msgConfirm[0]} </span>
                                                         <span><strong>{Languages[lang].msgConfirm[1]} </strong></span>
                                                         <span>{Languages[lang].msgConfirm[2]} </span>

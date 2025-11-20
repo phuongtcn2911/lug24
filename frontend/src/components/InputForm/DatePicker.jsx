@@ -4,8 +4,18 @@ import * as React from "react";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import TextField from "@mui/material/TextField";
 
-export default function MyDateTimePicker({ 
-  label, isDisabled, value, onChange, disablePast, maxDateTime,shouldDisableTime,isTimeValid,timeAlert }) {
+export default function MyDateTimePicker({
+  label,
+  isDisabled,
+  value,
+  onChange,
+  disablePast,
+  maxDateTime,
+  shouldDisableTime,
+  isTimeValid,
+  timeAlert}) {
+
+
 
   return (
     <DateTimePicker
@@ -18,11 +28,13 @@ export default function MyDateTimePicker({
       maxDateTime={maxDateTime || undefined}
       minutesStep={15}
       shouldDisableTime={shouldDisableTime}
+      format="DD-MMM-YYYY HH:mm"
+
       slotProps={{
-        textField:{
-          fullWidth:true,
+        textField: {
+          fullWidth: true,
           error: !isTimeValid,
-          helperText:!isTimeValid? timeAlert:"",
+          helperText: !isTimeValid ? timeAlert : "",
         }
       }}
     />

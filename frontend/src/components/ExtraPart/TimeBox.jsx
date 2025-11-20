@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import {LanguageContext} from "../../data/LanguageContext.jsx";
 import { useContext } from "react";
+import { FullDateStringByLang,FullVNTimeZoneString } from "../../data/DateStringFormat.jsx";
 
 export default function TimeBox() {
     const {lang, Languages } = useContext(LanguageContext);
@@ -18,14 +19,17 @@ export default function TimeBox() {
 
 
 
-    const formatTime = clock.toLocaleTimeString("vi-VN");
-    const dowIndex = clock.getDay();
+    // const formatTime = clock.toLocaleTimeString("vi-VN");
+    // const dowIndex = clock.getDay();
+    // const dowWord = Languages[lang].dayName[dowIndex];
+    
+    const formatDate=FullDateStringByLang(clock,lang);
+    const formatTime=FullVNTimeZoneString(clock);
 
-   
-    const dowWord = Languages[lang].dayName[dowIndex];
 
-    const formatDate =
-        `${dowWord}, ${String(clock.getDate()).padStart(2, '0')}/${String(clock.getMonth() + 1).padStart(2, '0')}/${clock.getFullYear()}`
+
+    // const formatDate =
+    //     `${dowWord}, ${String(clock.getDate()).padStart(2, '0')}/${String(clock.getMonth() + 1).padStart(2, '0')}/${clock.getFullYear()}`
 
 
 

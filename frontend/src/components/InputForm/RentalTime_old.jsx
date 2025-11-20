@@ -10,16 +10,19 @@ import { OrderContext } from "../../data/OrderContext.jsx";
 import { WorkingTime, Promotion } from "../../data/Data.js";
 
 export default function RentalTime({ arrayList, topic, getMaxRentalTime, getRentalTime, getInOutTime, getIsValidTime }) {
-    const [selectedValue, setSelectedValue] = useState({ rentalTimeChoices: 0 });
     const { lang, Languages } = useContext(LanguageContext);
+    const { order, setOrder } = useContext(OrderContext);
+
+    const [selectedValue, setSelectedValue] = useState({ rentalTimeChoices: 0 });
+    const [startDate, setStartDate] = useState(roundStartDate());
     const [rentalTime, setRentalTime] = useState(Promotion.rentalTime);
     const [maxRentalTime, setMaxRentalTime] = useState(Promotion.rentalTime);
-    const [startDate, setStartDate] = useState(roundStartDate());
     const [endDate, setEndDate] = useState(startDate.add(rentalTime, "hour"));
-    const [finalEndDate, setFinalEndDate] = useState(startDate.add(maxRentalTime, "hour"));
-    const { order, setOrder } = useContext(OrderContext);
     const [timeAlert, setTimeAlert] = useState("");
     const [isTimeValid, setIsTimeValid] = useState(false);
+    
+    const [finalEndDate, setFinalEndDate] = useState(startDate.add(maxRentalTime, "hour"));
+    
     const hasInit = useRef(false);
 
     // --- useEffect khởi tạo từ orderContext

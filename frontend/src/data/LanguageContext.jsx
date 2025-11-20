@@ -110,7 +110,7 @@ export function LanguageProvider({ children }) {
             rentalTimeChoices: ["Giá dùng thử: 4 giờ", "Chọn thời gian lấy hàng"],
             labelCheckInTime: "Thời gian gửi hàng",
             labelCheckOutTime: "Thời gian lấy hàng",
-            msgConfirm: ["Bằng việc chọn", "\"Xác nhận\"", "quý khách đã đồng ý với ", "Điều khoản dịch vụ", "của Lug24. Bạn có thể nhận được thông báo qua Email/SMS."],
+            msgConfirm: ["Bằng việc chọn", "\"Xác nhận\"", "quý khách đã đồng ý với ", "Điều khoản dịch vụ", "của Lug24. Bạn có thể nhận được thông báo qua Email/Zalo (khi đăng ký bằng số điện thoại)."],
             btnConfirm: "Xác nhận",
             terms: {
                 title: "Điều khoản sử dụng dịch vụ",
@@ -299,7 +299,7 @@ export function LanguageProvider({ children }) {
             labelCheckInTime: "Check-in Time",
             labelCheckOutTime: "Check-out Time",
             btnReservation: "Book a locker",
-            msgConfirm: ["By selecting", "\"Confirmation\"", " you agree to Lug24’s", "Terms of Service", ". You may also receive notifications via Email/SMS."],
+            msgConfirm: ["By selecting", "\"Confirmation\"", " you agree to Lug24’s", "Terms of Service", ". You may receive notifications via Email or Zalo (when registered with a phone number)."],
             btnConfirm: "Confirmation",
             terms: {
                 title: "User's Terms and Conditions",

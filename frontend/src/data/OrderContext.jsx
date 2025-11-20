@@ -58,9 +58,10 @@ export function OrderProvider({ children }) {
         console.log("OrderContext order changed:", order);
     }, [order]);
 
+
     function resetOrder() {
+        localStorage.removeItem("order");
         setOrder(defaultOrder);
-        sessionStorage.removeItem("order");
     }
 
 
