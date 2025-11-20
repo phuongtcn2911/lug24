@@ -3,14 +3,15 @@ import i18next from "i18next";
 import fs from "fs";
 import path from "path";
 
-// Hàm load JSON từ file
+// Hàm load JSON từ file, đường dẫn tuyệt đối từ root
 function loadLocaleJSON(lng, ns) {
   try {
-    const filePath = path.resolve(`./locales/${lng}/${ns}.json`);
-    const fileContent = fs.readFileSync(filePath, "utf8");
-    return JSON.parse(fileContent);
+    // Vercel sẽ chạy từ thư mục gốc repo
+    const filePath = path.resolve('./backend/locales', lng, `${ns}.json`);
+    const content = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(content);
   } catch (err) {
-    console.error(`Không thể load locales/${lng}/${ns}.json`, err);
+    console.error(`Cannot load locales/${lng}/${ns}.json`, err);
     return {};
   }
 }
