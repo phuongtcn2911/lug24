@@ -8,6 +8,7 @@ function loadLocaleJSON(lng, ns) {
   try {
     // Vercel sẽ chạy từ thư mục gốc repo
     const filePath = path.resolve('./backend/locales', lng, `${ns}.json`);
+    console.log("Kiểm tra path: ",filePath);
     const content = fs.readFileSync(filePath, "utf8");
     return JSON.parse(content);
   } catch (err) {
