@@ -5,13 +5,14 @@ import { fileURLToPath } from "url";
 import { config } from "dotenv";
 import hbs from "nodemailer-express-handlebars";
 import { generateQRCode } from "../utils/qrcode.js";
-import { getTranslator } from "../routes/i18n.js";
+import {initI18n,dict, getTranslator } from "../routes/i18n.js";
 
 config();
 
 // Chuyển __dirname sang cú pháp tương thích ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+await initI18n();
 
 
 
@@ -43,23 +44,38 @@ transporter.use(
     extName: '.hbs',
   }));
 
-// async function sendOtpViaMail(receiver, otp) {
-//   const mailOptions = {
-//     from: `"SmartLocker" <${process.env.EMAIL_USER}>`,
-//     to:receiver,
-//     subject: "Mã OTP mở tủ SmartLocker",
-//     text: `Mã OTP của bạn là: ${otp}. Mã có hiệu lực trong 5 phút.`,
-//   };
 
-//   await transporter.sendMail(mailOptions);
-
-// }
+// const dict=(key,options={})=>i18next.t(key,options);
+console.log(dict);
 
 export async function sendOTPMail(receiver, otp, lang = "vi") {
   console.log(receiver);
   const otpDigits = otp.toString().split('');
   //dict (dictionary) lấy tất cả mẫu câu theo ngôn ngữ lang nằm trong t
-  const dict = getTranslator(lang);
+  // const dict = getTranslator(lang);
+
+  const i18nContext = {
+    otpHeader: dict("otpHeader", { ns: "otpMail" }),
+    otpContent_0: dict("otpContent_0", { ns: "otpMail" }),
+    otpContent_1: dict("otpContent_1", { ns: "otpMail" }),
+    otpContent_2: dict("otpContent_2", { ns: "otpMail" }),
+    otpContent_3: dict("otpContent_3", { ns: "otpMail" }),
+
+    otpSupportNote_0: dict("otpSupportNote_0", { ns: "otpMail" }),
+    otpSupportNote_1: dict("otpSupportNote_1", { ns: "otpMail" }),
+    otpSupportNote_2: dict("otpSupportNote_2", { ns: "otpMail" }),
+    otpSupportNote_3: dict("otpSupportNote_3", { ns: "otpMail" }),
+    otpSupportNote_4: dict("otpSupportNote_4", { ns: "otpMail" }),
+    otpSupportNote_5: dict("otpSupportNote_5", { ns: "otpMail" }),
+
+    otpFooter_0: dict("otpFooter_0", { ns: "otpMail" }),
+    otpFooter_1: dict("otpFooter_1", { ns: "otpMail" }),
+
+    mailSignature_0: dict("mailSignature_0"),
+    mailSignature_1: dict("mailSignature_1"),
+    mailSignature_2: dict("mailSignature_2"),
+  };
+
 
   await transporter.sendMail({
     from: "LUG24 - Smart Locker <noreply@vizi24.com>",
@@ -68,29 +84,10 @@ export async function sendOTPMail(receiver, otp, lang = "vi") {
     replyTo: process.env.EMAIL_CS,
     template: "OTP_Mail",
     context: {
+      ...i18nContext,
       otpDigits,
       fullname: receiver.fullname,
       mailCS: process.env.EMAIL_CS,
-
-      otpHeader: dict("otpHeader", { ns: "otpMail" }),
-      otpContent_0: dict("otpContent_0", { ns: "otpMail" }),
-      otpContent_1: dict("otpContent_1", { ns: "otpMail" }),
-      otpContent_2: dict("otpContent_2", { ns: "otpMail" }),
-      otpContent_3: dict("otpContent_3", { ns: "otpMail" }),
-
-      otpSupportNote_0: dict("otpSupportNote_0", { ns: "otpMail" }),
-      otpSupportNote_1: dict("otpSupportNote_1", { ns: "otpMail" }),
-      otpSupportNote_2: dict("otpSupportNote_2", { ns: "otpMail" }),
-      otpSupportNote_3: dict("otpSupportNote_3", { ns: "otpMail" }),
-      otpSupportNote_4: dict("otpSupportNote_4", { ns: "otpMail" }),
-      otpSupportNote_5: dict("otpSupportNote_5", { ns: "otpMail" }),
-
-      otpFooter_0: dict("otpFooter_0", { ns: "otpMail" }),
-      otpFooter_1: dict("otpFooter_1", { ns: "otpMail" }),
-
-      mailSignature_0: dict("mailSignature_0"),
-      mailSignature_1: dict("mailSignature_1"),
-      mailSignature_2: dict("mailSignature_2"),
     },
   });
   console.log("Từ công cụ soạn mail phản hồi: Đã soạn và phát lệnh gửi mail OTP");
@@ -100,8 +97,6 @@ export async function sendOTPMail(receiver, otp, lang = "vi") {
 
 export async function sendReceiptEmail(obj, lang = "vi") {
   console.log("Nhận hóa đơn", obj);
-  const dict = getTranslator(lang);
-
   //Tạo mã QR và set lệnh gửi mail
   var data = {
     customer: {
