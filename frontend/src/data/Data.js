@@ -7,6 +7,7 @@ import pic5 from '../assets/img/Magazine.png'
 import pic6 from '../assets/img/Wildlife.png'
 import flagVN from '../assets/icon/VIETNAM.png'
 import flagEN from '../assets/icon/USA.png'
+import folderGap from '../assets/icon/Folder Gap.svg'
 import successPayment from '../assets/img/successPayment.png'
 import failPayment from '../assets/img/failPayment.png'
 import cancelPayment from '../assets/img/cancelPayment.png'
@@ -15,6 +16,7 @@ import tapToPay from '../assets/img/TapToPay.png'
 import otp from '../assets/img/OTP.jpg'
 import openLocker from '../assets/img/OpenLocker.png'
 import closeLocker from '../assets/img/CloseLocker.png'
+import inputOrder from '../assets/img/InputOrderCode.png'
 import dayjs from 'dayjs'
 
 
@@ -81,7 +83,8 @@ export const OrderStatus = [
 
 export const TapToPay=tapToPay;
 export const OTP=otp;
-
+export const folder_Gap=folderGap;
+export const InputOrderCode=inputOrder;
 export const LockerStatus=[openLocker,closeLocker];
 export const Timer={
     sessionDur:900,

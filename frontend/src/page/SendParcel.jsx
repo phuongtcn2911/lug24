@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { LanguageContext } from "../data/LanguageContext.jsx";
+// import { LanguageContext } from "../data/LanguageContext.jsx";
 import * as Data from '../data/Data.js'
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./CSS/Form.css"
@@ -12,18 +12,19 @@ import DiscountPart from "../components/InputForm/DiscountPart.jsx";
 // import { Lockers } from "../data/Data.js";
 import CurrencyFormat from "../data/CurrencyFormat.jsx";
 import { OrderContext } from "../data/OrderContext.jsx";
-import RadioButton from "..//components/InputForm/RadioButton.jsx"
+
 import RentalTime from "../components/InputForm/RentalTime.jsx";
 import Checkbox from "../components/InputForm/CheckBox.jsx";
 import validator from "validator"
-import { ReceiptTurkishLiraIcon, Timer } from "lucide-react";
-import axios from "axios";
+
 import { TimerContext } from "../data/TimerContext.jsx";
 import api from "../config/axios.js";
+import { useTranslation } from "react-i18next";
 
 
 function SendParcel() {
-    const { lang, Languages } = useContext(LanguageContext);
+    // const { lang, Languages } = useContext(LanguageContext);
+    const { t, i18n } = useTranslation();
     const { order, setOrder } = useContext(OrderContext);
     const { startTimer } = useContext(TimerContext);
 
@@ -44,8 +45,8 @@ function SendParcel() {
     const [availableBoxes, setAvailableBoxes] = useState([]);
 
     //Phần cuộn chân trang điều khoản
-    const contentRef=useRef(null);
-    const [isScrollEnd,setIsScrollEnd]=useState(false);
+    const contentRef = useRef(null);
+    const [isScrollEnd, setIsScrollEnd] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -62,17 +63,17 @@ function SendParcel() {
     }
 
     //Sự kiện dò chân trang
-    useEffect(()=>{
-        const endList=contentRef.current;
-        if(!endList) return;
+    useEffect(() => {
+        const endList = contentRef.current;
+        if (!endList) return;
 
-        const handleScroll=()=>{
-            const atBottom=endList.scrollTop+endList.clientHeight>=endList.scrollHeight-2;
-            if(atBottom)setIsScrollEnd(true);
+        const handleScroll = () => {
+            const atBottom = endList.scrollTop + endList.clientHeight >= endList.scrollHeight - 2;
+            if (atBottom) setIsScrollEnd(true);
         };
-        endList.addEventListener("scroll",handleScroll);
-        return()=>endList.removeEventListener("scroll",handleScroll);
-    },[]);
+        endList.addEventListener("scroll", handleScroll);
+        return () => endList.removeEventListener("scroll", handleScroll);
+    }, []);
 
     useEffect(function () {
         let isMounted = true;
@@ -174,7 +175,7 @@ function SendParcel() {
         }
     }, [order.customer.fullName, order.customer.email, order.customer.mobile, order.order.maxRentalTime, order.order.rentalTime, order.locker.sizeIndex]);
 
-  
+
     function changeOtherMethod(e) {
         e.preventDefault();
         setShowMobile(!showMobile);
@@ -277,10 +278,10 @@ function SendParcel() {
                     <div className="fieldset-columns">
                         <div className="col">
                             <fieldset className="group">
-                                <legend>{Languages[lang].legendRenter}</legend>
+                                <legend>{t("legendRenter")}</legend>
                                 <div className="fieldset-content mb-3">
                                     <TextInput
-                                        label={Languages[lang].labelRenterName}
+                                        label={t("labelRenterName")}
                                         type="text"
                                         transmitData={getFullNameValue}
                                         value={order.customer.fullName || ""}></TextInput>
@@ -288,7 +289,7 @@ function SendParcel() {
                                         {showMobile ? (
                                             <Transition.SwipeLeft key="mobile">
                                                 <TextInput
-                                                    label={Languages[lang].labelRenterPhone}
+                                                    label={t("labelRenterPhone")}
                                                     type="tel"
                                                     transmitData={getMobileValue}
                                                     value={order.customer.mobile || ""}></TextInput>
@@ -296,7 +297,7 @@ function SendParcel() {
                                         ) : (
                                             <Transition.SwipeLeft key="email">
                                                 <TextInput
-                                                    label={Languages[lang].labelRenterEmail}
+                                                    label={t("labelRenterEmail")}
                                                     type="email"
                                                     transmitData={getEmailValue}
                                                     value={order.customer.email || ""}></TextInput>
@@ -305,19 +306,19 @@ function SendParcel() {
                                     </AnimatePresence>
 
                                 </div>
-                                <a onClick={changeOtherMethod}>{showMobile == false ? Languages[lang].btnSignUpViaMobile : Languages[lang].btnSignUpViaEmail}</a>
+                                <a onClick={changeOtherMethod}>{showMobile == false ? t("btnSignUpViaMobile") : t("btnSignUpViaEmail")}</a>
                             </fieldset>
                             <fieldset className="group">
-                                <legend>{Languages[lang].legendLocker}</legend>
+                                <legend>{t("legendLocker")}</legend>
                                 <ButtonList
                                     arrayList={Data.Lockers}
-                                    topic={Languages[lang].labelChooseSize}
+                                    topic={t("labelChooseSize")}
                                     group="grpSize"
                                     changeButton={changeButton}
                                     savedSelectedIndex={order.locker.sizeIndex}
                                     amountList={availableBoxes}></ButtonList>
-                                <RentalTime topic={Languages[lang].labelRentalTime}
-                                    arrayList={Languages[lang].rentalTimeChoices}
+                                <RentalTime topic={t("labelRentalTime")}
+                                    arrayList={t("rentalTimeChoices",{returnObjects:true})}
                                     getRentalTime={setRentalTime}
                                     getMaxRentalTime={setMaxRentalTime}
                                     getInOutTime={getInOutTime}
@@ -326,41 +327,41 @@ function SendParcel() {
                         </div>
                         <div className="col double">
                             <fieldset className="group" style={{ flex: 1 }}>
-                                <legend>{Languages[lang].legendOrder}</legend>
+                                <legend>{t("legendOrder")}</legend>
 
                                 <div className="section-box">
                                     <div className="columns is-mobile">
                                         <div className="column is-two-third has-text-weight-semibold">
-                                            <p className="title is-6 ">{`${Languages[lang].labelLockerSize}`}</p>
+                                            <p className="title is-6 ">{`${t("labelLockerSize")}`}</p>
                                         </div>
                                         <div className="column has-text-right">
-                                            <p className="subtitle is-6 has-text-right">{`${Languages[lang].sizeUnit} ${sizeLetter}`}</p>
+                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")} ${sizeLetter}`}</p>
                                         </div>
 
                                     </div>
                                     <div className="columns is-mobile">
                                         <div className="column is-two-third has-text-weight-semibold">
                                             <p className="title is-6 ">
-                                                <span>{Languages[lang].labelRentalTimeOrder}</span>
+                                                <span>{t("labelRentalTimeOrder")}</span>
                                                 <span className="has-text-danger"> *</span>
                                             </p>
                                         </div>
                                         <div className="column has-text-right">
                                             <p className="subtitle is-6 has-text-right">
-                                                {`${rentalTime} ${Languages[lang].rentalTimeUnit}`}
+                                                {`${rentalTime} ${t("rentalTimeUnit")}`}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="columns is-mobile">
                                         <div className="column is-two-third has-text-weight-semibold">
                                             <p className="title is-6 ">
-                                                <span>{Languages[lang].labelMaxRentalTimeOrder}</span>
+                                                <span>{t("labelMaxRentalTimeOrder")}</span>
                                                 <span className="has-text-danger">*</span>
                                             </p>
                                         </div>
                                         <div className="column has-text-right">
                                             <p className="subtitle is-6 has-text-right">
-                                                {`${maxRentalTime} ${Languages[lang].rentalTimeUnit}`}
+                                                {`${maxRentalTime} ${t("rentalTimeUnit")}`}
                                             </p>
                                         </div>
                                     </div>
@@ -373,7 +374,7 @@ function SendParcel() {
                                 <div className="section-box">
                                     <div className="columns is-mobile">
                                         <div className="column is-two-third has-text-weight-semibold">
-                                            <p className="title is-6">{Languages[lang].labelSubTotal}</p>
+                                            <p className="title is-6">{t("labelSubTotal")}</p>
                                         </div>
                                         <div className="column has-text-right">
                                             <p className="subtitle is-6 has-text-right">{CurrencyFormat(subTotal)}</p>
@@ -381,7 +382,7 @@ function SendParcel() {
                                     </div>
                                     <div className="columns is-mobile">
                                         <div className="column is-two-third has-text-weight-semibold">
-                                            <p className="title is-6">{Languages[lang].labelDiscount}</p>
+                                            <p className="title is-6">{t("labelDiscount")}</p>
                                         </div>
                                         <div className="column has-text-right">
                                             <p className="subtitle is-6 has-text-right">{CurrencyFormat(discount)}</p>
@@ -390,7 +391,7 @@ function SendParcel() {
                                     </div>
                                     <div className="columns is-mobile">
                                         <div className="column is-two-third has-text-weight-semibold">
-                                            <p className="title is-6">{Languages[lang].labelTax}</p>
+                                            <p className="title is-6">{t("labelTax")}</p>
                                         </div>
                                         <div className="column has-text-right">
                                             <p className="subtitle is-6 has-text-right">{CurrencyFormat(tax)}</p>
@@ -401,7 +402,7 @@ function SendParcel() {
                                 <div className="section-box">
                                     <div className="columns is-mobile">
                                         <div className="column is-two-third has-text-weight-semibold">
-                                            <p className="title is-5">{Languages[lang].labelTotal}</p>
+                                            <p className="title is-5">{t("labelTotal")}</p>
                                         </div>
                                         <div className="column has-text-right">
                                             <p className="subtitle is-5 has-text-right is-bold">{CurrencyFormat(total)}</p>
@@ -417,7 +418,7 @@ function SendParcel() {
                                                 <span className="icon">
                                                     <i className="fa-solid fa-warehouse"></i>
                                                 </span>
-                                                <span>{Languages[lang].btnReservation}</span>
+                                                <span>{t("btnReservation")}</span>
                                             </button>
                                         </div>
                                     </div>
@@ -426,12 +427,13 @@ function SendParcel() {
                                         <div className="modal-background" onClick={() => setShowMsg(false)}></div>
                                         <div className="modal-card">
                                             <header className="modal-card-head has-background-warning">
-                                                <p className="modal-card-title">{Languages[lang].terms.title}</p>
+                                                <p className="modal-card-title">{t("terms.title")}</p>
                                                 <button className="delete has-background-warning-dark" aria-label="close"
                                                     onClick={(e) => { e.preventDefault(); setShowMsg(false) }}></button>
                                             </header>
                                             <section ref={contentRef} className="modal-card-body has-background-warning-light">
-                                                {Languages[lang].terms.contents.map(function (e, i) {
+
+                                                {t("terms.contents", { returnObjects: true }).map(function (e, i) {
                                                     return (
                                                         <div className="content" key={"p" + i}>
                                                             <p className="chapter-title">{e.chapter}</p>
@@ -465,11 +467,11 @@ function SendParcel() {
                                             <footer className="modal-card-foot" style={{ flexDirection: "column", alignItems: "stretch" }}>
                                                 <div className="block">
                                                     <Checkbox isChecked={isAgreement} onChange={setIsAgreement} disabled={!isScrollEnd}>
-                                                        <span>{Languages[lang].msgConfirm[0]} </span>
-                                                        <span><strong>{Languages[lang].msgConfirm[1]} </strong></span>
-                                                        <span>{Languages[lang].msgConfirm[2]} </span>
-                                                        <span><strong>{Languages[lang].msgConfirm[3]}</strong> </span>
-                                                        <span>{Languages[lang].msgConfirm[4]} </span>
+                                                        <span>{t("msgConfirm.0")} </span>
+                                                        <span><strong>{t("msgConfirm.1")} </strong></span>
+                                                        <span>{t("msgConfirm.2")} </span>
+                                                        <span><strong>{t("msgConfirm.3")}</strong> </span>
+                                                        <span>{t("msgConfirm.4")} </span>
                                                     </Checkbox>
 
                                                 </div>
@@ -479,9 +481,9 @@ function SendParcel() {
                                                     onClick={handleBooking}
                                                 >
                                                     <span className="icon">
-                                                       <i class="fa-solid fa-clipboard-check"></i>
+                                                        <i class="fa-solid fa-clipboard-check"></i>
                                                     </span>
-                                                    <span>{Languages[lang].btnConfirm}</span>
+                                                    <span>{t("btnConfirm")}</span>
                                                 </button>
 
 
@@ -495,10 +497,10 @@ function SendParcel() {
                     </div>
                     <div className="content">
 
-                        <p className="title is-6 has-text-weight-bold">{Languages[lang].notes.title}</p>
+                        <p className="title is-6 has-text-weight-bold">{t("notes.title")}</p>
                         <ul>
                             {
-                                Languages[lang].notes.content.map(function (e, i) {
+                                t("notes.content", { returnObjects: true }).map(function (e, i) {
                                     return (
                                         <li key={i}>{e}</li>
                                     );

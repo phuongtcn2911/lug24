@@ -15,11 +15,13 @@ import {InputOTP} from "./InputOTP";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import LockerStatusScreen from "./LockerStatusScreen";
 import { TimerContext } from "../../data/TimerContext";
+import { useTranslation } from "react-i18next";
 
 export default function ResultStatus({status}) {
-    const { lang, Languages,resetLanguage } = useContext(LanguageContext);
+    // const { lang, Languages,resetLanguage } = useContext(LanguageContext);
     const { order,resetOrder } = useContext(OrderContext); // order mới nested
     const { progress, changeStatus,changeStep,resetProgress } = useContext(PaymentProgressContext);
+    const {t, i18n}=useTranslation();
     const {startTimer}=useContext(TimerContext);
 
     useEffect(()=>{
@@ -77,7 +79,7 @@ export default function ResultStatus({status}) {
             {/* PHẦN DƯỚI */}
             <div className="order-body has-background-warning">
                 <div className="columns is-mobile is-multiline p-4">
-                    {Languages[lang].orderInfo.map((e, i) => (
+                    {t("orderInfo",{returnObjects:true}).map((e, i) => (
                         <div className="column is-4" key={i}>
                             <p className="has-text-grey-dark is-size-7 mb-1">{String(e).toUpperCase()}</p>
                             <p className="has-text-weight-semibold">
@@ -85,7 +87,7 @@ export default function ResultStatus({status}) {
                                     ? order.order.subID
                                     : i === 1
                                     ? CurrencyFormat(order.order.total)
-                                    : DateStringFormat.DateStringFormatWithoutWeekDay(order.order.finalCheckOut)}
+                                    : DateStringFormat.DateStringFormatWithoutWeekDay(order.order.finalCheckOut,i18n.language)}
                             </p>
                         </div>
                     ))}

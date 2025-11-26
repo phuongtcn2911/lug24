@@ -1,17 +1,18 @@
 import { useContext } from "react";
-import { LanguageContext } from "../../data/LanguageContext";
 import { TimerContext } from "../../data/TimerContext.jsx";
 import * as Data from "../../data/Data.js";
 import { Link, useNavigate } from "react-router-dom";
 import { cancelTransaction } from "../ExtraPart/Payment.jsx";
 import { OrderContext } from "../../data/OrderContext.jsx";
+import { useTranslation } from "react-i18next"
 
 export function Header({ link, isBackEnable }) {
-    const { lang, Languages,resetLanguage } = useContext(LanguageContext);
+    const { t, i18n } = useTranslation();
+
     const { remaining, stopTimer, resetTimer } = useContext(TimerContext);
     const { order, resetOrder } = useContext(OrderContext);
 
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const minutes = Math.floor(remaining / 60);
     const seconds = remaining % 60;
 
@@ -19,7 +20,7 @@ export function Header({ link, isBackEnable }) {
         if (link === "/") {
             stopTimer();
             resetTimer();
-            resetLanguage();
+           
             if (order?.orderID) {
                 (async () => {
                     const response = await cancelTransaction(order.orderID);
@@ -37,15 +38,15 @@ export function Header({ link, isBackEnable }) {
                 <div className="level-left">
                     <div className="level-item">
                         {isBackEnable == true ?
-                            
-                                <button className="button is-warning"
-                                    onClick={resetNewSS}>
-                                    <span className="icon">
-                                        <i className="fa-solid fa-circle-left"></i>
-                                    </span>
-                                    <span>{Languages[lang].btnBack}</span>
-                                </button>
-                         
+
+                            <button className="button is-warning"
+                                onClick={resetNewSS}>
+                                <span className="icon">
+                                    <i className="fa-solid fa-circle-left"></i>
+                                </span>
+                                <span>{t("btnBack")}</span>
+                            </button>
+
                             : null}
                     </div>
                 </div>
@@ -53,12 +54,12 @@ export function Header({ link, isBackEnable }) {
                     <div class="tags has-addons ">
                         <span class="tag is-dark is-large ">
                             <span className="icon">
-                               <i class="fa-solid fa-clock"></i>
+                                <i class="fa-solid fa-clock"></i>
                             </span>
-                            <span className="is-size-6 has-text-weight-medium">{Languages[lang].labelSessionDuration}</span>
+                            <span className="is-size-6 has-text-weight-medium">{t("labelSessionDuration")}</span>
                         </span>
                         <span class="tag is-warning is-large ">
-                            <span className="is-size-6 has-text-weight-medium">{`${String(minutes).padStart(2,0)}:${String(seconds).padStart(2,0)}`}</span>
+                            <span className="is-size-6 has-text-weight-medium">{`${String(minutes).padStart(2, 0)}:${String(seconds).padStart(2, 0)}`}</span>
                         </span>
                     </div>
                 </div>

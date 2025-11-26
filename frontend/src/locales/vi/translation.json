@@ -1,0 +1,244 @@
+{
+    "greetings": "Lug24 kính chào quý khách",
+    "sendParcel": "Gửi kiện hàng",
+    "receiveParcel": "Lấy kiện hàng",
+    "btnBack": "Quay lại",
+    "legendRenter": "Thông tin người thuê tủ",
+    "labelRenterName": "Họ và tên",
+    "labelRenterEmail": "Email",
+    "labelRenterPhone": "Số điện thoại",
+    "btnSignUpViaMobile": "Đăng ký bằng số điện thoại",
+    "btnSignUpViaEmail": "Đăng ký bằng email",
+    "legendLocker": "Thông tin ô tủ",
+    "labelChooseSize": "Chọn kích thước",
+    "labelRentalTime": "Chọn thời gian thuê",
+    "legendOrder": "Đơn hàng",
+    "labelLockerSize": "Kích thước tủ ",
+    "labelRentalTimeOrder": "Thời gian thuê",
+    "labelMaxRentalTimeOrder": "Lưu trữ tối đa trong",
+    "labelPromoCode": "Mã giảm giá",
+    "btnEnterPromoCode": "Nhập mã",
+    "labelSubTotal": "Tạm tính",
+    "labelDiscount": "Giảm giá",
+    "labelTax": "Thuế (nếu có)",
+    "labelTotal": "Tổng cộng",
+    "labelSessionDuration": "Giao dịch sẽ kết thúc trong",
+    "btnCheckout": "Thanh toán",
+    "alertEmpty": "Thông tin không được bỏ trống",
+    "alertEmailInvalid": "Email không đúng",
+    "alertPhoneInvalid": "Số điện thoại không đúng",
+    "alertPromoInvalid": "Mã không hợp lệ",
+    "alertRentalTime": [
+        "Thời gian lấy hàng phải diễn ra sau thời gian gửi hàng",
+        "Cơ sở ký gửi chỉ hoạt động trong khung giờ từ {{openHour}}:{{openMinute}} đến {{closeHour}}:{{closeMinute}}. Vui lòng chọn lại khung giờ lấy hàng."
+    ],
+    "alertOutOfLocker": "Tất cả tủ ký gửi đều đã đầy. Vui lòng quay lại sau.",
+    "labConfirm": "Tôi chấp nhận các điều khoản dịch vụ",
+    "btnReservation": "Đặt tủ",
+    "houseRule": [
+        {
+            "title": "Quy định ký gửi hành lý",
+            "subTitle": "Khi sử dụng dịch vụ ký gửi hành lý này (Lug24), người sử dụng dịch vụ đã đọc, hiểu, đồng ý và cam kết tuân thủ các điều khoản và điều kiện"
+        },
+        {
+            "title": "Vũ khí, đạn dược, vật liệu nổ",
+            "subTitle": "Súng, dao, bom, đạn, thuốc nổ, pháo nổ, pháo hoa, các loại pháo khác và các vật liệu liên quan."
+        },
+        {
+            "title": "Hóa chất, chất thải nguy hại và ma túy, chất gây nghiện",
+            "subTitle": "Hóa chất độc hại, chất thải công nghiệp, chất gây ô nhiễm môi trường. Tất cả các loại ma túy, tiền chất và chất kích thích bị cấm. Các loại hóa chất bị cấm sản xuất, kinh doanh hoặc nhập khẩu"
+        },
+        {
+            "title": "Ấn phẩm đồi trụy, phản động, hàng hóa vi phạm quyền sở hữu trí tuệ",
+            "subTitle": "Sách báo, phim ảnh có nội dung đồi trụy, phản động hoặc kích động bạo lực. Hàng giả, hàng nhái, vi phạm bản quyền."
+        },
+        {
+            "title": "Động vật, thực vật hoang dã, di vật cổ, văn hóa phẩm",
+            "subTitle": "Các loài động vật và thực vật quý hiếm, có nguy cơ tuyệt chủng. Cổ vật và tác phẩm văn hóa có giá trị lịch sử hoặc văn hóa."
+        }
+    ],
+    "sizeUnit": "Cỡ ",
+    "rentalTimeUnit": " giờ",
+    "rentalTimeChoices": [
+        "Giá dùng thử: 4 giờ",
+        "Chọn thời gian lấy hàng"
+    ],
+    "labelCheckInTime": "Thời gian gửi hàng",
+    "labelCheckOutTime": "Thời gian lấy hàng",
+    "msgConfirm": [
+        "Bằng việc chọn",
+        "\"Xác nhận\"",
+        "quý khách đã đồng ý với ",
+        "Điều khoản dịch vụ",
+        "của Lug24. Bạn có thể nhận được thông báo qua Email/Zalo (khi đăng ký bằng số điện thoại)."
+    ],
+    "btnConfirm": "Xác nhận",
+    "terms": {
+        "title": "Điều khoản sử dụng dịch vụ",
+        "contents": [
+            {
+                "chapter": "Điều 1: Sử dụng dịch vụ",
+                "content": [
+                    "Người sử dụng phải cung cấp thông tin cá nhân (email, số điện thoại hoặc chứng minh nhân dân) khi sử dụng dịch vụ.",
+                    "Người sử dụng phải đăng ký và thanh toán đầy đủ tất cả phí dịch vụ, bao gồm phí quá hạn.",
+                    "Thông tin, mã đăng ký và mã nhận hành lý do Lug24 cung cấp là bí mật và không được tiết lộ cho bên thứ ba.",
+                    "Lug24 không chịu trách nhiệm về thiệt hại hoặc mất mát nếu người sử dụng đăng ký với thông tin giả, không chính xác hoặc không xác thực."
+                ]
+            },
+            {
+                "chapter": "Điều 2: Thời gian ký gửi và phí dịch vụ",
+                "content": [
+                    "Phí dịch vụ được tính theo giá niêm yết trên lug24.com.",
+                    "Thời gian ký gửi và nhận hành lý khác nhau theo từng địa điểm; người sử dụng phải tìm hiểu và chọn đúng địa điểm, thời gian trước khi đăng ký.",
+                    "Thời gian sử dụng dịch vụ được tính theo khối 6 giờ, 12 giờ và 24 giờ. Nếu sử dụng ít hơn một khối, vẫn phải trả phí đầy đủ của khối đó.",
+                    "Thời gian quá hạn và phí: Sau khi hết thời gian ký gửi ban đầu, Lug24 cho phép 10 phút gia hạn. Sau thời gian này, phí quá hạn sẽ được tính theo lịch phí chuẩn 6 giờ, 12 giờ và 24 giờ. Để thanh toán phí quá hạn, người sử dụng chỉ cần nhập mã đăng ký ban đầu, thanh toán phí và nhận hành lý.",
+                    "Sau 48 giờ kể từ khi kết thúc thời gian dịch vụ đăng ký ban đầu, nếu không nhận hành lý, người sử dụng sẽ mất quyền sở hữu và lug24 được phép xử lý mà không cần bồi thường."
+                ]
+            },
+            {
+                "chapter": "Điều 3: Các loại hàng hoá không ký gửi tại Lug24",
+                "content": [
+                    "Vì lý do an ninh, Lug24 không cho phép ký gửi các vật phẩm bị cấm theo luật như được liệt kê trong danh sách đính kèm (**), tiền mặt, đá quý, trang sức hoặc hàng hóa có giá trị cao. Lug24 không kiểm tra hành lý khi ký gửi và do đó được miễn trừ trách nhiệm pháp lý về các vật phẩm bị cấm hoặc đối tượng chứa trong hành lý. Ngoài ra, thức ăn, nước uống, trái cây, thực phẩm, sản hải, thức ăn chế biến sẵn đều không đóng gói chân không không chấp nhận tại khoang ký gửi. Bất kì việc ký gửi không đúng danh sách hàng hóa được chấp nhận tại Lug24 như đã công bố sẽ bị phạt lên đến 5 triệu đồng/lần ký gửi và chịu bồi thường các thiệt hại xảy ra nếu gây ảnh hưởng về mùi và thiệt hại vật chất đến không gian ký gửi các các khoang ký gửi khác."
+                ]
+            },
+            {
+                "chapter": "Điều 4: Bồi thường thiệt hại",
+                "content": [
+                    "Lug24 sẽ bồi thường tối đa 2 triệu đồng/vụ trong trường xảy các thiệt hại do cháy nổ và trộm cắp.",
+                    "Lug24 sẽ KHÔNG bồi thường thiệt hại trong các trường hợp sau:",
+                    [
+                        "Người sử dụng cung cấp thông tin giả, không chính xác hoặc không xác thực khi đăng ký.",
+                        "Thiệt hại kỹ thuật hoặc trầy xước xảy ra trong quá trình sử dụng dịch vụ trước khi ký gửi hành lý.",
+                        "Các hư hại hoặc trầy xước đã có trước khi ký gửi hành lý tại Lug24.",
+                        "Hành động của người sử dụng hoặc thông đồng với người khác để trộm cắp hoặc phá hủy tài sản.",
+                        "Sự kiện bất khả kháng như thiên tai (động đất, lũ lụt, bão), chiến tranh, phá hủy hoặc các điều kiện không lường trước khác không do Lug24 gây ra.",
+                        "Biểu tình, bạo loạn, phá hủy.",
+                        "Bức xạ hoặc rò rỉ hạt nhân.",
+                        "Mất mát hoặc thiệt hại do người sử dụng quên, đặt nhầm hoặc không kiểm tra hành lý khi nhận từ hệ thống Lug24.",
+                        "Hành vi gian lận cố ý của người sử dụng để đổi hành lý.",
+                        "Lệnh của chính phủ hoặc cơ quan quản lý yêu cầu thu hồi hành lý."
+                    ],
+                    "Ngay sau khi hành lý bị mất hoặc thiệt hại, người sử dụng phải cung cấp bằng chứng hình ảnh và báo cáo cho Lug24 để kiểm tra theo quy định. Căn cứ theo kết quả của cơ quan điều tra, Lug24 sẽ tiến hành bồi thường theo đúng như nội dung của cam kết này."
+                ]
+            },
+            {
+                "chapter": "** Danh sách hàng hoá cấm",
+                "content": [
+                    "Hàng hóa cấm xuất nhập khẩu:",
+                    [
+                        "Vũ khí, đạn dược, vật liệu nổ: Súng, dao, bom, đạn, thuốc nổ và các vật liệu liên quan.",
+                        "Chất độc, chất thải nguy hại: Hóa chất độc hại, chất thải công nghiệp, chất gây ô nhiễm môi trường.",
+                        "Ma tuý, chất gây nghiện: Tất cả các loại ma túy, tiền chất và chất kích thích bị cấm.",
+                        "Ấn phẩm đồi trụy, phản động: Sách báo, phim ảnh có nội dung đồi trụy, phản động hoặc kích động bạo lực.",
+                        "Động vật, thực vật hoang dã: Các loài động vật và thực vật quý hiếm, có nguy cơ tuyệt chủng.",
+                        "Hàng hóa vi phạm quyền sở hữu trí tuệ: Hàng giả, hàng nhái, vi phạm bản quyền.",
+                        "Hóa chất cấm: Các loại hóa chất bị cấm sản xuất, kinh doanh hoặc nhập khẩu.",
+                        "Pháo: Pháo nổ, pháo hoa và các loại pháo khác.",
+                        "Di vật cổ, văn hóa phẩm: Cổ vật và tác phẩm văn hóa có giá trị lịch sử hoặc văn hóa."
+                    ],
+                    "Hàng hóa cấm vận chuyển:",
+                    [
+                        "Chất lỏng dễ cháy: Xăng, dầu, rượu, keo, sơn, nước hoa, v.v.",
+                        "Chất khí dễ cháy: Bình gas, bật lửa gas, v.v.",
+                        "Chất độc và chất lây nhiễm: Thuốc trừ sâu, virus, vi khuẩn gây bệnh.",
+                        "Chất ăn mòn: Axit, pin, ắc quy, v.v.",
+                        "Vũ khí, đạn dược: (trừ trường hợp được phép)",
+                        "Hàng hóa có từ trường mạnh: Một số loại nam châm, thiết bị điện tử.",
+                        "Tiền và giấy tờ có giá trị: (trừ trường hợp được phép)"
+                    ],
+                    "Hàng hóa cấm kinh doanh:",
+                    [
+                        "Thuốc thú y, thuốc bảo vệ thực vật cấm hoặc chưa được phép sử dụng: Bao gồm thuốc thú y và thuốc bảo vệ thực vật bị cấm sử dụng tại Việt Nam.",
+                        "Đồ chơi nguy hiểm, đồ chơi có hại: Bao gồm đồ chơi có thể gây hại cho trẻ em, ảnh hưởng sức khỏe, nhân cách hoặc gây rối loạn trật tự công cộng.",
+                        "Thực phẩm chức năng, mỹ phẩm không rõ nguồn gốc, không đảm bảo chất lượng: Bao gồm thực phẩm chức năng và mỹ phẩm không rõ nguồn gốc, không đảm bảo chất lượng hoặc có thể gây hại cho sức khỏe.",
+                        "Hàng hóa không rõ nguồn gốc, xuất xứ: Bao gồm hàng hóa không có hóa đơn, chứng từ chứng minh nguồn gốc hoặc có thể là hàng giả, hàng nhái, hàng lậu."
+                    ]
+                ]
+            }
+        ]
+    },
+    "notes": {
+        "title": "Lưu ý",
+        "content": [
+            "Thời gian thuê được làm tròn gần nhất với các bội số: 6h, 12h, 24h và 48h. Trong trường hợp quý khách lựa chọn ký gửi vượt các mốc thời gian trên thì sẽ được tính ở mốc thời gian kế tiếp.",
+            "Thời gian kí gửi tối đa của quý khách là 48 giờ. Sau thời gian lấy hàng được niêm yết, quý khách có 15 phút quá hạn không tính phí. Sau thời gian này, phí quá hạn sẽ được áp dụng.",
+            "Lưu ý về thời gian hoạt động tại cơ sở ký gửi có thể ảnh hưởng đến việc lấy hàng của quý khách."
+        ]
+    },
+    "labelChangePaymentMethod": "Thay đổi phương thức thanh toán",
+    "paymentMethod": [
+        "Thanh toán chạm",
+        "Quét mã QR"
+    ],
+    "progressStatus": [
+        "Thanh toán",
+        "Nhập mã OTP",
+        "Mở tủ",
+        "Hoàn tất"
+    ],
+    "orderStatus": [
+        "Chờ thanh toán",
+        "Thanh toán thành công",
+        "Thanh toán thất bại",
+        "Đơn hàng đã bị hủy"
+    ],
+    "orderInfo": [
+        "Mã đơn hàng",
+        "Tổng đơn hàng",
+        "Thời gian lấy hàng"
+    ],
+    "labelPaymentDirection": [
+        "Đặt thẻ vào khu vực quét",
+        "Quét QR để thanh toán"
+    ],
+    "defaultBankingMsg": "Lug24 - Thanh toán hóa đơn",
+    "labelEndTransaction": "Giao dịch sẽ kết thúc trong",
+    "labelMessage": "Nội dung",
+    "labelCancelTransaction": "Hủy giao dịch",
+    "labelCustomer": "Khách hàng",
+    "labelTransition": "Ứng dụng sẽ tự động chuyển trang trong {{timelapse}} giây",
+    "labelConfirmOTP": {
+        "title": "Xác nhận mã mở tủ",
+        "subtitle": "Nhập 6 số được gửi cho bạn thông qua email/số điện thoại mà bạn cung cấp",
+        "resend": "Gửi lại mã OTP",
+        "resendCountDown": "Gửi lại sau ",
+        "error": "Mã OTP không chính xác",
+        "success": "Mã OTP đã được gửi đi"
+    },
+    "lockerStatus": [
+        {
+            "title": "Tủ #{{lockerNo}} đang mở",
+            "note": [
+                "Vui lòng đặt kiện hàng vào khoang tủ, sau đó ấn mạnh để đóng tủ.",
+                "Không rời khỏi tủ trong lúc quá trình đang được xử lý."
+            ]
+        },
+        {
+            "title": "Tủ đã đóng",
+            "note": [
+                "Kiện hàng được gửi thành công.",
+                "Biên nhận sẽ được gửi về email/số điện thoại mà bạn cung cấp."
+            ]
+        }
+    ],
+    "labelLockerID": "Mã tủ",
+    "labelUpdate": "Tính năng này đang được cập nhật ...",
+    "labelConfirmCheckIn": "Xác nhận thông tin đặt tủ",
+    "labelPaymentMethod": "Hình thức thanh toán",
+    "sepayTransitionNoti": "Đang chuyển trang thanh toán Sepay...",
+    "supportPart": {
+        "title": "Hỗ trợ kỹ thuật",
+        "hotline": {
+            "title": "Đường dây nóng 24/7",
+            "value": "1900.XXXX"
+        },
+        "website": {
+            "title": "Website",
+            "value": "lug24.com"
+        },
+        "zalo": {
+            "title": "Zalo",
+            "value": "lug24"
+        }
+    }
+}

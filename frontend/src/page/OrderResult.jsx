@@ -5,9 +5,6 @@ import ProgressBar from "../components/ExtraPart/ProgressBar"
 import SupportPart from "../components/ExtraPart/SupportPart";
 import ResultStatus from "../components/ExtraPart/ResultStatus";
 
-
-
-
 export default function OrderResult() {
     const [step, setStep] = useState(1);
 
@@ -16,9 +13,6 @@ export default function OrderResult() {
 
     const queryParams = new URLSearchParams(location.search);
     const status = queryParams.get("status");
-
-
-
 
 
     return (

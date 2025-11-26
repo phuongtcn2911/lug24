@@ -6,13 +6,15 @@ import { OrderContext } from "../../data/OrderContext";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import axios from "axios";
 import api from "../../config/axios";
+import { useTranslation } from "react-i18next";
 
 export default function LockerStatusScreen() {
     const { lang, Languages } = useContext(LanguageContext);
+    const {t,i18n}=useTranslation();
     const { order, resetOrder } = useContext(OrderContext);
     const [secs, setSecs] = useState(Timer.lockerStatusDur);
     const { progress, changeStep, changeStatus } = useContext(PaymentProgressContext);
-    const [title, setTitle] = useState(Languages[lang].lockerStatus[progress.status].title);
+    const [title, setTitle] = useState(t("lockerStatus",{returnObjects:true,lockerNo:order.locker.id})[progress.status].title);
 
 
     const nav = useNavigate();
@@ -76,12 +78,12 @@ export default function LockerStatusScreen() {
         }
     }
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        const editTitle = String(title).replace("#", "#" + order.locker.id);
-        setTitle(editTitle);
+    //     const editTitle = String(title).replace("#", "#" + order.locker.id);
+    //     setTitle(editTitle);
 
-    }, []);
+    // }, []);
 
     async function sendReceipt(obj, contactType) {
         var orderOBJ = {
@@ -106,10 +108,10 @@ export default function LockerStatusScreen() {
             <p className="title is-2 mt-3 has-text-info has-text-centered has-text-weight-bold is-spaced">
                 {String(title).toUpperCase()}
             </p>
-            <p className="subtitle is-5 has-text-gray has-text-weight-bold">{Languages[lang].lockerStatus[progress.status].note[0]}<br />{Languages[lang].lockerStatus[progress.status].note[1]}</p>
+            <p className="subtitle is-5 has-text-gray has-text-weight-bold">{t("lockerStatus",{returnObjects:true})[progress.status].note[0]}<br />{t("lockerStatus",{returnObjects:true})[progress.status].note[1]}</p>
             {progress.status == 1 ?
                 (
-                    <p className="subtitle is-7 is-italic has-text-gray">{`${Languages[lang].labelTransition[0]} ${secs} ${Languages[lang].labelTransition[1]}`}</p>
+                    <p className="subtitle is-7 is-italic has-text-gray">{t("labelTransition",{timelapse:secs})}</p>
                 ) : null}
             <div className="image-section">
                 <img

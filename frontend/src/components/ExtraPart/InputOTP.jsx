@@ -7,6 +7,7 @@ import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import { OrderContext } from "../../data/OrderContext";
 import axios from "axios";
 import api from "../../config/axios";
+import { useTranslation } from "react-i18next";
 
 export async function sendingOTP(obj) {
     try {
@@ -42,6 +43,7 @@ export function InputOTP() {
     const [otp, setOTP] = useState(["", "", "", "", "", ""]);
     const inputsRef = useRef([]);
     const { lang, Languages } = useContext(LanguageContext);
+    const {t,i18n}=useTranslation();
     const { order } = useContext(OrderContext);
     const [error, setError] = useState("");
     const [resendTimer, setResendTimer] = useState(Timer.resendOTP);
@@ -77,7 +79,7 @@ export function InputOTP() {
                     changeStatus(0);
                 }
                 else {
-                    setError(Languages[lang].labelConfirmOTP.error);
+                    setError(t("labelConfirmOTP.error"));
                     setOTP(["", "", "", "", "", ""]);
                     // setCurrentIndex(0);
                     const firstInput = inputsRef.current[0];
@@ -153,10 +155,10 @@ export function InputOTP() {
     return (
         <div className="container">
 
-            <img className="orderStatus-image" src={OTP} alt="OTP"></img>
+            <img className="size-96 object-cover mx-auto my-4" src={OTP} alt="OTP"></img>
 
-            <p className="title is-2">{Languages[lang].labelConfirmOTP.title}</p>
-            <p className="subtitle is-6 is-italic">{Languages[lang].labelConfirmOTP.subtitle}</p>
+            <p className="title is-2">{t("labelConfirmOTP.title")}</p>
+            <p className="subtitle is-6 is-italic">{t("labelConfirmOTP.subtitle")}</p>
             <div id="otp" className="otp-container mb-4">
                 {otp.map((val, index) => (
                     <input
@@ -178,8 +180,8 @@ export function InputOTP() {
                 style={{ pointerEvents: !isReactive ? "not-allowed" : "auto" }}
                 onClick={resendOTP}>
                 {!isReactive
-                    ? `${Languages[lang].labelConfirmOTP.resendCountDown} ${resendTimer}`
-                    : `${Languages[lang].labelConfirmOTP.resend}`}
+                    ? `${t("labelConfirmOTP.resendCountDown")} ${resendTimer}`
+                    : `${t("labelConfirmOTP.resend")}`}
             </a>
 
         </div>

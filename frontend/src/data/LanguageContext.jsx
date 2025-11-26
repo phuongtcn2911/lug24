@@ -9,10 +9,12 @@ export function LanguageProvider({ children }) {
 
     function changeLanguage() {
         if (lang == 0) {
+            i18n.changeLanguage("en");
             setLang(1);
             setFlag("flagEN");
         }
         else {
+            i18n.changeLanguage("vi");
             setLang(0);
             setFlag("flagVN");
         }

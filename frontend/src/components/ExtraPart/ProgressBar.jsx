@@ -1,18 +1,18 @@
 import React, { useContext } from "react"
 import { CreditCard, KeyRound, LockKeyholeOpen, LockKeyhole } from "lucide-react";
 import "./CSS/ProgressBar.css"
-import { LanguageContext } from "../../data/LanguageContext";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
+import { useTranslation } from "react-i18next";
 
 export default function ProgressBar() {
-    const {lang,Languages}=useContext(LanguageContext);
+    const {t, i18n}=useTranslation();
     const {progress}=useContext(PaymentProgressContext);
     
     const steps = [
-        { label: Languages[lang].progressStatus[0], icon: <CreditCard size={20} /> },
-        { label: Languages[lang].progressStatus[1], icon: <KeyRound size={20} /> },
-        { label: Languages[lang].progressStatus[2], icon: <LockKeyholeOpen size={20} /> },
-        { label: Languages[lang].progressStatus[3], icon: <LockKeyhole size={20} /> },
+        { label: t("progressStatus.0"), icon: <CreditCard size={20} /> },
+        { label: t("progressStatus.1"), icon: <KeyRound size={20} /> },
+        { label: t("progressStatus.2"), icon: <LockKeyholeOpen size={20} /> },
+        { label: t("progressStatus.3"), icon: <LockKeyhole size={20} /> },
     ];
 
     return (

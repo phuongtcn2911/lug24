@@ -5,7 +5,6 @@ import { useContext } from 'react';
 
 import './CSS/App.css';
 import * as Data from '../data/Data.js'
-import { LanguageContext } from '../data/LanguageContext.jsx';
 
 import AnimatedButton from '../components/AnimatedButton/AnimatedButton.jsx';
 import ExtraPart from '../components/ExtraPart/ExtraPart.jsx';
@@ -13,15 +12,15 @@ import DevButton from '../components/DevButton.jsx';
 import VideoBox from '../components/ExtraPart/VideoBox.jsx';
 import { TimerContext } from '../data/TimerContext.jsx';
 import { OrderContext } from '../data/OrderContext.jsx';
+import { useTranslation } from 'react-i18next';
 
 
 
 
 function Home() {
-
-  const { lang, Languages } = useContext(LanguageContext);
   const {startTimer,resetTimer}=useContext(TimerContext);
   const {resetOrder}=useContext(OrderContext);
+   const { t, i18n } = useTranslation();
 
   function startNewSession(){
     resetTimer();
@@ -52,14 +51,14 @@ function Home() {
                 imgLink={Data.AnimatedButtons[0].imgLink}
                 color={Data.AnimatedButtons[0].color}
                 clickEvent={()=>startNewSession()}
-              >{Languages[lang].sendParcel}</AnimatedButton>
+              >{t("sendParcel")}</AnimatedButton>
             </Link>
 
             <Link to="/ReceiveParcel">
               <AnimatedButton
                 imgLink={Data.AnimatedButtons[1].imgLink}
                 color={Data.AnimatedButtons[1].color}
-              >{Languages[lang].receiveParcel}</AnimatedButton>
+              >{t("receiveParcel")}</AnimatedButton>
             </Link>
 
           </ul>

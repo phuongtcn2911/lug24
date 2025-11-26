@@ -1,10 +1,13 @@
 import { useState, useContext } from "react";
 import { LanguageContext } from "../../data/LanguageContext.jsx";
+import { useTranslation } from "react-i18next";
+
 import validator from "validator"
 
 export default function TextInput({ label, type, value, placeholder, transmitData }) {
     // const [inputValue, setInputValue] = useState("");
-     const { lang, Languages } = useContext(LanguageContext);
+    // const { lang, Languages } = useContext(LanguageContext);
+    const { t, i18n } = useTranslation();
     const [isTouched, setTouched] = useState(false);
     const [className, setClassName] = useState("input");
     const [error,setError]=useState("");
@@ -14,19 +17,19 @@ export default function TextInput({ label, type, value, placeholder, transmitDat
 
         if (value.trim() === "") {
             setClassName("input is-danger");
-            setError(Languages[lang].alertEmpty);
+            setError(t("alertEmpty"));
             return;
         }
 
         if (type === "email" && !validator.isEmail(value)) {
             setClassName("input is-danger");
-            setError(Languages[lang].alertEmailInvalid);
+            setError(t("alertEmailInvalid"));
             return;
         }
 
         if (type === "tel" && !validator.isMobilePhone(value, "vi-VN")) {
             setClassName("input is-danger");
-            setError(Languages[lang].alertPhoneInvalid);
+            setError(t("alertPhoneInvalid"));
             return;
         }
 

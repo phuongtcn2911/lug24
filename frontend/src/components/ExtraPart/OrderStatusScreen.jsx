@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { OrderStatus,Timer } from "../../data/Data"
-import { LanguageContext } from "../../data/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { OrderContext } from "../../data/OrderContext";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
+import { useTranslation } from "react-i18next";
 
 export default function OrderStatusScreen() {
-    const { lang, Languages,resetLanguage } = useContext(LanguageContext);
+    
+    const {t,i18n}=useTranslation();
     const { resetOrder } = useContext(OrderContext);
     const [secs, setSecs] = useState(Timer.ordStatusDur);
     const { progress,changeStep } = useContext(PaymentProgressContext);
@@ -48,9 +49,9 @@ export default function OrderStatusScreen() {
     return (
         <>
             <p className="title is-4 mt-3 has-text-info has-text-centered has-text-weight-bold">
-                {String(Languages[lang].orderStatus[progress.status]).toUpperCase()}
+                {String(t("orderStatus",{returnObjects:true})[progress.status]).toUpperCase()}
             </p>
-            <p className="subtitle is-7 is-italic has-text-gray">{`${Languages[lang].labelTransition[0]} ${secs} ${Languages[lang].labelTransition[1]}`}</p>
+            <p className="subtitle is-7 is-italic has-text-gray">{t("labelTransition",{timelapse:secs})}</p>
             <div className="image-section">
                 <img
                     src={OrderStatus[progress.status]}

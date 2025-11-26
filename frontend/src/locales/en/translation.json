@@ -1,0 +1,244 @@
+{
+    "greetings": "Welcome to Lug24",
+    "sendParcel": "Drop off parcel",
+    "receiveParcel": "Pick up parcel",
+    "btnBack": "Back",
+    "legendRenter": "Locker renter information",
+    "labelRenterName": "Fullname",
+    "labelRenterEmail": "Email",
+    "labelRenterPhone": "Mobile",
+    "btnSignUpViaMobile": "Sign up with phone number",
+    "btnSignUpViaEmail": "Sign up with email",
+    "legendLocker": "Rental locker options",
+    "labelChooseSize": "Choose a rental size",
+    "labelRentalTime": "Choose a rental time",
+    "legendOrder": "Booking",
+    "labelLockerSize": "Locker's size ",
+    "labelRentalTimeOrder": "Rental time",
+    "labelMaxRentalTimeOrder": "Maximum storage time",
+    "labelPromoCode": "Promo code",
+    "btnEnterPromoCode": "Enter code",
+    "labelSubTotal": "Subtotal",
+    "labelDiscount": "Discount",
+    "labelTax": "Tax (if capable)",
+    "labelTotal": "Total",
+    "labelSessionDuration": "The session will end in",
+    "btnCheckout": "Checkout",
+    "alertEmpty": "This field is required",
+    "alertEmailInvalid": "Invalid email",
+    "alertPhoneInvalid": "Invalid phone number",
+    "alertPromoInvalid": "Invalid code",
+    "alertRentalTime": [
+        "Pickup time must be after drop-off time!",
+        "The storage facility operates only between {{openHour}}:{{openMinute}} and {{closeHour}}:{{closeMinute}}. Please select another pickup time."
+    ],
+    "alertOutOfLocker": "All storage lockers are full. Please come back later.",
+    "labConfirm": "I agree to the Terms and Conditions",
+    "houseRule": [
+        {
+            "title": "Checked luggage regulations",
+            "subTitle": "Use of this baggage deposit service (Lug24) constitutes your agreement to the Terms and Conditions."
+        },
+        {
+            "title": "Weapons, ammunition, explosives",
+            "subTitle": "Gun, knife, bomb, bullet, grenade and relevant explosives. All types of fireworks are banned."
+        },
+        {
+            "title": "Toxic substances, hazardous waste, Narcotics and Addictive Substances",
+            "subTitle": "Toxic chemicals, industrial waste, environmental pollutants. All types of illegal drugs and their precursors are prohibited."
+        },
+        {
+            "title": "Harmful, Obscene, and Reactionary Cultural Products, infringing goods",
+            "subTitle": "Films, books, and other cultural items that are considered harmful, depraved, or politically reactionary, counterfeit, trademark-infringing, copyright infringing and patent infringing goods. Items of historical and cultural value."
+        },
+        {
+            "title": "Endangered Wild Animals and Plants, Antiquities and Relics",
+            "subTitle": "Threatened and protected species. Items of historical and cultural value."
+        }
+    ],
+    "sizeUnit": "Size ",
+    "rentalTimeUnit": "  hours",
+    "rentalTimeChoices": [
+        "Trial Time: 4 hours",
+        "Choose a pick-up time"
+    ],
+    "labelCheckInTime": "Check-in Time",
+    "labelCheckOutTime": "Check-out Time",
+    "btnReservation": "Book a locker",
+    "msgConfirm": [
+        "By selecting",
+        "\"Confirmation\"",
+        " you agree to Lug24’s",
+        "Terms of Service",
+        ". You may receive notifications via Email or Zalo (when registered with a phone number)."
+    ],
+    "btnConfirm": "Confirmation",
+    "terms": {
+        "title": "User's Terms and Conditions",
+        "contents": [
+            {
+                "chapter": "Article 1: User’s service commitment",
+                "content": [
+                    "The user of this service is required to provide personal contacts (email, phone number or personal identification where needed) for the locker service registration.",
+                    "The user has to register to book a locker and is liable for paying all the locker rental fees, including the surcharged fee for late(s).",
+                    "All registered contact information, codes provided by lug24 during the service is confidential to the user only and non-disclosed to any third party for any reason.",
+                    "Lug24 will not be liable for loss or damage if any intentionally false, impersonation or misleading information provided by the user during the service."
+                ]
+            },
+            {
+                "chapter": "Article 2: Storage time and service fee",
+                "content": [
+                    "The service fee is public at Price on www.lug24.com",
+                    "The luggage check-in and check-out times might vary from one to another location; the user is expected to refer to our public info for each location to choose a proper locker location and timing before registration.",
+                    "The standard storage fee is calculated on the basis of 6, 12, and 24 hours. If the storage is less than those fixed standard timings, the full fee will be applied accordingly.",
+                    "Overtime storage and surcharge fee: When the registered storage time is up, the maximum allowed waiting time is 10 minutes for the luggage to be checked-out from the locker. Any extra time beyond will be applied as a surcharge fee calculated on the basis of 6, 12, 24 hours. For surcharge fee payment, the user just logs in with registered info and verification code, makes payment and checks the luggage out.",
+                    "After 48 hours compared to the paid storage time, if the luggage is not checked out by the user, the user is deemed to have given permission for lug24 to dispose of the item and lug24 will not be liable for any compensation."
+                ]
+            },
+            {
+                "chapter": "Article 3: Items and Good are not accepted at Lug24 locker",
+                "content": [
+                    "For security reasons, all prohibited items, weapons, illegal things listed (**) in the user's terms are not accepted at any locker at lug24 Besides, cash and cash equivalents, valuable notes, stocks, securities, valuable things and items are not accepted for storage. As this is a self-service luggage locker, items are stored at a locker on the user's own Items will not undergo procedures by lug24 staff. Lug24 will be disclaimed for any illegal items stored at our locker due to the user's intention. Furthermore, food and beverage, fruits, non-vacuum packed food, seafood, and read-to-eat food are not welcomed. A fine of 5 million VND will be applied for any unaccepted item stored at the Lug24 locker per one time."
+                ]
+            },
+            {
+                "chapter": "Article 4: Compensation",
+                "content": [
+                    "Lug24 accepts a maximum liability of 2 million VND in the event of loss of the luggage due to an accident or caused by fire.",
+                    "Lug24 will NOT liable for any compensation for either of circumstances as listed below:",
+                    [
+                        "False, misleading or impersonation information provided by the user when registration for a locker booking.",
+                        "Existing damages, scratches, fractures, worn-out or those are caused by the user during the self-service check-in or check-out at Lug24 locker.",
+                        "Damage or scratches that existed before storing luggage at Lug24.",
+                        "The user's intentional act or in collaboration with another person or party for damage, destroying or theft.",
+                        "Force majeure such as natural disasters (typhoons, flooding, earthquakes, and the likes), war, enemy aggression, rebellions, and other unexpected force majeure out of lug24 expectation.",
+                        "Strikes, riots, public harassment.",
+                        "Effects of nuclear splitting, mitigation or radiation.",
+                        "Loss or damages caused by the user unintentionally leaving behind after check-in and check-out or leaving.",
+                        "Wrongful act on purpose of the user to claim for the luggage loss and damage.",
+                        "Confiscation or seizure by relevant authorities or by the government orders."
+                    ],
+                    "Lug24 will not take any responsibilities after the luggage is checked out from the locker by the user. In the event of loss and damage, the user is expected to immediately report to Lug24 with proven evidence and details. Based on the relevant authorities investigation, Lug24 will take liability for damage and loss covered by this agreement."
+                ]
+            },
+            {
+                "chapter": "** List of Prohibited Goods",
+                "content": [
+                    "Prohibited goods for import-export",
+                    [
+                        "Weapons, ammunition, explosives: gun, knife, bomb, bullet, grenade and relevant explosives.",
+                        "Toxic substances, hazardous waste: Toxic chemicals, industrial waste, environmental pollutants.",
+                        "Narcotics and Addictive Substances: All types of illegal drugs and their precursors are prohibited.",
+                        "Harmful, Obscene, and Reactionary Cultural Products: Films, books, and other cultural items that are considered harmful, depraved, or politically reactionary.",
+                        "Endangered Wild Animals and Plants: threatened and protected species.",
+                        "Infringing goods: counterfeit, trademark-infringing, copyright infringing and patent infringing goods",
+                        "Prohibited chemicals: Types of chemicals prohibited from production, business or import.",
+                        "Fireworks: All types of fireworks are banned.",
+                        "Antiquities and Relics: Items of historical and cultural value."
+                    ],
+                    "Items prohibited for transportation:",
+                    [
+                        "Flammable liquids: Gasoline, oil, alcohol, glue, paint, perfume, etc.",
+                        "Flammable gases: Gas cylinders, gas lighters, etc.",
+                        "Toxic and infectious substances: Pesticides, viruses, disease-causing bacteria.",
+                        "Corrosive substances: Acids, batteries, accumulators, etc.",
+                        "Vũ khí, đạn dược: (except when permitted)",
+                        "Goods with strong magnetic fields: Some types of magnets, electronic devices.",
+                        "Money and valuable documents: (except when permitted)"
+                    ],
+                    "Prohibited goods:",
+                    [
+                        "Veterinary drugs and pesticides banned or not yet permitted for use: Including veterinary drugs and pesticides banned for use in Vietnam.",
+                        "Dangerous, harmful toys: Including toys that can harm children, affect health, personality or disrupt public order.",
+                        "Supplementary foods and cosmetics of unknown origin and poor quality: Including functional foods and cosmetics of unknown origin, not guaranteed quality or possibly harmful to health.",
+                        "Goods of unknown origin: Including goods without invoices or documents proving origin or may be counterfeit, fake or smuggled goods."
+                    ]
+                ]
+            }
+        ]
+    },
+    "notes": {
+        "title": "Note:",
+        "content": [
+            "Rental time is rounded up to the nearest multiple of 6h, 12h, 24h, or 48h. If you choose a deposit duration that exceeds these thresholds, it will be charged at the next applicable time block.",
+            "The maximum deposit time allowed is 48 hours. After the posted pickup time, you have a 15-minute grace period free of charge. Beyond this period, overtime fees will apply.",
+            "Please note that the operating hours of the baggage deposit facility may affect your ability to pick up your items."
+        ]
+    },
+    "paymentMethod": [
+        "Tap to Pay",
+        "QR Code Payment"
+    ],
+    "labelChangePaymentMethod": "Change another payment method",
+    "progressStatus": [
+        "Payment",
+        "Enter OTP",
+        "Open locker",
+        "Complete"
+    ],
+    "orderStatus": [
+        "Pending Payment",
+        "Payment Successful",
+        "Payment Failed",
+        "Order Cancelled"
+    ],
+    "orderInfo": [
+        "Order ID",
+        "Order Total",
+        "Pickup Time"
+    ],
+    "labelPaymentDirection": [
+        "Place your card on the reader",
+        "Scan QR to pay"
+    ],
+    "defaultBankingMsg": "Lug24 - Payment for order",
+    "labelEndTransaction": "The transaction will expire in",
+    "labelMessage": "Message",
+    "labelCancelTransaction": "Cancel transaction",
+    "labelCustomer": "Customer's Name",
+    "labelTransition": "The app will automatically redirect in {{timelapse}} seconds",
+    "labelConfirmOTP": {
+        "title": "Confirm Locker Access Code",
+        "subtitle": "Enter the 6-digit code sent to your provided email or phone number",
+        "resend": "Resend OTP",
+        "error": "Invalid OTP",
+        "resendCountDown": "Resend in ",
+        "success": "OTP has been sent"
+    },
+    "lockerStatus": [
+        {
+            "title": "Locker #{{lockerNo}} is open",
+            "note": [
+                "Please place your parcel into the locker compartment, then push firmly to close it.",
+                "Do not leave the locker while the process is in progress."
+            ]
+        },
+        {
+            "title": "Locker is closed",
+            "note": [
+                "Your parcel has been successfully stored.",
+                "A receipt will be sent to the email or phone number you provided."
+            ]
+        }
+    ],
+    "labelLockerID": "Locker n.o",
+    "labelUpdate": "This function is under constructing ...",
+    "labelConfirmCheckIn": "Locker Booking Confirmation",
+    "labelPaymentMethod": "Payment Methods",
+    "sepayTransitionNoti": "Redirecting to Sepay payment page...",
+    "supportPart": {
+        "title": "Technical Support",
+        "hotline": {
+            "title": "24/7 Hotline",
+            "value": "1900.XXXX"
+        },
+        "website": {
+            "title": "Website",
+            "value": "lug24.com"
+        },
+        "zalo": {
+            "title": "Zalo",
+            "value": "lug24"
+        }
+    }
+}

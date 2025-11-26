@@ -1,10 +1,12 @@
 
 import { useState, useContext, useEffect } from "react";
 import { LanguageContext } from "../../data/LanguageContext";
+import { useTranslation } from "react-i18next";
 
 export default function ButtonList({ arrayList, topic, group, changeButton, savedSelectedIndex, amountList }) {
     const { lang, Languages } = useContext(LanguageContext);
     const [activeIndex, setActiveIndex] = useState(savedSelectedIndex);
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         if (amountList.length === 0) return;
@@ -53,7 +55,7 @@ export default function ButtonList({ arrayList, topic, group, changeButton, save
                             currentIndex = savedSelectedIndex;
                         }
 
-                        const isActive = currentIndex === index&&amountList[index]>0;
+                        const isActive = currentIndex === index && amountList[index] > 0;
 
                         return (
                             <p key={index} className="control badge-container">
@@ -61,7 +63,7 @@ export default function ButtonList({ arrayList, topic, group, changeButton, save
                                     className={`button ${isActive ? "is-warning is-selected" : ""}`}
                                     onClick={(e) => onClick(e, index)}
                                     disabled={amountList[index] === 0}>
-                                    {`${Languages[lang].sizeUnit} ${label.size}`}
+                                    {`${t("sizeUnit")} ${label.size}`}
                                 </button>
                                 <span className="badge">{amountList[index]}</span>
                             </p>
@@ -71,7 +73,7 @@ export default function ButtonList({ arrayList, topic, group, changeButton, save
             </div>
             {savedSelectedIndex === undefined && (
                 <p className="help is-danger">
-                    {Languages[lang].alertOutOfLocker}
+                    {t("alertOutOfLocker")}
                 </p>
             )
             }

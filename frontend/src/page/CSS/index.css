@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -36,6 +40,12 @@ body {
 
   min-width: 320px;
   min-height: 100vh;
+}
+
+.folder-shape {
+    clip-path: polygon(10px 0%, 100% 0%, 100% 100%, 0% 100%);
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 
 /* h1 {

@@ -2,7 +2,6 @@ import { useContext, useEffect, useState, useRef } from "react";
 import { Header } from "../components/ExtraPart/Header";
 import InfoLabel from "../components/InputForm/InfoLabel";
 import RadioButton from "../components/InputForm/RadioButton";
-import { LanguageContext } from "../data/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { OrderContext } from "../data/OrderContext";
 import * as Data from "../data/Data";
@@ -10,9 +9,13 @@ import CurrencyFormat from "../data/CurrencyFormat";
 import * as DateStringFormat from "../data/DateStringFormat";
 import api from "../config/axios";
 import { PaymentProgressContext } from "../data/PaymentProgressContext";
+import { useTranslation } from "react-i18next";
+
 
 export default function ConfirmCheckIn() {
-    const { lang, Languages } = useContext(LanguageContext);
+    // const { lang, Languages } = useContext(LanguageContext);
+    const {t,i18n}=useTranslation();
+
     const { order, setOrder } = useContext(OrderContext);
     
     const [selectedValue, setSelectedValue] = useState({ paymentMethods: 0 });
@@ -143,7 +146,7 @@ export default function ConfirmCheckIn() {
 
             if (response.code === 0) {
                 const newSubID = `LUG${String(response.value.orderCode).slice(-6)}`;
-                const description = `${Languages[lang].defaultBankingMsg} ${newSubID}`;
+                const description = `${t("defaultBankingMsg")} ${newSubID}`;
 
                 orderRef.current = {
                     ...orderRef.current,
@@ -213,40 +216,40 @@ export default function ConfirmCheckIn() {
             <Header link="/SendParcel" isBackEnable={true} />
             {isRedirecting && (
                 <div className="notification is-info">
-                    Đang chuyển đến trang thanh toán SePay...
+                {t("sepayTransitionNoti")}
                 </div>
             )}
 
             <article className="message is-warning">
                 <div className="message-body">
-                    <h1 className="title has-text-left">Xác nhận thông tin đặt tủ</h1>
+                    <h1 className="title has-text-left">{t("labelConfirmCheckIn")}</h1>
                     <div className="columns is-mobile">
-                        <InfoLabel layout="is-6" label={Languages[lang].labelCustomer}>
+                        <InfoLabel layout="is-6" label={t("labelCustomer")}>
                             {String(order.customer.fullName).toUpperCase()}
                         </InfoLabel>
-                        <InfoLabel layout="is-6" label={`${Languages[lang].labelRenterEmail}/${Languages[lang].labelRenterPhone}`}>
+                        <InfoLabel layout="is-6" label={`${t("labelRenterEmail")}/${t("labelRenterPhone")}`}>
                             {order.customer.email || order.customer.mobile}
                         </InfoLabel>
                     </div>
                     <div className="columns is-mobile">
-                        <InfoLabel layout="is-6" label={Languages[lang].labelLockerSize}>
+                        <InfoLabel layout="is-6" label={t("labelLockerSize")}>
                             {Data.Lockers?.[order.locker.sizeIndex]?.size || "-"}
                         </InfoLabel>
-                        <InfoLabel layout="is-2" label={Languages[lang].labelLockerID}>#{locker}</InfoLabel>
+                        <InfoLabel layout="is-2" label={t("labelLockerID")}>#{locker}</InfoLabel>
                     </div>
                     <div className="columns is-mobile">
-                        <InfoLabel layout="is-6" label={Languages[lang].labelCheckInTime}>
-                            {DateStringFormat.DateStringFormat(order.order.checkIn)}
+                        <InfoLabel layout="is-6" label={t("labelCheckInTime")}>
+                            {DateStringFormat.DateStringFormat(order.order.checkIn,i18n.language)}
                         </InfoLabel>
-                        <InfoLabel layout="is-6" label={Languages[lang].labelCheckOutTime}>
-                            {DateStringFormat.DateStringFormat(order.order.finalCheckOut)}
+                        <InfoLabel layout="is-6" label={t("labelCheckOutTime")}>
+                            {DateStringFormat.DateStringFormat(order.order.finalCheckOut,i18n.language)}
                         </InfoLabel>
                     </div>
                     <div className="columns is-mobile">
-                        <InfoLabel layout="is-6" label={Languages[lang].labelMaxRentalTimeOrder}>
-                            {`${order.order.maxRentalTime} ${Languages[lang].rentalTimeUnit}`}
+                        <InfoLabel layout="is-6" label={t("labelMaxRentalTimeOrder")}>
+                            {`${order.order.maxRentalTime} ${t("rentalTimeUnit")}`}
                         </InfoLabel>
-                        <InfoLabel layout="is-6" label={Languages[lang].labelTotal}>
+                        <InfoLabel layout="is-6" label={t("labelTotal")}>
                             {CurrencyFormat(order.order.total)}
                         </InfoLabel>
                     </div>
@@ -255,8 +258,8 @@ export default function ConfirmCheckIn() {
 
             <div className="fieldset-columns">
                 <fieldset className="group">
-                    <legend>Hình thức thanh toán</legend>
-                    {Languages[lang].paymentMethod.map((p, i) => (
+                    <legend>{t("labelPaymentMethod")}</legend>
+                    {t("paymentMethod",{returnObjects:true}).map((p, i) => (
                         <div className="field" key={i}>
                             <RadioButton
                                 label={p}
@@ -277,7 +280,7 @@ export default function ConfirmCheckIn() {
                     disabled={isLoading}
                 >
                     <span className="icon"><i className="fa-solid fa-cart-shopping"></i></span>
-                    <span>{Languages[lang].btnCheckout}</span>
+                    <span>{t("btnCheckout")}</span>
                 </button>
                 {error && <p className="help is-danger">{error}</p>}
             </div>

@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import { Stack } from "@mui/material";
 import { OrderContext } from "../../data/OrderContext.jsx";
 import { WorkingTime, Promotion } from "../../data/Data.js";
+import { useTranslation } from "react-i18next";
 import "dayjs/locale/vi";
 import "dayjs/locale/en";
 
@@ -19,8 +20,9 @@ export default function RentalTime({
   getInOutTime,
   getIsValidTime,
 }) {
-  const { lang, Languages } = useContext(LanguageContext);
+
   const { order, setOrder } = useContext(OrderContext);
+  const { t, i18n } = useTranslation();
 
   const [selectedValue, setSelectedValue] = useState({ rentalTimeChoices: 0 });
   const [startDate, setStartDate] = useState(roundDate());
@@ -31,6 +33,8 @@ export default function RentalTime({
   const [isTimeValid, setIsTimeValid] = useState(true);
 
   const hasInit = useRef(false);
+  const skipEndChange=useRef(false);
+
 
   // --- Utils ---
   function roundMaxRentalTime(hours) {
@@ -49,7 +53,7 @@ export default function RentalTime({
     else {
       roundedRemainedHour = 12;
     }
-    console.log("Phần dư sau khi làm tròn: ",roundedRemainedHour);
+    console.log("Phần dư sau khi làm tròn: ", roundedRemainedHour);
 
     const totalHour = fullRoundHour * 12 + roundedRemainedHour;
     console.log("Tổng: ", totalHour);
@@ -60,16 +64,14 @@ export default function RentalTime({
     let end = start.add(duration, "hour");
     if (isOutWorkingTime(end)) {
       const nextOpen = getNextOpenDay(start);
-      // end = nextOpen.add(duration, "hour");
       end = nextOpen;
     }
     return end;
   }
 
-  function roundDate(date=dayjs()) {
-    // let now = dayjs();
+  function roundDate(date = dayjs()) {
     const roundMinutes = Math.ceil(date.minute() / 15) * 15;
-    const roundDate=date.set("minute", roundMinutes).set("second", 0);
+    const roundDate = date.set("minute", roundMinutes).set("second", 0);
     return roundDate;
   }
 
@@ -94,52 +96,74 @@ export default function RentalTime({
 
   // --- Init khi load page ---
   useEffect(() => {
-    console.log("Khởi tạo comp Rental Time: ",order);
+    console.log("Khởi tạo comp Rental Time: ", order);
     if (!order || hasInit.current) return;
     hasInit.current = true;
 
-    let initStart = roundDate(order.order.startDate?dayjs(order.order.startDate):undefined)
-    let initRental = order.rentalTime || Promotion.rentalTime; // default 4h
+    let initStart = roundDate(order.order.startDate ? dayjs(order.order.startDate) : undefined)
+    let initRental = order.order.rentalTime || Promotion.rentalTime; // default 4h
     let initChoice = 0; // 0 = standard, 1 = custom
-    let initEnd = initStart.add(initRental, "hour");
+    let tempEnd = initStart.add(4, 'hour');
 
-    // if (isOutWorkingTime(initEnd)) {
-    //   // recommend custom
-    //   initChoice = 1;
-    //   initRental = 6;
-    //   initStart = getNextOpenDay(initStart); // start at next open
-    //   initEnd = initStart.add(initRental, "hour");
-    // }
+    if (isOutWorkingTime(initStart) || isOutWorkingTime(tempEnd)) {
+      initChoice = 1;
+      initRental = 6;
+      tempEnd = initStart.add(6, "hour");
+    }
+
+    if (isOutWorkingTime(tempEnd)) {
+      const nextOpen = getNextOpenDay(initStart);
+      tempEnd = nextOpen;
+      initRental = Math.ceil(tempEnd.diff(initStart, "hour", true));
+    }
 
     const initMax = roundMaxRentalTime(initRental);
 
+    setSelectedValue({ rentalTimeChoices: initChoice });
     setStartDate(initStart);
     setRentalTime(initRental);
+    setEndDate(tempEnd);
     setMaxRentalTime(initMax);
-    setEndDate(initEnd);
-    setSelectedValue({ rentalTimeChoices: initChoice });
+    setIsTimeValid(true);
+    setTimeAlert("");
 
     // đồng bộ orderContext
     setOrder(prev => ({
       ...prev,
-      startDate: initStart.toISOString(),
-      // rentalTime: initRental,
-      // maxRentalTime: initMax,
-      // finalEndDate: initStart.add(initMax, "hour").toISOString(),
+      order: {
+        ...prev.order,
+        startDate: initStart.toISOString(),
+        rentalTime: initRental,
+        maxRentalTime: initMax,
+        finalEndDate: initStart.add(initMax, "hour").toISOString(),
+      }
     }));
 
     getRentalTime(initRental);
     getMaxRentalTime(initMax);
-    getInOutTime(initStart, initEnd, initStart.add(initMax, "hour"));
+    getInOutTime(initStart, tempEnd, initStart.add(initMax, "hour"));
     getIsValidTime(true);
   }, [order]);
 
   // --- Khi user thay đổi radio ---
   const changeValue = (groupName, value) => {
-    let newRental = value === 0 ? 4 : 6;
     let newStart = startDate;
-    let newEnd = calcEndDate(newStart, newRental);
+    let newEnd;
+    let newRental;
+
+    if(value===0){
+      newRental=4;
+      newEnd = calcEndDate(newStart, newRental);
+    }
+    else{
+      const tempEnd=newStart.add(6,'hour');
+      newEnd=isOutWorkingTime(tempEnd)?getNextOpenDay(newStart):tempEnd;
+      newRental=Math.ceil(newEnd.diff(newStart,"hour",true));
+    }
+
     let newMax = roundMaxRentalTime(newRental);
+    
+    skipEndChange.current=true;
 
     setSelectedValue(prev => ({ ...prev, [groupName]: value }));
     setRentalTime(newRental);
@@ -150,24 +174,32 @@ export default function RentalTime({
 
     if (newEnd.isBefore(newStart)) {
       setIsTimeValid(false);
-      setTimeAlert(Languages[lang].alertRentalTime[0]);
+      setTimeAlert(t("alertRentalTime.0"));
     } else if (isOutWorkingTime(newEnd)) {
       setIsTimeValid(false);
-      setTimeAlert(Languages[lang].alertRentalTime[1]);
+      setTimeAlert(t("alertRentalTime.1", {
+        openHour: String(WorkingTime.open.hour()).padStart(2, '0'),
+        openMinute: String(WorkingTime.open.minute()).padStart(2, '0'),
+        closeHour: String(WorkingTime.closed.hour()).padStart(2, '0'),
+        closeMinute: String(WorkingTime.closed.minute()).padStart(2, '0')
+      }));
     } else {
       setIsTimeValid(true);
       setTimeAlert("");
     }
 
-    // setTimeAlert(isOutWorkingTime(newEnd) ? Languages[lang].alertRentalTime[1] : "");
+    // setTimeAlert(isOutWorkingTime(newEnd) ? t("alertRentalTime[1] : "");
 
     // đồng bộ orderContext
     setOrder(prev => ({
       ...prev,
-      startDate: newStart.toISOString(),
-      rentalTime: newRental,
-      maxRentalTime: newMax,
-      finalEndDate: newStart.add(newMax, "hour").toISOString(),
+      order: {
+        ...prev.order,
+        startDate: newStart.toISOString(),
+        rentalTime: newRental,
+        maxRentalTime: newMax,
+        finalEndDate: newStart.add(newMax, "hour").toISOString(),
+      }
     }));
 
     getRentalTime(newRental);
@@ -178,10 +210,16 @@ export default function RentalTime({
 
   // --- Khi user thay đổi endDate trực tiếp ---
   const handleEndDateChange = newValue => {
+
+    if(skipEndChange.current){
+      skipEndChange.current=false;
+      return;
+    }
+
     if (!newValue || !newValue.isValid()) return;
 
     // let valid = !isOutWorkingTime(newValue) && newValue.isAfter(startDate);
-    newValue=roundDate(newValue);
+    newValue = roundDate(newValue);
     let duration = Math.ceil(newValue.diff(startDate, "hour", true));
     const roundedMax = roundMaxRentalTime(duration);
 
@@ -190,17 +228,20 @@ export default function RentalTime({
     setMaxRentalTime(roundedMax);
     // setIsTimeValid(valid);
 
-    if(newValue.isBefore(startDate)||newValue.diff(startDate)==0)
-    {
-       setIsTimeValid(false);
-       setTimeAlert(Languages[lang].alertRentalTime[0]);
+    if (newValue.isBefore(startDate) || newValue.diff(startDate) == 0) {
+      setIsTimeValid(false);
+      setTimeAlert(t("alertRentalTime.0"));
     }
-    else if(isOutWorkingTime(newValue))
-    {
-       setIsTimeValid(false);
-       setTimeAlert(Languages[lang].alertRentalTime[1]);
+    else if (isOutWorkingTime(newValue)) {
+      setIsTimeValid(false);
+      setTimeAlert(t("alertRentalTime.1", {
+        openHour: String(WorkingTime.open.hour()).padStart(2, '0'),
+        openMinute: String(WorkingTime.open.minute()).padStart(2, '0'),
+        closeHour: String(WorkingTime.closed.hour()).padStart(2, '0'),
+        closeMinute: String(WorkingTime.closed.minute()).padStart(2, '0')
+      }));
     }
-    else{
+    else {
       setIsTimeValid(true);
       setTimeAlert("");
     }
@@ -210,9 +251,12 @@ export default function RentalTime({
     // đồng bộ orderContext
     setOrder(prev => ({
       ...prev,
-      rentalTime: duration,
-      maxRentalTime: roundedMax,
-      finalEndDate: startDate.add(roundedMax, "hour").toISOString(),
+      order:{
+        ...prev.order,
+        rentalTime: duration,
+        maxRentalTime: roundedMax,
+        finalEndDate: startDate.add(roundedMax, "hour").toISOString(),
+      }
     }));
 
     getRentalTime(duration);
@@ -237,10 +281,10 @@ export default function RentalTime({
       ))}
       <div className="container mt-5">
         <LocalizationProvider dateAdapter={AdapterDayjs}
-        adapterLocale={lang===0?"vi":"en"}>
+          adapterLocale={i18n.language === "vi-VN" ? "vi" : "en"}>
           <Stack spacing={3}>
             <DatePicker
-              label={Languages[lang].labelCheckInTime}
+              label={t("labelCheckInTime")}
               value={startDate}
               isDisabled={true}
               isTimeValid={true}
@@ -248,7 +292,7 @@ export default function RentalTime({
               onChange={v => setStartDate(v)}
             />
             <DatePicker
-              label={Languages[lang].labelCheckOutTime}
+              label={t("labelCheckOutTime")}
               value={endDate}
               disablePast={true}
               isDisabled={selectedValue.rentalTimeChoices === 0}

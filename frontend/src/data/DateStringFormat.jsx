@@ -1,12 +1,12 @@
-export function DateStringFormat(date) {
+export function DateStringFormat(date,lang="vi") {
     let formatString = "-";
     if (date != null) {
         const dateValue = new Date(date);
-        formatString = dateValue.toLocaleString("vi-VN", {
+        formatString = dateValue.toLocaleString(lang==="vi"?"vi-VN":"en-US", {
             timezone: "Asia/Ho_Chi_Minh",
             weekday: "long",
             year: "numeric",
-            month: "2-digit",
+            month: "short",
             day: "2-digit",
             hour: "2-digit",
             minute: "2-digit",
@@ -16,13 +16,13 @@ export function DateStringFormat(date) {
     return formatString;
 }
 
-export function FullDateStringByLang(date, langIndex=0){
+export function FullDateStringByLang(date, lang="vi"){
     let formatString="-";
     if(date!=null)
     {
         const dateValue=new Date(date);
         formatString=dateValue.toLocaleString(
-            langIndex===0?"vi-VN":"en-US",
+            lang==="vi"?"vi-VN":"en-US",
             {
                 timezone:"Asia/Ho_Chi_Minh",
                 year:"numeric",
@@ -56,14 +56,14 @@ export function FullVNTimeZoneString(clock){
     return formatString;
 }
 
-export function DateStringFormatWithoutWeekDay(date) {
+export function DateStringFormatWithoutWeekDay(date,lang="vi") {
     let formatString = "-";
     if (date != null) {
         const dateValue = new Date(date);
-        formatString = dateValue.toLocaleString("vi-VN", {
+        formatString = dateValue.toLocaleString(lang==="vi"?"vi-VN":"en-US", {
             timezone: "Asia/Ho_Chi_Minh",
             year: "numeric",
-            month: "2-digit",
+            month: "short",
             day: "2-digit",
             hour: "2-digit",
             minute: "2-digit",

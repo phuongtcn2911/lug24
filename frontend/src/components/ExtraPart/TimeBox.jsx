@@ -3,9 +3,12 @@ import { useEffect, useState } from "react";
 import {LanguageContext} from "../../data/LanguageContext.jsx";
 import { useContext } from "react";
 import { FullDateStringByLang,FullVNTimeZoneString } from "../../data/DateStringFormat.jsx";
+import { useTranslation } from "react-i18next"
 
 export default function TimeBox() {
-    const {lang, Languages } = useContext(LanguageContext);
+    
+    // const {lang, Languages } = useContext(LanguageContext);
+     const { t, i18n } = useTranslation();
 
     const [clock, setClock] = useState(new Date());
    
@@ -23,7 +26,7 @@ export default function TimeBox() {
     // const dowIndex = clock.getDay();
     // const dowWord = Languages[lang].dayName[dowIndex];
     
-    const formatDate=FullDateStringByLang(clock,lang);
+    const formatDate=FullDateStringByLang(clock,i18n.language);
     const formatTime=FullVNTimeZoneString(clock);
 
 

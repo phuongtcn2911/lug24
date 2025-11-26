@@ -7,6 +7,7 @@ import { LanguageProvider } from '../data/LanguageContext.jsx';
 import { OrderProvider } from '../data/OrderContext.jsx';
 import { TimerProvider } from '../data/TimerContext.jsx';
 import { PaymentProgressProvider } from '../data/PaymentProgressContext.jsx';
+import "../i18n.js";
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
 
