@@ -21,7 +21,7 @@ export async function sendingOTP(obj) {
     }
 }
 
-export async function sendOTP(order,langIndex) {
+export async function sendOTP(order, langIndex) {
     try {
         const otpObj = {
             receiver: {
@@ -30,7 +30,7 @@ export async function sendOTP(order,langIndex) {
                 mobile: order.customer.mobile
             },
             contactType: order.customer.email != "" ? "Email" : "Zalo",
-            lang:langIndex===0?"vi":"en",
+            lang: langIndex === 0 ? "vi" : "en",
         };
         await api.post("api/requestOTP", { obj: otpObj });
     }
@@ -43,11 +43,13 @@ export function InputOTP() {
     const [otp, setOTP] = useState(["", "", "", "", "", ""]);
     const inputsRef = useRef([]);
     const { lang, Languages } = useContext(LanguageContext);
-    const {t,i18n}=useTranslation();
+    const { t, i18n } = useTranslation();
     const { order } = useContext(OrderContext);
     const [error, setError] = useState("");
     const [resendTimer, setResendTimer] = useState(Timer.resendOTP);
     const [isReactive, setIsReactive] = useState(true);
+    const [titleOTP, setTitleOTP] = useState(t("labelConfirmOTP.resend"));
+    const [isCounting, setIsCounting] = useState(false);
     // const [currentIndex, setCurrentIndex] = useState(0);
     const { changeStep, changeStatus } = useContext(PaymentProgressContext);
 
@@ -68,7 +70,7 @@ export function InputOTP() {
                 }
 
                 const obj = {
-                    receiver: order.customer.email||order.customer.mobile,
+                    receiver: order.customer.email || order.customer.mobile,
                     otp: otp.join(""),
                 }
 
@@ -95,14 +97,22 @@ export function InputOTP() {
     }, [otp]);
 
     useEffect(() => {
+        if (!isCounting) return;
+
         let timer;
         if (resendTimer > 0) {
-            timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
-        } else if (resendTimer == 0 && !isReactive) {
+            timer = setTimeout(() => {
+                setResendTimer(prev => prev - 1);
+            }, 1000);
+            setTitleOTP(t("labelConfirmOTP.resendCountDown", { timelapse: resendTimer }));
+            setIsReactive(false);
+        } else {
             setIsReactive(true);
+            setTitleOTP(t("labelConfirmOTP.resend"));
+            setIsCounting(false);
         }
         return () => clearTimeout(timer);
-    }, [resendTimer]);
+    }, [resendTimer, isCounting]);
 
 
 
@@ -138,16 +148,13 @@ export function InputOTP() {
     };
 
     const resendOTP = async () => {
-        console.log(resendTimer);
         if (!isReactive) return;
-
-        // setResendTimer(Timer.resendOTP);
-        // setIsReactive(false);
         setError("");
-        sendOTP(order,lang);
-
-       
+        sendOTP(order, lang);
+        setResendTimer(Timer.resendOTP);
+        setIsCounting(true);
     };
+
 
 
 
@@ -155,7 +162,7 @@ export function InputOTP() {
     return (
         <div className="container">
 
-            <img className="size-96 object-cover mx-auto my-4" src={OTP} alt="OTP"></img>
+            <img className="object-cover mx-auto my-4" src={OTP} alt="OTP"></img>
 
             <p className="title is-2">{t("labelConfirmOTP.title")}</p>
             <p className="subtitle is-6 is-italic">{t("labelConfirmOTP.subtitle")}</p>
@@ -177,11 +184,11 @@ export function InputOTP() {
             </div>
             <p className="help is-danger">{error}</p>
             <a disabled={!isReactive}
-                style={{ pointerEvents: !isReactive ? "not-allowed" : "auto" }}
+                style={{
+                    cursor: !isReactive ? "not-allowed" : "pointer",
+                }}
                 onClick={resendOTP}>
-                {!isReactive
-                    ? `${t("labelConfirmOTP.resendCountDown")} ${resendTimer}`
-                    : `${t("labelConfirmOTP.resend")}`}
+                {titleOTP}
             </a>
 
         </div>

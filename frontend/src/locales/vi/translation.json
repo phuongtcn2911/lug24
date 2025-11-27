@@ -201,7 +201,7 @@
         "title": "Xác nhận mã mở tủ",
         "subtitle": "Nhập 6 số được gửi cho bạn thông qua email/số điện thoại mà bạn cung cấp",
         "resend": "Gửi lại mã OTP",
-        "resendCountDown": "Gửi lại sau ",
+        "resendCountDown": "Gửi lại sau {{timelapse}} giây",
         "error": "Mã OTP không chính xác",
         "success": "Mã OTP đã được gửi đi"
     },

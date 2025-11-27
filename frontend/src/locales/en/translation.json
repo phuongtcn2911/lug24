@@ -202,7 +202,7 @@
         "subtitle": "Enter the 6-digit code sent to your provided email or phone number",
         "resend": "Resend OTP",
         "error": "Invalid OTP",
-        "resendCountDown": "Resend in ",
+        "resendCountDown": "Resend in {{timelapse}} seconds",
         "success": "OTP has been sent"
     },
     "lockerStatus": [
