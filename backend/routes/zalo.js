@@ -4,6 +4,7 @@ import * as zaloController from "../controllers/zaloController.js"
 const router=express.Router();
 
 router.post("/sendOTPZalo",zaloController.sendOTPZalo);
+router.post("/sendReceiptZalo",zaloController.sendReceiptZalo);
 
 
 export default router;

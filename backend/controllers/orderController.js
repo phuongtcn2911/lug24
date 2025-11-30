@@ -2,6 +2,7 @@ import axios from "axios";
 import { generateOrderCode } from "../utils/generator.js";
 import { sendReceiptEmail } from "../utils/mailer.js";
 import { config } from "dotenv";
+import { sendReceiptZalo } from "./zaloController.js";
 // import { getSmartLockerConfig } from "../config.js";
 
 config();
@@ -203,11 +204,19 @@ export async function sendReceipt(req, res) {
           "Từ phía Server(Controller->Mailer) phản hồi: Đã gửi receipt về email",
       });
     }
+    else if(obj.contactType==="Zalo"){
+      await sendReceiptZalo(obj.order, obj.lang);
+      res.json({
+        code:0,
+        message:"Từ phía Server(Controller->Zalo API) Phản hồi: Đã gửi receipt về zalo",
+      });
+
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({
       error:
-        "Từ phía Server(Controller->Mailer) phản hồi: Không thể gửi hóa đơn về mail",
+        "Từ phía Server(Controller->Mailer/Zalo API) phản hồi: Không thể gửi hóa đơn về mail/zalo",
     });
   }
 }

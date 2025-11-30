@@ -6,8 +6,10 @@ import { config } from "dotenv";
 import hbs from "nodemailer-express-handlebars";
 import { generateQRCode } from "../utils/qrcode.js";
 import {initI18n,dict, getTranslator } from "../routes/i18n.js";
+import { getGmailConfig } from "../config.js";
 
 config();
+const {gmailNoreplyID,gmailNoreplyPWD,gmailCS}=getGmailConfig();
 
 // Chuyển __dirname sang cú pháp tương thích ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -27,8 +29,8 @@ await initI18n();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_NOREPLY,
-    pass: process.env.EMAIL_NOREPLY_PWD,
+    user: gmailNoreplyID,
+    pass: gmailNoreplyPWD,
   },
 });
 
@@ -81,13 +83,13 @@ export async function sendOTPMail(receiver, otp, lang = "vi") {
     from: "LUG24 - Smart Locker <noreply@vizi24.com>",
     to: receiver.email,
     subject: dict("otpSubject", { ns: "otpMail" }),
-    replyTo: process.env.EMAIL_CS,
+    replyTo: gmailCS,
     template: "OTP_Mail",
     context: {
       ...i18nContext,
       otpDigits,
       fullname: receiver.fullname,
-      mailCS: process.env.EMAIL_CS,
+      mailCS: gmailCS,
     },
   });
   console.log("Từ công cụ soạn mail phản hồi: Đã soạn và phát lệnh gửi mail OTP");
@@ -110,12 +112,12 @@ export async function sendReceiptEmail(obj, lang = "vi") {
         boxSize: obj.locker.sizeLetter,
       },
       lockerID: process.env.DEVICE_NO,
-      locationName: "DOUP Healthy Food",
-      locationAddress: "54/1 Lê Quang Định, phường Bình Thạnh, TP.HCM, Việt Nam",
-      locationPhone: "+84 111 1111",
+      locationName: dict("locationName"),
+      locationAddress: dict("locationAddress"),
+      locationPhone: dict("locationPhone"),
       locationWorkingTime: {
-        open: "10:00",
-        closed: "22:00"
+        open:  dict("locationWorkingTime.open"),
+        closed: dict("locationWorkingTime.closed")
       }
     },
     order: {

@@ -1,5 +1,12 @@
 {
     "mailSignature_0": "Email này được gửi đến quý khách",
     "mailSignature_1": "vì đã đặt tủ tại Lug24.",
-    "mailSignature_2": "© 2025 Lug24. Bảo lưu mọi quyền."
+    "mailSignature_2": "© 2025 Lug24. Bảo lưu mọi quyền.",
+    "locationName": "DOUP Healthy Food",
+    "locationAddress": "54/1 Le Quang Dinh Street, Binh Thanh Ward, Ho Chi Minh City, Vietnam",
+    "locationPhone": "+84 111 1111",
+    "locationWorkingTime": {
+        "open": "10:00",
+        "closed": "22:00"
+    }
 }
