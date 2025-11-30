@@ -155,6 +155,14 @@ export function InputOTP() {
         setIsCounting(true);
     };
 
+    function sendOTPHandler(e){
+        if(!isReactive){
+            e.preventDefault();
+            return;
+        }
+        resendOTP();
+    }
+
 
 
 
@@ -187,7 +195,7 @@ export function InputOTP() {
                 style={{
                     cursor: !isReactive ? "not-allowed" : "pointer",
                 }}
-                onClick={resendOTP}>
+                onClick={sendOTPHandler}>
                 {titleOTP}
             </a>
 

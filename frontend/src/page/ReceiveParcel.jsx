@@ -11,6 +11,7 @@ function ReceiveParcel() {
   const { lang, Languages } = useContext(LanguageContext);
   const [ activeTab, setActiveTab ] = useState("keyIn");
   const [ phone, setPhone ] = useState();
+  
 
   return (
     <>
@@ -19,7 +20,7 @@ function ReceiveParcel() {
       <div className="p-8 bg-gray-100">
         <div className="flex w-full">
           <button
-            className="flex-1 bg-white tab-btn px-4 py-3 font-medium text-red-600 round rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none "
+            className="flex-1 bg-white tab-btn px-4 py-3 font-medium text-red-600 round rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none"
             onClick={()=>{setActiveTab("keyIn");console.log(activeTab);}}>
             Nhập mã
           </button>

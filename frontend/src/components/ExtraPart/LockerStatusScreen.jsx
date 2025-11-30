@@ -59,7 +59,7 @@ export default function LockerStatusScreen() {
         (async () => {
             const response = await sendReceipt(order, order.customer.email ? "Email" : "Zalo");
             if (response.code !== 0) {
-                console.warn("Từ phía server <-> frontend: Không thể gửi mail", response.message);
+                console.warn("Từ phía server <-> frontend: Không thể gửi hóa đơn", response.message);
             }
         })();
         changeStep(4);
@@ -98,8 +98,8 @@ export default function LockerStatusScreen() {
             console.log(res.data);
             return res.data;
         } catch (err) {
-            console.error("Phía server trả lời: Không thể gửi hóa đơn về mail", err.message);
-            return { code: -1, message: "Cannot send receipt mail" };
+            console.error("Phía server trả lời: Không thể gửi hóa đơn", err.message);
+            return { code: -1, message: "Cannot send receipt" };
         }
     }
 
