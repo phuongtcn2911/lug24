@@ -17,7 +17,9 @@ import otp from '../assets/img/OTP.jpg'
 import openLocker from '../assets/img/OpenLocker.png'
 import closeLocker from '../assets/img/CloseLocker.png'
 import inputOrder from '../assets/img/InputOrderCode.png'
+import dectectQR from '../assets/img/detect_QR.png'
 import dayjs from 'dayjs'
+import beepMP3 from '../assets/sound/Beep.mp3'
 
 
 export const Logo = logo;
@@ -99,3 +101,6 @@ export const WorkingTime={
     open:dayjs().hour(10).minute(0),
     closed:dayjs().hour(22).minute(0),
 };
+
+export const detect_QR=dectectQR;
+export const beepSound=beepMP3;

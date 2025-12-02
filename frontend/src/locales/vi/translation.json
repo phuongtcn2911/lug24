@@ -240,5 +240,11 @@
             "title": "Zalo",
             "value": "lug24"
         }
-    }
+    },
+     "labelInputCodeID":"Nhập mã",
+     "labelScanCodeID":"Quét mã",
+     "plchldInputCodeID":"Nhập mã đặt tủ",
+     "btnSendOTP":"Nhận OTP để mở tủ",
+     "labelOtherMethod":"hoặc mở tủ bằng",
+     "btnFaceRecognize":"Nhận diện gương mặt"
 }

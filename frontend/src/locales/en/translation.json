@@ -240,5 +240,11 @@
             "title": "Zalo",
             "value": "lug24"
         }
-    }
+    },
+    "labelInputCodeID": "Enter Code",
+    "labelScanCodeID": "Scan Code",
+    "plchldInputCodeID": "Enter order code",
+    "btnSendOTP": "Get OTP to unlock",
+    "labelOtherMethod": "or unlock using",
+    "btnFaceRecognize": "Face Recognition"
 }
