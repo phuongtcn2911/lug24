@@ -1,5 +1,8 @@
 import crypto from "crypto";
 import { access } from "fs";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Hàm generateOrderCode
 export function generateOrderCode() {
@@ -46,3 +49,20 @@ export function generateVerifierCode() {
   const challenge = generateCodeChallenge(verifier);
   return { verifier, challenge };
 }
+
+export function signQRCode(data){
+  return crypto.createHmac("sha256",process.env.QR_SIGNATURE).update(data).digest("hex");
+}
+
+
+export function verifySignature(text){
+  const parts=text.split("&signature=");
+  if(parts.length!==2) return false;
+  const raw=parts[0];
+  const importSignature=parts[1];
+
+  const originalSignature=crypto.createHmac("sha256",process.env.QR_SIGNATURE).update(raw).digest("hex");
+  return importSignature===originalSignature;
+}
+
+

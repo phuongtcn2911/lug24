@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { config } from "dotenv";
 import hbs from "nodemailer-express-handlebars";
-import { generateQRCode } from "../utils/qrcode.js";
+import { generateQRCodeWithSignature } from "../utils/qrcode.js";
 import {initI18n,dict, getTranslator } from "../routes/i18n.js";
 import { getGmailConfig } from "../config.js";
 
@@ -150,8 +150,9 @@ export async function sendReceiptEmail(obj, lang = "vi") {
     }
   }
 
-  var qrLink = await generateQRCode(data);
-  const base64Data = qrLink.replace(/^data:image\/png;base64,/, "");
+  // var qrLink = await generateQRCode(data.order.orderID);
+  var qr =await generateQRCodeWithSignature(data.order.orderID);
+  const base64Data = qr.imgURL.replace(/^data:image\/png;base64,/, "");
   const buffer = Buffer.from(base64Data, "base64");
 
 

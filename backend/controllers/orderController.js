@@ -1,5 +1,5 @@
 import axios from "axios";
-import { generateOrderCode } from "../utils/generator.js";
+import { generateOrderCode, verifySignature } from "../utils/generator.js";
 import { sendReceiptEmail } from "../utils/mailer.js";
 import { config } from "dotenv";
 import { sendReceiptZalo } from "./zaloController.js";
@@ -51,7 +51,7 @@ export async function bookABox(req, res) {
 export async function cancelABox(req, res) {
   try {
     // const { apiURL, apiKey, deviceNo } = getSmartLockerConfig();
-    
+
     const orderCode = req.body?.orderID;
     // console.log("OrderCode đc nhận tại backend",orderCode);
     if (!orderCode)
@@ -197,18 +197,18 @@ export async function sendReceipt(req, res) {
         });
 
     if (obj.contactType === "Email") {
-      await sendReceiptEmail(obj.order,obj.lang);
+      await sendReceiptEmail(obj.order, obj.lang);
       res.json({
         code: 0,
         message:
           "Từ phía Server(Controller->Mailer) phản hồi: Đã gửi receipt về email",
       });
     }
-    else if(obj.contactType==="Zalo"){
+    else if (obj.contactType === "Zalo") {
       await sendReceiptZalo(obj.order, obj.lang);
       res.json({
-        code:0,
-        message:"Từ phía Server(Controller->Zalo API) Phản hồi: Đã gửi receipt về zalo",
+        code: 0,
+        message: "Từ phía Server(Controller->Zalo API) Phản hồi: Đã gửi receipt về zalo",
       });
 
     }
@@ -217,6 +217,49 @@ export async function sendReceipt(req, res) {
     res.status(500).json({
       error:
         "Từ phía Server(Controller->Mailer/Zalo API) phản hồi: Không thể gửi hóa đơn về mail/zalo",
+    });
+  }
+}
+
+export async function readQRCode(req, res) {
+  try {
+    const text = req.body?.obj;
+    console.log("Server nhận QR URL: ", text);
+    if (!text) {
+      return res.status(400)
+        .json({
+          code: -2,
+          message: "Từ phía Server(Controller) nhận OBJ: Thiếu tham số từ QR URL",
+        })
+    }
+
+    const valid = verifySignature(text);
+    if (!valid) {
+      return res.status(200)
+        .json({
+          code: -1,
+          message: "QR không hợp lệ",
+          data: null
+        });
+    }
+
+    const params = new URLSearchParams(text);
+    let obj = {
+      orderID: params.get("orderID"),
+      time: params.get("time")
+    }
+    return res.status(200)
+      .json({
+        code: 1,
+        message: "QR hợp lệ",
+        data: obj
+      })
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error:
+        "Từ phía Server(Controller) phản hồi: Có vấn đề từ QR gửi đến",
     });
   }
 }
