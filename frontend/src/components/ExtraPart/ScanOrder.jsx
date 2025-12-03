@@ -1,13 +1,20 @@
 import { BrowserMultiFormatReader } from "@zxing/browser"
 import { useEffect, useRef, useState } from "react"
 import { detect_QR, beepSound, } from "../../data/Data"
+import { Loader2 } from "lucide-react";
+import api from "../../config/axios";
+import { useTranslation } from "react-i18next";
 export function ScanOrder() {
     const videoRef = useRef(null);
     const [result, setResult] = useState("");
     const [isDetected, setIsDetected] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isValidQR, setIsValidQR] = useState(false);
+    const [error, setError] = useState("");
+    const {t,i18n}=useTranslation();
 
     const codeReaderRef = useRef(null);
-    const detectedRef=useRef(false);
+    const detectedRef = useRef(false);
     const beep = useRef(new Audio(beepSound));
     let lastLog = useRef(0);
 
@@ -37,22 +44,29 @@ export function ScanOrder() {
 
         }
     }
+
     //Callback xử lý kết quả quét
-    function handleDecode(result, err) {
+    async function handleDecode(result, err) {
         if (detectedRef.current) return;
 
         const now = Date.now();
         if (result && !detectedRef.current && now - lastLog.current > 200) {
-            lastLog.current = now;
-            const text = String(result.getText()).replace(/["“”]/g, "");
-            setResult(text);
-            setIsDetected(true);
             if (beep.current) {
                 beep.current.currentTime = 0;
                 beep.current.play().catch(e => console.log("Không phát được âm thanh:", e));
             }
-            detectedRef.current=true;
-            
+
+            lastLog.current = now;
+
+            const text = result.getText();
+
+            // setResult(text);
+             setIsLoading(true);
+            await checkContentQR(text);
+
+            setIsDetected(true);
+            detectedRef.current = true;
+
             // stopCamera();
         }
         if (err && err.name !== "NotFoundException") {
@@ -75,10 +89,31 @@ export function ScanOrder() {
 
     function resetScan() {
         setIsDetected(false);
-        detectedRef.current=false;
+        detectedRef.current = false;
         setResult("");
+        setError("");
         stopCamera();
         startScan();
+    }
+
+    async function checkContentQR(text) {
+       
+        new Promise(resolve=>setTimeout(resolve,3000));
+        const res = await api.post("api/readQRCode", { obj: text });
+        console.log(res);
+        //Giao tiếp vs backend có kết quả lưu trong data
+        if (res.status === 200) {
+            const statusResult = res.data.code;
+            if (statusResult === -1) {
+                setError(t("scanQRInvalidNoti"));
+            }
+            else if (statusResult === 1) {
+                const qrData = res.data.data;
+                setResult(qrData.orderID);
+                setError("");
+            }
+        }
+        setIsLoading(false);
     }
 
     return (
@@ -107,25 +142,38 @@ export function ScanOrder() {
                         <span className="absolute bottom-0 right-0 w-1 h-8 bg-white"></span>
 
                         <div className="absolute inset-x-0 top-0 h-0.5 bg-emerald-300 animate-scan"></div>
-                        {isDetected && (
+                        {isLoading == true ?
+                            <Loader2 className="h-6 w-6 animate-spin text-gray-600" /> :
+                            isDetected ?
+                                <img
+                                    src={detect_QR} // đường dẫn ảnh bạn muốn
+                                    alt="Detected"
+                                    className="absolute inset-0 w-24 h-24 mx-auto my-auto object-contain animate-detect cursor-pointer"
+                                    onClick={() => resetScan()}
+                                /> : ""
+                        }
+
+
+                        {/* {isDetected && (
                             <img
                                 src={detect_QR} // đường dẫn ảnh bạn muốn
                                 alt="Detected"
                                 className="absolute inset-0 w-24 h-24 mx-auto my-auto object-contain animate-detect cursor-pointer"
                                 onClick={() => resetScan()}
                             />
-                        )}
+                        )} */}
                     </div>
                 </div>
 
             </div>
-            <p className="text-xs italic mb-3 text-center mx-4">{`Đặt thẻ vào khung để quét`}</p>
+            {/* <p className="text-xs italic mb-3 text-center mx-4">{error}</p> */}
             <div className="relative w-96 mx-auto my-3">
                 <input
                     type="text"
-                    placeholder="Đưa mã QR vào khung quét"
-                    className={`text-xl w-72 h-12 px-4 rounded-lg mx-auto border border-gray-300 placeholder-gray-500 focus:ring-0 focus:outline-none
-                        ${result ? "uppercase font-semibold border-b-4 border-b-emerald-600" : ""}`}
+                    placeholder={!error? t("plchldScanCodeID"):t("scanQRInvalidNoti")}
+                    className={`text-center w-72 h-12 px-4 rounded-lg mx-auto border border-gray-300 placeholder-gray-500 focus:ring-0 focus:outline-none
+                        ${result ? "text-xl uppercase font-semibold border-b-4 border-b-emerald-600" : 
+                            error?"text-lg border-b-4 border-b-red-600 placeholder-red-500":"text-lg "}`}
                     value={result}
                     readOnly
                 />
@@ -134,7 +182,7 @@ export function ScanOrder() {
             <button
                 className={`py-2 rounded-lg text-white
                 ${isDetected ? "bg-yellow-400" : "bg-gray-300 cursor-not-allowed"} `}>
-                Lấy mã OTP
+               {t("btnSendOTP")}
             </button>
         </div>
     )

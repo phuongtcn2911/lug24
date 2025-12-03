@@ -246,5 +246,7 @@
     "plchldInputCodeID": "Enter order code",
     "btnSendOTP": "Get OTP to unlock",
     "labelOtherMethod": "or unlock using",
-    "btnFaceRecognize": "Face Recognition"
+    "btnFaceRecognize": "Face Recognition",
+    "scanQRInvalidNoti": "Invalid QR code",
+    "plchldScanCodeID": "Place QR code inside the frame"
 }

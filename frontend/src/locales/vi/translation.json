@@ -246,5 +246,7 @@
      "plchldInputCodeID":"Nhập mã đặt tủ",
      "btnSendOTP":"Nhận OTP để mở tủ",
      "labelOtherMethod":"hoặc mở tủ bằng",
-     "btnFaceRecognize":"Nhận diện gương mặt"
+     "btnFaceRecognize":"Nhận diện gương mặt",
+     "scanQRInvalidNoti":"Mã QR không hợp lệ",
+     "plchldScanCodeID":"Đưa mã QR vào khung quét"
 }
