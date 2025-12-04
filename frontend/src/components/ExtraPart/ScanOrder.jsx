@@ -11,7 +11,7 @@ export function ScanOrder() {
     const [isLoading, setIsLoading] = useState(false);
     const [isValidQR, setIsValidQR] = useState(false);
     const [error, setError] = useState("");
-    const {t,i18n}=useTranslation();
+    const { t, i18n } = useTranslation();
 
     const codeReaderRef = useRef(null);
     const detectedRef = useRef(false);
@@ -61,7 +61,7 @@ export function ScanOrder() {
             const text = result.getText();
 
             // setResult(text);
-             setIsLoading(true);
+            setIsLoading(true);
             await checkContentQR(text);
 
             setIsDetected(true);
@@ -97,8 +97,8 @@ export function ScanOrder() {
     }
 
     async function checkContentQR(text) {
-       
-        new Promise(resolve=>setTimeout(resolve,3000));
+
+        new Promise(resolve => setTimeout(resolve, 3000));
         const res = await api.post("api/readQRCode", { obj: text });
         console.log(res);
         //Giao tiếp vs backend có kết quả lưu trong data
@@ -143,7 +143,10 @@ export function ScanOrder() {
 
                         <div className="absolute inset-x-0 top-0 h-0.5 bg-emerald-300 animate-scan"></div>
                         {isLoading == true ?
-                            <Loader2 className="h-6 w-6 animate-spin text-gray-600" /> :
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <Loader2 className="h-12 w-12 animate-spin text-gray-600" />
+                            </div>
+                            :
                             isDetected ?
                                 <img
                                     src={detect_QR} // đường dẫn ảnh bạn muốn
@@ -170,10 +173,10 @@ export function ScanOrder() {
             <div className="relative w-96 mx-auto my-3">
                 <input
                     type="text"
-                    placeholder={!error? t("plchldScanCodeID"):t("scanQRInvalidNoti")}
+                    placeholder={!error ? t("plchldScanCodeID") : t("scanQRInvalidNoti")}
                     className={`text-center w-72 h-12 px-4 rounded-lg mx-auto border border-gray-300 placeholder-gray-500 focus:ring-0 focus:outline-none
-                        ${result ? "text-xl uppercase font-semibold border-b-4 border-b-emerald-600" : 
-                            error?"text-lg border-b-4 border-b-red-600 placeholder-red-500":"text-lg "}`}
+                        ${result ? "text-xl uppercase font-semibold border-b-4 border-b-emerald-600" :
+                            error ? "text-lg border-b-4 border-b-red-600 placeholder-red-500" : "text-lg "}`}
                     value={result}
                     readOnly
                 />
@@ -182,7 +185,7 @@ export function ScanOrder() {
             <button
                 className={`py-2 rounded-lg text-white
                 ${isDetected ? "bg-yellow-400" : "bg-gray-300 cursor-not-allowed"} `}>
-               {t("btnSendOTP")}
+                {t("btnSendOTP")}
             </button>
         </div>
     )
