@@ -19,17 +19,17 @@ import i18next from "./routes/i18n.js"
 
 // Khởi tạo app
 const app = express();
-app.use(cors(
-    {
-        origin: [
-            "https://lug24-livid.vercel.app",    // Frontend domain
-            "http://localhost:3000"              // Local dev
-        ],
-        methods: ["GET", "POST", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-        credentials: true
-    }
-));
+const corsOptions = {
+    origin: [
+        "https://lug24-livid.vercel.app",    // Frontend domain
+        "http://localhost:3000"              // Local dev
+    ],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+}
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 
