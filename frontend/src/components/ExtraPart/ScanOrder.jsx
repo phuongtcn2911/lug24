@@ -56,16 +56,16 @@ export function ScanOrder() {
                 beep.current.play().catch(e => console.log("Không phát được âm thanh:", e));
             }
 
+            detectedRef.current = true;
             lastLog.current = now;
 
             const text = result.getText();
-
+            
             // setResult(text);
             setIsLoading(true);
             await checkContentQR(text);
-
+            
             setIsDetected(true);
-            detectedRef.current = true;
 
             // stopCamera();
         }
@@ -144,7 +144,7 @@ export function ScanOrder() {
                         <div className="absolute inset-x-0 top-0 h-0.5 bg-emerald-300 animate-scan"></div>
                         {isLoading == true ?
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <Loader2 className="h-12 w-12 animate-spin text-gray-600" />
+                                <Loader2 className="h-12 w-12 animate-spin text-white" />
                             </div>
                             :
                             isDetected ?
