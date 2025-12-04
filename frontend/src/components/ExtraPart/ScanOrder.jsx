@@ -56,16 +56,15 @@ export function ScanOrder() {
                 beep.current.play().catch(e => console.log("Không phát được âm thanh:", e));
             }
 
+            setIsDetected(true);
             detectedRef.current = true;
-            lastLog.current = now;
-
-            const text = result.getText();
-            
-            // setResult(text);
             setIsLoading(true);
+
+            lastLog.current = now;
+            const text = result.getText();
+            // setResult(text);
             await checkContentQR(text);
             
-            setIsDetected(true);
 
             // stopCamera();
         }
@@ -97,8 +96,6 @@ export function ScanOrder() {
     }
 
     async function checkContentQR(text) {
-
-        new Promise(resolve => setTimeout(resolve, 3000));
         const res = await api.post("api/readQRCode", { obj: text });
         console.log(res);
         //Giao tiếp vs backend có kết quả lưu trong data
