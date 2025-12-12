@@ -25,9 +25,9 @@ export async function createPaymentSePay(req, res) {
         const errorURL=`${process.env.FRONTEND_URL}/OrderResult?status=error`;
         const cancelURL=`${process.env.FRONTEND_URL}/OrderResult?status=cancel`;
 
-        console.log(successURL);
-        console.log(errorURL);
-        console.log(cancelURL);
+        // console.log(successURL);
+        // console.log(errorURL);
+        // console.log(cancelURL);
 
 
         const pkg = {

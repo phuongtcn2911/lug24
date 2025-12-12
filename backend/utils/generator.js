@@ -12,6 +12,11 @@ export function generateOrderCode() {
     .padStart(12, "0");
 }
 
+export function generateCustomerID(){
+  const randomNumber=Math.floor(Math.random()*1000000);
+  return `CUS${randomNumber}`;
+}
+
 export function hashCode(sth) {
   return crypto.createHash("sha256").update(String(sth)).digest("hex");
 }
