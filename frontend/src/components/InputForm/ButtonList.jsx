@@ -1,10 +1,9 @@
 
 import { useState, useContext, useEffect } from "react";
-import { LanguageContext } from "../../data/LanguageContext";
 import { useTranslation } from "react-i18next";
 
 export default function ButtonList({ arrayList, topic, group, changeButton, savedSelectedIndex, amountList }) {
-    const { lang, Languages } = useContext(LanguageContext);
+
     const [activeIndex, setActiveIndex] = useState(savedSelectedIndex);
     const { t, i18n } = useTranslation();
 

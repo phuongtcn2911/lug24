@@ -5,9 +5,20 @@ export const OrderContext = createContext();
 
 export const defaultOrder = {
     customer: {
+        id: "",
         fullName: "",
         mobile: "",
         email: "",
+        identityCard: "",
+        imageURL: ""
+    },
+    receiver: {
+        id: "",
+        fullName: "",
+        mobile: "",
+        email: "",
+        identityCard: "",
+        imageURL: ""
     },
     locker: {
         id: undefined,
@@ -27,6 +38,7 @@ export const defaultOrder = {
         subTotal: 0,
         tax: 0,
         total: 0,
+        priceListID:""
     },
     transaction: {
         uuid: undefined,
@@ -41,21 +53,21 @@ export function OrderProvider({ children }) {
     const [order, setOrder] = useState(checkLocalStoreOrder);
 
     function checkLocalStoreOrder() {
-    try {
-        const localOrder = localStorage.getItem("order");
-        if (localOrder) {
-            return JSON.parse(localOrder);
+        try {
+            const localOrder = localStorage.getItem("order");
+            if (localOrder) {
+                return JSON.parse(localOrder);
+            }
+            return defaultOrder;
         }
-        return defaultOrder;
+        catch {
+            return defaultOrder;
+        }
     }
-    catch {
-        return defaultOrder;
-    }
-}
 
     useEffect(() => {
         localStorage.setItem("order", JSON.stringify(order));
-        console.log("OrderContext order changed:", order);
+        // console.log("OrderContext order changed:", order);
     }, [order]);
 
 

@@ -1,5 +1,4 @@
 import { useContext, useState } from "react";
-import { LanguageContext } from "../data/LanguageContext.jsx";
 import { Header } from "../components/ExtraPart/Header.jsx";
 import TextInput from "../components/InputForm/TextInput.jsx";
 import { folder_Gap } from "../data/Data.js"

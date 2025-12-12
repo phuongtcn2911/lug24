@@ -4,12 +4,14 @@ import { detect_QR, beepSound, } from "../../data/Data"
 import { Loader2 } from "lucide-react";
 import api from "../../config/axios";
 import { useTranslation } from "react-i18next";
+import MiniOTP from "./MiniOTP";
 export function ScanOrder() {
     const videoRef = useRef(null);
     const [result, setResult] = useState("");
     const [isDetected, setIsDetected] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isValidQR, setIsValidQR] = useState(false);
+    const [showOTP, setShowOTP]=useState(false);
     const [error, setError] = useState("");
     const { t, i18n } = useTranslation();
 
@@ -20,29 +22,72 @@ export function ScanOrder() {
 
     useEffect(() => {
         startScan();
+
+        const handleVisibility = () => {
+            if (document.hidden) {
+                console.log("Tab hidden → stopCamera()");
+                stopCamera();
+            }
+            else {
+                console.log("Tab active → startScan()");
+                startScan();
+            }
+        }
+
+        document.addEventListener("visibilitychange", handleVisibility);
+
         return () => {
+            document.removeEventListener("visibilitychange", handleVisibility);
             stopCamera();
+            // codeReaderRef.current?.stopStreams();
+            // codeReaderRef.current?.stopContinuousDecode();
+            // codeReaderRef.current = null;
         }
     }, []);
 
-    function startScan() {
-        if (videoRef.current) {
-            const codeReader = new BrowserMultiFormatReader();
-            codeReaderRef.current = codeReader;
+    async function startScan() {
+        if (!videoRef.current) return;
 
-            const constraints = {
-                video: {
-                    width: { ideal: 320 },
-                    height: { ideal: 320 },
-                    facingMode: "environment",
-                    advanced: [{ focusMode: "continuous" }]
-                },
-            };
-
-
-            codeReader.decodeFromConstraints(constraints, videoRef.current, handleDecode);
-
+        if (videoRef.current.srcObject && videoRef.current.srcObject.getTracks().some(t => t.readyState === "live")) {
+            return;
         }
+
+        if (!codeReaderRef.current) {
+            codeReaderRef.current = new BrowserMultiFormatReader();
+        }
+
+        const constraints = {
+            video: {
+                width: { ideal: 320 },
+                height: { ideal: 320 },
+                facingMode: "environment",
+                advanced: [{ focusMode: "continuous" }]
+            },
+        };
+
+        try {
+            await codeReaderRef.current.decodeFromConstraints(constraints, videoRef.current, handleDecode);
+        } catch (err) {
+            console.error("startScan error:", e);
+        }
+
+        // if (videoRef.current) {
+        //     const codeReader = new BrowserMultiFormatReader();
+        //     codeReaderRef.current = codeReader;
+
+        //     const constraints = {
+        //         video: {
+        //             width: { ideal: 320 },
+        //             height: { ideal: 320 },
+        //             facingMode: "environment",
+        //             advanced: [{ focusMode: "continuous" }]
+        //         },
+        //     };
+
+
+        //     codeReader.decodeFromConstraints(constraints, videoRef.current, handleDecode);
+
+        // }
     }
 
     //Callback xử lý kết quả quét
@@ -64,7 +109,7 @@ export function ScanOrder() {
             const text = result.getText();
             // setResult(text);
             await checkContentQR(text);
-            
+
 
             // stopCamera();
         }
@@ -78,12 +123,20 @@ export function ScanOrder() {
     }
 
     function stopCamera() {
-        if (videoRef.current?.srcObject) {
-            const stream = videoRef.current.srcObject;
-            const tracks = stream.getTracks();
-            tracks.forEach(track => track.stop());
-            videoRef.current.srcObject = null;
+        const video = videoRef.current;
+        if (!video) return;
+
+        const stream = video.srcObject;
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
         }
+
+        // if (videoRef.current?.srcObject) {
+        //     const stream = videoRef.current.srcObject;
+        //     const tracks = stream.getTracks();
+        //     tracks.forEach(track => track.stop());
+        //     videoRef.current.srcObject = null;
+        // }
     }
 
     function resetScan() {
@@ -181,9 +234,14 @@ export function ScanOrder() {
 
             <button
                 className={`py-2 rounded-lg text-white
-                ${isDetected ? "bg-yellow-400" : "bg-gray-300 cursor-not-allowed"} `}>
+                ${isDetected ? "bg-yellow-400" : "bg-gray-300 cursor-not-allowed"} `}
+                onClick={()=>setShowOTP(true)}
+                >
                 {t("btnSendOTP")}
             </button>
+
+            {showOTP?
+            <MiniOTP closeOTP={()=>setShowOTP(false)} isOpen={showOTP}/>:""}
         </div>
     )
 }

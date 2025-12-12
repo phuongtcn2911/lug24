@@ -2,10 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 
 import "./CSS/ResultStatus.css";
 import * as Data from "../../data/Data"
-import { LanguageContext } from "../../data/LanguageContext";
 import { OrderContext } from "../../data/OrderContext";
-import CurrencyFormat from "../../data/CurrencyFormat";
-import * as DateStringFormat from "../../data/DateStringFormat";
+import CurrencyFormat from "../../utils/CurrencyFormat";
+import * as DateStringFormat from "../../utils/DateStringFormat";
 import { AnimatePresence } from "framer-motion";
 import * as Transition from "../../components/Transition"
 
@@ -32,7 +31,7 @@ export default function ResultStatus({status}) {
             changeStatus(1); 
             changeStep(1);
             console.log("Tiến hành lưu giao dịch trên AITUIO và gửi OTP về mail");
-            afterPayment(order,0,changeStatus);
+            afterPayment(order,0,changeStatus,i18n.language);
         }
         else if(status==="cancel"){
             console.log("Tiến hành hủy giao dịch trên AITUIO");

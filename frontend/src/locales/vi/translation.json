@@ -17,6 +17,7 @@
     "labelRentalTimeOrder": "Thời gian thuê",
     "labelMaxRentalTimeOrder": "Lưu trữ tối đa trong",
     "labelPromoCode": "Mã giảm giá",
+    "plcPromoCode":"Nhập mã giảm giá",
     "btnEnterPromoCode": "Nhập mã",
     "labelSubTotal": "Tạm tính",
     "labelDiscount": "Giảm giá",

@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import RadioButton from "./RadioButton";
 import DatePicker from "./DatePicker.jsx";
-import { LanguageContext } from "../../data/LanguageContext.jsx";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -38,11 +37,11 @@ export default function RentalTime({
 
   // --- Utils ---
   function roundMaxRentalTime(hours) {
-    console.log("Trước khi làm tròn: ", hours);
+    // console.log("Trước khi làm tròn: ", hours);
     const fullRoundHour = Math.trunc(hours / 12);
-    console.log("Phần đủ: ", fullRoundHour);
+    // console.log("Phần đủ: ", fullRoundHour);
     const remainedHour = hours % 12;
-    console.log("Phần dư: ", remainedHour);
+    // console.log("Phần dư: ", remainedHour);
     let roundedRemainedHour = 0;
     if (remainedHour === 0 || remainedHour === 4 || remainedHour === 6 || remainedHour === 12) {
       roundedRemainedHour = remainedHour;
@@ -53,10 +52,10 @@ export default function RentalTime({
     else {
       roundedRemainedHour = 12;
     }
-    console.log("Phần dư sau khi làm tròn: ", roundedRemainedHour);
+    // console.log("Phần dư sau khi làm tròn: ", roundedRemainedHour);
 
     const totalHour = fullRoundHour * 12 + roundedRemainedHour;
-    console.log("Tổng: ", totalHour);
+    // console.log("Tổng: ", totalHour);
     return totalHour;
   }
 
@@ -96,7 +95,7 @@ export default function RentalTime({
 
   // --- Init khi load page ---
   useEffect(() => {
-    console.log("Khởi tạo comp Rental Time: ", order);
+    // console.log("Khởi tạo comp Rental Time: ", order);
     if (!order || hasInit.current) return;
     hasInit.current = true;
 

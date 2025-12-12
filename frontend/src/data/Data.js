@@ -94,7 +94,8 @@ export const Timer={
     lockerStatusDur:10,
     ordStatusDur:5,
     checkAvlBoxPing:10,
-    resendOTP:90
+    resendOTP:90,
+    validOTPDur:180
 }
 
 export const WorkingTime={

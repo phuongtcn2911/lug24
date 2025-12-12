@@ -1,8 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import { LanguageContext } from "../../data/LanguageContext";
+import { useTranslation } from "react-i18next";
 
-export default function DiscountPart({ getDiscountPrice,savedValue, transmitData }) {
-    const { lang, Languages } = useContext(LanguageContext);
+
+export default function DiscountPart({ getDiscountPrice, savedValue, transmitData }) {
+    // const { lang, Languages } = useContext(LanguageContext);
+    const { t, i18n } = useTranslation();
     const [errMessg, checkErrMessg] = useState();
     const [inputValue, setInputValue] = useState();
 
@@ -11,9 +13,9 @@ export default function DiscountPart({ getDiscountPrice,savedValue, transmitData
         setInputValue(newValue);
     }
 
-    useEffect(function(){
-        setInputValue(savedValue||"");
-    },[savedValue]);
+    useEffect(function () {
+        setInputValue(savedValue || "");
+    }, [savedValue]);
 
 
     function checkValidDiscountCode(e) {
@@ -21,17 +23,17 @@ export default function DiscountPart({ getDiscountPrice,savedValue, transmitData
         let discountPrice;
         if (inputValue == "FREE1h") {
             checkErrMessg();
-            discountPrice=-30000;
-            
+            discountPrice = -30000;
+
         }
         else {
             checkErrMessg(Languages[lang].alertInvalid);
-            discountPrice=0;
+            discountPrice = 0;
         }
         transmitData(inputValue);
 
         if (getDiscountPrice != undefined) {
-            getDiscountPrice({ discountPrice:discountPrice });
+            getDiscountPrice({ discountPrice: discountPrice });
         }
     }
 
@@ -41,12 +43,12 @@ export default function DiscountPart({ getDiscountPrice,savedValue, transmitData
         <div className="section-box">
             <div className="columns is-mobile">
                 <div className="column custom is-full">
-                    <p className="title is-6">{Languages[lang].labelPromoCode}</p>
+                    <p className="title is-6">{t("labelPromoCode")}</p>
                     <div className="field has-addons mb-0">
                         <div className="control is-expanded">
                             <input className="input"
                                 type="text"
-                                placeholder="Input your promo code"
+                                placeholder={t("plcPromoCode")}
                                 onChange={changeHandler}
                                 value={inputValue}></input>
                         </div>
@@ -54,7 +56,7 @@ export default function DiscountPart({ getDiscountPrice,savedValue, transmitData
                             <button
                                 onClick={checkValidDiscountCode}
                                 className="button is-warning">
-                                {Languages[lang].btnEnterPromoCode}
+                                {t("btnEnterPromoCode")}
                             </button>
                         </div>
                     </div>

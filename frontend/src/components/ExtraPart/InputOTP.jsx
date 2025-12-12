@@ -2,7 +2,7 @@ import "./CSS/OTP.css"
 import { OTP, Timer } from "../../data/Data"
 import "./CSS/ResultStatus.css"
 import React, { useState, useRef, useContext, useEffect } from "react";
-import { LanguageContext } from "../../data/LanguageContext";
+
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
 import { OrderContext } from "../../data/OrderContext";
 import axios from "axios";
@@ -21,7 +21,7 @@ export async function sendingOTP(obj) {
     }
 }
 
-export async function sendOTP(order, langIndex) {
+export async function sendOTP(order, lang) {
     try {
         const otpObj = {
             receiver: {
@@ -30,7 +30,7 @@ export async function sendOTP(order, langIndex) {
                 mobile: order.customer.mobile
             },
             contactType: order.customer.email != "" ? "Email" : "Zalo",
-            lang: langIndex === 0 ? "vi" : "en",
+            lang: lang
         };
         await api.post("api/requestOTP", { obj: otpObj });
     }
@@ -42,7 +42,6 @@ export async function sendOTP(order, langIndex) {
 export function InputOTP() {
     const [otp, setOTP] = useState(["", "", "", "", "", ""]);
     const inputsRef = useRef([]);
-    const { lang, Languages } = useContext(LanguageContext);
     const { t, i18n } = useTranslation();
     const { order } = useContext(OrderContext);
     const [error, setError] = useState("");
@@ -60,7 +59,6 @@ export function InputOTP() {
                 async function verifyOTP(obj) {
                     try {
                         const res = await api.post('api/verifyOTP', obj);
-                        // const res = await axios.post("http://localhost:5000/api/verifyOTP", obj);
                         console.log(res.data);
                         return res.data;
                     } catch (err) {
@@ -150,7 +148,7 @@ export function InputOTP() {
     const resendOTP = async () => {
         if (!isReactive) return;
         setError("");
-        sendOTP(order, lang);
+        sendOTP(order, i18n.language);
         setResendTimer(Timer.resendOTP);
         setIsCounting(true);
     };

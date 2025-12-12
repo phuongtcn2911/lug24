@@ -17,6 +17,7 @@
     "labelRentalTimeOrder": "Rental time",
     "labelMaxRentalTimeOrder": "Maximum storage time",
     "labelPromoCode": "Promo code",
+    "plcPromoCode":"Input your promo code",
     "btnEnterPromoCode": "Enter code",
     "labelSubTotal": "Subtotal",
     "labelDiscount": "Discount",

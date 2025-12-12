@@ -10,7 +10,7 @@ import ButtonList from "../components/InputForm/ButtonList.jsx";
 import { Header } from "../components/ExtraPart/Header.jsx";
 import DiscountPart from "../components/InputForm/DiscountPart.jsx";
 // import { Lockers } from "../data/Data.js";
-import CurrencyFormat from "../data/CurrencyFormat.jsx";
+import CurrencyFormat from "../utils/CurrencyFormat.jsx";
 import { OrderContext } from "../data/OrderContext.jsx";
 
 import RentalTime from "../components/InputForm/RentalTime.jsx";
@@ -20,6 +20,7 @@ import validator from "validator"
 import { TimerContext } from "../data/TimerContext.jsx";
 import api from "../config/axios.js";
 import { useTranslation } from "react-i18next";
+import { InitialDataContext } from "../data/InitialDataContext.jsx";
 
 
 function SendParcel() {
@@ -27,6 +28,7 @@ function SendParcel() {
     const { t, i18n } = useTranslation();
     const { order, setOrder } = useContext(OrderContext);
     const { startTimer } = useContext(TimerContext);
+    const {priceList,campus}=useContext(InitialDataContext);
 
     const [showMobile, setShowMobile] = useState(false);
     const [sizeLetter, setSizeLetter] = useState();
@@ -124,6 +126,7 @@ function SendParcel() {
     useEffect(function () {
         if (order.locker.sizeIndex === undefined) return; // tránh chạy khi context chưa sẵn sàng
 
+
         const currentLocker = Data.Lockers[order.locker.sizeIndex];
         if (!currentLocker) return;
 
@@ -136,6 +139,7 @@ function SendParcel() {
                 newSubTotal = Data.Promotion.lockers[order.locker.sizeIndex].price;
             }
             else if (maxRentalTime > Data.Promotion.rentalTime) {
+
                 newUnitPrice = currentLocker.price;
                 newSubTotal = newUnitPrice * maxRentalTime;
             }
@@ -174,6 +178,14 @@ function SendParcel() {
             setIsDisabledSubmit(true);
         }
     }, [order.customer.fullName, order.customer.email, order.customer.mobile, order.order.maxRentalTime, order.order.rentalTime, order.locker.sizeIndex]);
+
+    function getPriceID(isPromotion,sizeLetter){
+        var item=priceList.filter(function(e){
+            const priceID=e.PRICE_LIST_ID;
+            return String(priceID).match(isPromotion?/^PP4H/:/^PBUS/) && e.SIZE===sizeLetter;
+        });
+        return item;
+    };
 
 
     function changeOtherMethod(e) {

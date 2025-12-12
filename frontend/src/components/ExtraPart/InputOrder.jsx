@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { InputOrderCode } from "../../data/Data";
 import { useTranslation } from "react-i18next";
+import MiniOTP from "./MiniOTP";
 export function InputOrder() {
 
     const [error, setError] = useState("");
     const [value, setValue] = useState("");
+    const [showOTP, setShowOTP] = useState(false);
     const { t, i18n } = useTranslation();
 
 
@@ -31,9 +33,9 @@ export function InputOrder() {
                 <input
                     type="text"
                     value={value}
-                    onChange={(e) => {setValue(e.target.value);checkError(e);}}
-                   
-                    onFocus={(e)=>setValue(e.target.value)}
+                    onChange={(e) => { setValue(e.target.value); checkError(e); }}
+
+                    onFocus={(e) => setValue(e.target.value)}
                     maxLength={9}
                     placeholder={t("plchldInputCodeID")}
                     className={`peer block transition-all duration-200
@@ -59,9 +61,12 @@ export function InputOrder() {
 
             <button
                 className={`w-72  py-2 my-2 rounded-lg text-white
-                ${!error?"bg-yellow-400":"bg-gray-300  cursor-not-allowed"} `}>
+                ${!error && value.length === 9 ? "bg-yellow-400" : "bg-gray-300  cursor-not-allowed"} `}
+                onClick={()=>setShowOTP(true)}>
                 {t("btnSendOTP")}
             </button>
+
+            {showOTP?<MiniOTP closeOTP={()=>setShowOTP(false)} isOpen={showOTP}/>:""}
         </div>
     );
 }

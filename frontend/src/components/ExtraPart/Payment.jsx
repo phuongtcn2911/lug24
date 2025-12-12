@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { OrderContext } from "../../data/OrderContext";
-import { LanguageContext } from "../../data/LanguageContext";
 import * as BankAccount from "../../data/BankAccount";
 import InfoLabel from "../InputForm/InfoLabel";
 import { Timer, TapToPay } from "../../data/Data";
@@ -9,6 +8,7 @@ import api from "../../config/axios";
 import { TimerContext } from "../../data/TimerContext";
 import { io } from "socket.io-client";
 import { sendOTP } from "./InputOTP";
+import { useTranslation } from "react-i18next";
 
 export async function cancelTransaction(orderID) {
     try {
@@ -51,13 +51,39 @@ export async function savePayment(order, paymentType) {
 
 }
 
+export async function insertCustomer(customer) {
+    try {
+        const res = await api.post("api/insertCustomer", { obj: customer });
+        return res;
+    }
+    catch (err) {
+        console.log("Giai đoạn lưu thông tin khách hàng bị lỗi: ", err);
+    }
+
+}
+
+export async function insertOrder(order) {
+    try {
+        await api.post("api/insertOrder", { obj: order });
+    }
+    catch (err) {
+        console.log("Giai đoạn lưu đơn hàng bị lỗi: ", err);
+    }
+}
 
 
-export async function afterPayment(order, paymentType, changeStatus,langIndex) {
+
+export async function afterPayment(order, paymentType, changeStatus, lang) {
     (async () => {
         await savePayment(order, paymentType);
-        await sendOTP(order,langIndex);
-        console.log("Đã gửi mail OTP bằng ngôn ngữ ", langIndex);
+        const res = await insertCustomer(order.customer);
+        console.log(res);
+        if (res?.data?.customerID) {
+            order.customer.id = res.data.customerID;
+        }
+        // await insertOrder(order);
+        await sendOTP(order, lang);
+        console.log("Đã gửi mail OTP bằng ngôn ngữ ", lang);
         changeStatus(1);
     })();
 
@@ -65,14 +91,14 @@ export async function afterPayment(order, paymentType, changeStatus,langIndex) {
 
 export function Payment({ method }) {
     const { order, setOrder, resetOrder } = useContext(OrderContext);
-    const { lang, Languages } = useContext(LanguageContext);
     const { remaining } = useContext(TimerContext);
     const { changeStatus, resetProgress } = useContext(PaymentProgressContext);
 
     const [msg, setMsg] = useState("");
     const [timeLeft, setTimeLeft] = useState(Timer.transactDur);
+    const { t, i18n } = useTranslation();
 
-   useEffect(() => {
+    useEffect(() => {
         const timer = setInterval(() => {
             setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
         }, 1000);
@@ -112,7 +138,7 @@ export function Payment({ method }) {
 
         socket.on("payment_success", (data) => {
             if (data?.orderID === order?.order?.subID) {
-                afterPayment(order, 0, changeStatus,lang);
+                afterPayment(order, 0, changeStatus, i18n.language);
             }
         });
 
@@ -132,7 +158,7 @@ export function Payment({ method }) {
         <>
             <div className="columns is-mobile">
                 <div className="column is-6">
-                    <p className="title mb-2 is-5">{Languages[lang].labelEndTransaction}</p>
+                    <p className="title mb-2 is-5">{t("labelEndTransaction")}</p>
                     <div className="tags are-large is-centered mb-2">
                         <span className="tag has-text-weight-bold">{minutes.toString().padStart(2, "0")}</span>
                         <span>:</span>
@@ -140,21 +166,21 @@ export function Payment({ method }) {
                     </div>
 
                     <hr className="divider" />
-                    <InfoLabel label={Languages[lang].labelCustomer} children={order.customer.fullName} />
+                    <InfoLabel label={t("labelCustomer")} children={order.customer.fullName} />
                     <InfoLabel
-                        label={`${Languages[lang].labelRenterEmail}/${Languages[lang].labelRenterPhone}`}
+                        label={`${t("labelRenterEmail")}/${t("labelRenterPhone")}`}
                         children={order.customer.email || order.customer.mobile}
                     />
-                    <InfoLabel label={Languages[lang].labelMessage} children={msg} />
+                    <InfoLabel label={t("labelMessage")} children={msg} />
 
                     <div className="field p-3 has-text-left">
-                        <a className="help" onClick={() => cancelBookABox(order.order.id, resetOrder, resetProgress, changeStatus)}>{Languages[lang].labelCancelTransaction}</a>
-                        <a className="help" onClick={changePaymentMethod}>{Languages[lang].labelChangePaymentMethod}</a>
+                        <a className="help" onClick={() => cancelBookABox(order.order.id, resetOrder, resetProgress, changeStatus)}>{t("labelCancelTransaction")}</a>
+                        <a className="help" onClick={changePaymentMethod}>{t("labelChangePaymentMethod")}</a>
                     </div>
                 </div>
 
                 <div className="column is-6">
-                    <p className="title is-5">{Languages[lang].labelPaymentDirection[method]}</p>
+                    <p className="title is-5">{t(`labelPaymentDirection.${method}`)}</p>
                     <img
                         width="300"
                         src={method === 1 ? order.transaction.qrURL : TapToPay}

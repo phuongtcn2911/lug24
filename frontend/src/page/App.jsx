@@ -4,13 +4,16 @@ import { AnimatePresence } from "framer-motion";
 import * as Transition from "../components/Transition.jsx";
 // import { LanguageProvider } from "../data/LanguageContext.jsx";
 // import { OrderProvider } from "../data/OrderContext.jsx";
-import RegulationCommitment from "./RegulationCommitment.jsx";
+// import RegulationCommitment from "./RegulationCommitment.jsx";
 
 import Home from "./Home.jsx";
 import SendParcel from "./SendParcel.jsx";
 import ReceiveParcel from "./ReceiveParcel.jsx";
 import ConfirmCheckIn from "./ConfirmCheckIn.jsx";
 import OrderResult from "./OrderResult.jsx";
+import { useState } from "react";
+import { useEffect } from "react";
+import api from "../config/axios.js";
 
 
 function App() {
@@ -21,7 +24,7 @@ function App() {
         <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}> 
                 <Route path="/" element={<Transition.Fade><Home /></Transition.Fade>} />
-                <Route path="/RegulationCommitment" element={<Transition.Fade><RegulationCommitment /></Transition.Fade>} />
+                {/* <Route path="/RegulationCommitment" element={<Transition.Fade><RegulationCommitment /></Transition.Fade>} /> */}
                 <Route path="/SendParcel" element={<Transition.Fade><SendParcel /></Transition.Fade>} />
                 <Route path="/ReceiveParcel" element={<Transition.Fade><ReceiveParcel /></Transition.Fade>} />
                 <Route path="/ConfirmCheckIn" element={<Transition.Fade><ConfirmCheckIn /></Transition.Fade>} />

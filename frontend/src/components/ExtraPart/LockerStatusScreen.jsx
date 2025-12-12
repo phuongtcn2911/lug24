@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { LockerStatus, Timer } from "../../data/Data"
-import { LanguageContext } from "../../data/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { OrderContext } from "../../data/OrderContext";
 import { PaymentProgressContext } from "../../data/PaymentProgressContext";
@@ -9,7 +8,7 @@ import api from "../../config/axios";
 import { useTranslation } from "react-i18next";
 
 export default function LockerStatusScreen() {
-    const { lang, Languages } = useContext(LanguageContext);
+
     const {t,i18n}=useTranslation();
     const { order, resetOrder } = useContext(OrderContext);
     const [secs, setSecs] = useState(Timer.lockerStatusDur);
@@ -89,7 +88,7 @@ export default function LockerStatusScreen() {
         var orderOBJ = {
             order: obj,
             contactType: contactType,
-            lang:lang==0?"vi":"en",
+            lang:i18n.language,
         };
 
         try {
