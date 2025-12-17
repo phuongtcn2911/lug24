@@ -17,6 +17,78 @@ export function InitialDataProvider({ children }) {
         return rawData ? JSON.parse(rawData) : null;
     }
 
+    function filterTrialPrice(isTrial) {
+        var items = priceList?.filter(function (e) {
+            const priceID = e.PRICE_LIST_ID;
+            return String(priceID).match(isTrial ? /^PP4H/ : /^PBUS/);
+        }).map(function (e) {
+            return {
+                priceID: e.PRICE_LIST_ID,
+                size: e.SIZE,
+                price: e.UNIT_PRICE,
+                tax: e.TAX_RATE
+            }
+        });
+        return items;
+    }
+
+    function getLockersInfo() {
+        var lockers = priceList?.reduce(function (storage, item) {
+            const classifiedSize=item.SIZE;
+            const index=storage.findIndex(function(item)
+            {return item.size===classifiedSize;})
+
+            if (index===-1) {
+                storage.push({
+                    size:classifiedSize,
+                    priceInfo:[]
+                });
+            }
+
+            storage[storage.length-1].priceInfo.push({
+                priceID: item.PRICE_LIST_ID,
+                unitPrice: item.UNIT_PRICE,
+                tax: item.TAX_RATE,
+                timeAllowance: String(item.PRICE_LIST_ID).startsWith("PBUS") ? 1 : 4,
+            });
+
+            return storage;
+        },[]);
+        return lockers;
+    }
+
+    function getALockerBySize(size)
+    {
+        var locker=priceList?.reduce(function(storage,item){
+            const classifiedSize=item.SIZE;
+
+            if(classifiedSize===size){
+                storage.priceInfo.push({
+                    priceID:item.PRICE_LIST_ID,
+                    unitPrice:item.UNIT_PRICE,
+                    tax:item.TAX_RATE,
+                    timeAllowance:String(item.PRICE_LIST_ID).startsWith("PBUS") ? 1 : 4,
+                });
+            }
+
+            return storage;
+        },{size:size,priceInfo:[]});
+        return locker;
+    }
+
+    function getLockerPriceInfo(isTrial, size) {
+        var items = priceList?.filter(function (e) {
+            return String(e.PRICE_LIST_ID).match(isTrial ? /^PP4H/ : /^PBUS/) && e.SIZE === size;
+        }).map(function () {
+            return {
+                priceID: e.PRICE_LIST_ID,
+                size: e.SIZE,
+                price: e.UNIT_PRICE,
+                tax: e.TAX_RATE
+            }
+        });
+    }
+
     async function initData() {
         try {
             let localPrice = loadFromStorage("priceList");
@@ -28,7 +100,7 @@ export function InitialDataProvider({ children }) {
             if (isExistLocal) {
                 setPriceList(localPrice);
                 setCampus(localCampus);
-                console.log("Local tồn tại:", { localPrice, localCampus });
+                // console.log("Local tồn tại:", { localPrice, localCampus });
                 return;
             }
 
@@ -36,7 +108,7 @@ export function InitialDataProvider({ children }) {
             localPrice = res.data?.data?.priceList || [];
             localCampus = res.data?.data?.campus || [];
 
-            console.log("API trả về:", { localPrice, localCampus });
+            // console.log("API trả về:", { localPrice, localCampus });
 
             setPriceList(localPrice);
             setCampus(localCampus);
@@ -63,7 +135,7 @@ export function InitialDataProvider({ children }) {
     }
 
     return (
-        <InitialDataContext.Provider value={{ priceList, campus, setPriceList, setCampus, resetInitialData }}>{children}</InitialDataContext.Provider>
+        <InitialDataContext.Provider value={{ priceList, campus, setPriceList, setCampus, resetInitialData, filterTrialPrice, getLockerPriceInfo, getLockersInfo,getALockerBySize }}>{children}</InitialDataContext.Provider>
     );
 
 

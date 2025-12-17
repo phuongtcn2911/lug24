@@ -22,6 +22,8 @@ import dayjs from 'dayjs'
 import beepMP3 from '../assets/sound/Beep.mp3'
 
 
+
+
 export const Logo = logo;
 export const API_BASE=import.meta.env.VITE_API_URL;
 
@@ -50,8 +52,10 @@ export function getVideoID(vidURL) {
 
 // export const RentalTimeMilestone = [6,12,24,48];
 export const RuleImgs = [pic3, pic4, pic5, pic6];
+
 export const Promotion = {
     rentalTime: 4,
+   
     lockers: [
         {
             size: 'M',

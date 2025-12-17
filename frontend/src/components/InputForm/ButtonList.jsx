@@ -8,6 +8,7 @@ export default function ButtonList({ arrayList, topic, group, changeButton, save
     const { t, i18n } = useTranslation();
 
     useEffect(() => {
+        // console.log("Thông tin tủ: ",arrayList);
         if (amountList.length === 0) return;
 
         // Tìm lựa chọn khả dụng đầu tiên (>0)
@@ -22,20 +23,20 @@ export default function ButtonList({ arrayList, topic, group, changeButton, save
 
             // Nếu có callback ngoài thì gọi luôn
             if (changeButton) {
-                changeButton({ group, index: firstAvailable });
+                changeButton({ group, index: firstAvailable,info:arrayList[firstAvailable] });
             }
         }
     }, [amountList]);
 
 
 
-    function onClick(e, index) {
+    function onClick(e, index,label) {
         e.preventDefault();
         setActiveIndex(index);
         // console.log("Group name: " + group + ". Index: " + savedSelectedIndex);
 
         if (changeButton != undefined) {
-            changeButton({ group, index });
+            changeButton({ group, index,info:label });
         }
     }
 
@@ -45,7 +46,6 @@ export default function ButtonList({ arrayList, topic, group, changeButton, save
             <label className="label">{topic}</label>
             <div className="field is-grouped is-grouped-multiline mb-0">
                 {
-
                     arrayList.map(function (label, index) {
                         let currentIndex;
                         if (activeIndex !== null && activeIndex !== undefined) {
@@ -60,7 +60,7 @@ export default function ButtonList({ arrayList, topic, group, changeButton, save
                             <p key={index} className="control badge-container">
                                 <button
                                     className={`button ${isActive ? "is-warning is-selected" : ""}`}
-                                    onClick={(e) => onClick(e, index)}
+                                    onClick={(e) => onClick(e, index,label)}
                                     disabled={amountList[index] === 0}>
                                     {`${t("sizeUnit")} ${label.size}`}
                                 </button>

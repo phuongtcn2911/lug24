@@ -28,7 +28,7 @@ function Home() {
   }
 
   return (
-    <>
+    <div className=''>
       <img id="imgLogo" src={Data.Logo} width="60%"></img>
 
       <section className="my-3">
@@ -70,7 +70,7 @@ function Home() {
       </section>
 
 
-    </>
+    </div>
   )
 }
 

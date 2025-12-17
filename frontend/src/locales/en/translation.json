@@ -4,7 +4,10 @@
     "receiveParcel": "Pick up parcel",
     "btnBack": "Back",
     "legendRenter": "Locker renter information",
-    "labelRenterName": "Fullname",
+    "headerDropOff": "Drop-off Information",
+    "headerPickUp": "Pick-up Information",
+    "labelRenterName": "Renter's full name",
+    "labelReceiverName": "Receiver's Full Name",
     "labelRenterEmail": "Email",
     "labelRenterPhone": "Mobile",
     "btnSignUpViaMobile": "Sign up with phone number",
@@ -17,7 +20,11 @@
     "labelRentalTimeOrder": "Rental time",
     "labelMaxRentalTimeOrder": "Maximum storage time",
     "labelPromoCode": "Promo code",
-    "plcPromoCode":"Input your promo code",
+    "plcPromoCode": "Input your promo code",
+    "plcFullname": "E.g: John Due",
+    "plcEmail": "E.g: john.due@gmail.com",
+    "plcPhone": "VD: 84 123 456 789",
+    "chkSameDelivery": "Allow another person to collect",
     "btnEnterPromoCode": "Enter code",
     "labelSubTotal": "Subtotal",
     "labelDiscount": "Discount",
@@ -58,6 +65,10 @@
         }
     ],
     "sizeUnit": "Size ",
+    "sizeDescription":[
+        "40 x 40 x 60 cm",
+        "40 x 85 x 60 cm"
+    ],
     "rentalTimeUnit": "  hours",
     "rentalTimeChoices": [
         "Trial Time: 4 hours",
@@ -65,6 +76,10 @@
     ],
     "labelCheckInTime": "Check-in Time",
     "labelCheckOutTime": "Check-out Time",
+    "btnNextStep": "Next step",
+    "btnPrevStep":"Back",
+    "divFillInfo": "Use information from",
+    "btnScanIDCard": "Scan Citizen ID Card",
     "btnReservation": "Book a locker",
     "msgConfirm": [
         "By selecting",

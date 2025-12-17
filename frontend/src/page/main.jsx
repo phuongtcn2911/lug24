@@ -8,6 +8,7 @@ import { TimerProvider } from '../data/TimerContext.jsx';
 import { PaymentProgressProvider } from '../data/PaymentProgressContext.jsx';
 import "../i18n.js";
 import { InitialDataProvider } from '../data/InitialDataContext.jsx';
+import 'flowbite'
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
 

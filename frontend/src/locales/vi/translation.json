@@ -4,11 +4,14 @@
     "receiveParcel": "Lấy kiện hàng",
     "btnBack": "Quay lại",
     "legendRenter": "Thông tin người thuê tủ",
-    "labelRenterName": "Họ và tên",
-    "labelRenterEmail": "Email",
-    "labelRenterPhone": "Số điện thoại",
-    "btnSignUpViaMobile": "Đăng ký bằng số điện thoại",
-    "btnSignUpViaEmail": "Đăng ký bằng email",
+    "headerDropOff": "Thông tin ký gửi",
+    "headerPickUp": "Thông tin nhận lại",
+    "labelRenterName": "Họ và tên người thuê tủ",
+    "labelReceiverName": "Họ và tên người nhận hàng",
+    "labelRenterEmail": "Email đăng ký nhận xác thực",
+    "labelRenterPhone": "Số điện thoại đăng ký nhận xác thực",
+    "btnSignUpViaMobile": "Đăng ký nhận xác thực bằng số điện thoại",
+    "btnSignUpViaEmail": "Đăng ký nhận xác thực bằng email",
     "legendLocker": "Thông tin ô tủ",
     "labelChooseSize": "Chọn kích thước",
     "labelRentalTime": "Chọn thời gian thuê",
@@ -17,7 +20,11 @@
     "labelRentalTimeOrder": "Thời gian thuê",
     "labelMaxRentalTimeOrder": "Lưu trữ tối đa trong",
     "labelPromoCode": "Mã giảm giá",
-    "plcPromoCode":"Nhập mã giảm giá",
+    "plcPromoCode": "Nhập mã giảm giá",
+    "plcFullname": "VD: Bùi Bảo Nhân",
+    "plcEmail": "VD: nhan.bb@gmail.com",
+    "plcPhone": "VD: 84 123 456 789",
+    "chkSameDelivery": "Kê khai ủy quyền cho người nhận khác",
     "btnEnterPromoCode": "Nhập mã",
     "labelSubTotal": "Tạm tính",
     "labelDiscount": "Giảm giá",
@@ -35,6 +42,10 @@
     ],
     "alertOutOfLocker": "Tất cả tủ ký gửi đều đã đầy. Vui lòng quay lại sau.",
     "labConfirm": "Tôi chấp nhận các điều khoản dịch vụ",
+    "btnNextStep":"Bước tiếp theo",
+    "btnPrevStep":"Quay lại",
+    "divFillInfo":"Sử dụng thông tin từ",
+    "btnScanIDCard":"Quét thẻ căn cước",
     "btnReservation": "Đặt tủ",
     "houseRule": [
         {
@@ -59,6 +70,10 @@
         }
     ],
     "sizeUnit": "Cỡ ",
+    "sizeDescription":[
+        "40 x 40 x 60 cm",
+        "40 x 85 x 60 cm"
+    ],
     "rentalTimeUnit": " giờ",
     "rentalTimeChoices": [
         "Giá dùng thử: 4 giờ",
@@ -242,12 +257,12 @@
             "value": "lug24"
         }
     },
-     "labelInputCodeID":"Nhập mã",
-     "labelScanCodeID":"Quét mã",
-     "plchldInputCodeID":"Nhập mã đặt tủ",
-     "btnSendOTP":"Nhận OTP để mở tủ",
-     "labelOtherMethod":"hoặc mở tủ bằng",
-     "btnFaceRecognize":"Nhận diện gương mặt",
-     "scanQRInvalidNoti":"Mã QR không hợp lệ",
-     "plchldScanCodeID":"Đưa mã QR vào khung quét"
+    "labelInputCodeID": "Nhập mã",
+    "labelScanCodeID": "Quét mã",
+    "plchldInputCodeID": "Nhập mã đặt tủ",
+    "btnSendOTP": "Nhận OTP để mở tủ",
+    "labelOtherMethod": "hoặc mở tủ bằng",
+    "btnFaceRecognize": "Nhận diện gương mặt",
+    "scanQRInvalidNoti": "Mã QR không hợp lệ",
+    "plchldScanCodeID": "Đưa mã QR vào khung quét"
 }

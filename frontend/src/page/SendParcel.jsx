@@ -1,532 +1,157 @@
-import { useContext, useEffect, useRef, useState } from "react";
-// import { LanguageContext } from "../data/LanguageContext.jsx";
-import * as Data from '../data/Data.js'
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import "./CSS/Form.css"
-import TextInput from "../components/InputForm/TextInput.jsx";
-import { AnimatePresence } from "framer-motion";
-import * as Transition from "../components/Transition.jsx"
-import ButtonList from "../components/InputForm/ButtonList.jsx";
-import { Header } from "../components/ExtraPart/Header.jsx";
-import DiscountPart from "../components/InputForm/DiscountPart.jsx";
-// import { Lockers } from "../data/Data.js";
-import CurrencyFormat from "../utils/CurrencyFormat.jsx";
-import { OrderContext } from "../data/OrderContext.jsx";
-
-import RentalTime from "../components/InputForm/RentalTime.jsx";
-import Checkbox from "../components/InputForm/CheckBox.jsx";
-import validator from "validator"
-
-import { TimerContext } from "../data/TimerContext.jsx";
-import api from "../config/axios.js";
 import { useTranslation } from "react-i18next";
-import { InitialDataContext } from "../data/InitialDataContext.jsx";
+import { Header } from "../components/ExtraPart/Header";
+import DiscountPart from "../components/InputForm/DiscountPart";
+import CurrencyFormat from "../utils/CurrencyFormat.jsx";
+import SenderInput from "../components/InputForm/SenderInput.jsx";
+import ChooseLocker from "../components/InputForm/ChooseLocker.jsx";
+import { useState } from "react";
 
-
-function SendParcel() {
-    // const { lang, Languages } = useContext(LanguageContext);
-    const { t, i18n } = useTranslation();
-    const { order, setOrder } = useContext(OrderContext);
-    const { startTimer } = useContext(TimerContext);
-    const {priceList,campus}=useContext(InitialDataContext);
-
-    const [showMobile, setShowMobile] = useState(false);
-    const [sizeLetter, setSizeLetter] = useState();
-    const [sizeIndex, setSizeIndex] = useState(0);
-    const [unitPrice, setUnitPrice] = useState(0);
-    const [rentalTime, setRentalTime] = useState(0);
-    const [maxRentalTime, setMaxRentalTime] = useState(0);
-    const [discount, setDiscount] = useState(0);
-    const [subTotal, setSubTotal] = useState(0);
-    const [tax, setTax] = useState(0);
-    const [total, setTotal] = useState(0);
-    const [isDisabledSubmit, setIsDisabledSubmit] = useState(true);
-    const [isShowMsg, setShowMsg] = useState(false);
-    const [isAgreement, setIsAgreement] = useState(false);
-    const [isValidTime, setIsValidTime] = useState(true);
-    const [availableBoxes, setAvailableBoxes] = useState([]);
-
-    //Phần cuộn chân trang điều khoản
-    const contentRef = useRef(null);
-    const [isScrollEnd, setIsScrollEnd] = useState(false);
-
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    function showMsg(e) {
-        e.preventDefault();
-        setShowMsg(true);
-    }
-
-    async function countAvailableBox(size) {
-        const res = await api.post('api/countAvailableBox', { size });
-        console.log("Get available box:", res.data);
-        return res.data;
-    }
-
-    //Sự kiện dò chân trang
-    useEffect(() => {
-        const endList = contentRef.current;
-        if (!endList) return;
-
-        const handleScroll = () => {
-            const atBottom = endList.scrollTop + endList.clientHeight >= endList.scrollHeight - 2;
-            if (atBottom) setIsScrollEnd(true);
-        };
-        endList.addEventListener("scroll", handleScroll);
-        return () => endList.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    useEffect(function () {
-        let isMounted = true;
-
-        async function fetchBoxes() {
-            try {
-                const [smallAmt, largeAmt] = await Promise.all([
-                    countAvailableBox(1),
-                    countAvailableBox(3),
-                ]);
-
-                if (isMounted) {
-                    setAvailableBoxes([smallAmt, largeAmt]);
-                    console.log("Available boxes:", [smallAmt, largeAmt]);
-                }
-            } catch (err) {
-                console.error("Lỗi khi lấy số lượng tủ:", err);
-            }
-        }
-
-        fetchBoxes();
-
-        const interval = setInterval(fetchBoxes, Data.Timer.checkAvlBoxPing * 1000);
-
-        return () => {
-            isMounted = false;
-            clearInterval(interval);
-        }
-    }, [location.pathname]);
-
-    // Khi mount, load dữ liệu từ context
-    useEffect(function () {
-        startTimer();
-        if (order.locker.sizeIndex !== undefined && Data.Lockers[order.locker.sizeIndex]) {
-            setSizeIndex(order.locker.sizeIndex);
-            setSizeLetter(Data.Lockers[order.locker.sizeIndex].size);
-            setRentalTime(order.order.rentalTime);
-            setMaxRentalTime(order.order.maxRentalTime);
-        }
-        if (order.order.discountCode) {
-            // Giả sử bạn đã lưu discount trước đó
-            setDiscount(order.order.discountCode || 0); // nếu lưu giá trị discount trong context
-        }
-        console.log(isValidTime);
-    }, []);
-
-    // Tự động tính toán subtotal, tax, total khi các giá trị thay đổi
-    useEffect(function () {
-        if (order.locker.sizeIndex === undefined) return; // tránh chạy khi context chưa sẵn sàng
-
-
-        const currentLocker = Data.Lockers[order.locker.sizeIndex];
-        if (!currentLocker) return;
-
-        let newSubTotal = 0;
-        let newUnitPrice = 0;
-
-        if (isValidTime) {
-            if (maxRentalTime > 0 && maxRentalTime <= Data.Promotion.rentalTime) {
-                newUnitPrice = 0;
-                newSubTotal = Data.Promotion.lockers[order.locker.sizeIndex].price;
-            }
-            else if (maxRentalTime > Data.Promotion.rentalTime) {
-
-                newUnitPrice = currentLocker.price;
-                newSubTotal = newUnitPrice * maxRentalTime;
-            }
-
-        }
-
-        const newTax = Data.TaxIndex * newSubTotal;
-        const newTotal = newSubTotal + newTax + discount;
-
-        setUnitPrice(newUnitPrice);
-        setSubTotal(newSubTotal);
-        setTax(newTax);
-        setTotal(newTotal);
-
-        setOrder(prev => ({
-            ...prev,
-            order: {
-                ...prev.order,
-                subTotal: newSubTotal,
-                discountPrice: discount,
-                rentalTime: rentalTime,
-                maxRentalTime: maxRentalTime,
-                tax: newTax,
-                total: newTotal,
-            }
-        }));
-
-    }, [unitPrice, rentalTime, maxRentalTime, discount, sizeIndex, isValidTime]);
-
-    useEffect(function () {
-        // console.log(isValidForm());
-        if (isValidForm()) {
-            setIsDisabledSubmit(false);
-        }
-        else {
-            setIsDisabledSubmit(true);
-        }
-    }, [order.customer.fullName, order.customer.email, order.customer.mobile, order.order.maxRentalTime, order.order.rentalTime, order.locker.sizeIndex]);
-
-    function getPriceID(isPromotion,sizeLetter){
-        var item=priceList.filter(function(e){
-            const priceID=e.PRICE_LIST_ID;
-            return String(priceID).match(isPromotion?/^PP4H/:/^PBUS/) && e.SIZE===sizeLetter;
-        });
-        return item;
-    };
-
-
-    function changeOtherMethod(e) {
-        e.preventDefault();
-        setShowMobile(!showMobile);
-    }
-
-    function changeButton({ group, index }) {
-        if (group == "grpSize") {
-            setSizeLetter(Data.Lockers[index].size);
-            setUnitPrice(Data.Lockers[index].price);
-            setSizeIndex(index);
-            setOrder((prev) => ({
-                ...prev,
-                locker: {
-                    ...prev.locker,
-                    sizeIndex: index,
-                    sizeLetter: Data.Lockers[index].size,
-                }
-            }));
-        }
-    }
-
-    function getDiscount({ discountPrice }) {
-        setDiscount(discountPrice);
-
-    }
-
-    function getFullNameValue(value) {
-        setOrder(prev => ({
-            ...prev,
-            customer: {
-                ...prev.customer,
-                fullName: value
-            }
-        }));
-    }
-
-    function getMobileValue(value) {
-        setOrder(prev => ({
-            ...prev,
-            customer: {
-                ...prev.customer,
-                mobile: value
-            }
-        }));
-    }
-
-    function getEmailValue(value) {
-        setOrder(prev => ({
-            ...prev,
-            customer: {
-                ...prev.customer,
-                email: value
-            }
-        }));
-    }
-
-    function getDiscountCode(value) {
-        setOrder(prev => ({
-            ...prev,
-            order: {
-                ...prev.order,
-                discountCode: value
-            }
-        }));
-    }
-
-    function getInOutTime(checkIn, checkOut, finalCheckOut) {
-        setOrder(prev => ({
-            ...prev,
-            order: {
-                ...prev.order,
-                checkIn: checkIn,
-                checkOut: checkOut,
-                finalCheckOut: finalCheckOut,
-            }
-        }));
-    }
-
-    function isValidForm() {
-        const hasName = order.customer.fullName?.trim() !== "";
-        const hasValidEmail = order.customer.email?.trim() !== "" && validator.isEmail(order.customer.email);
-        const hasValidMobile = order.customer.mobile?.trim() !== "" && validator.isMobilePhone(order.customer.mobile, "vi-VN");
-        const hasSize = order.locker.sizeIndex != undefined;
-        // && isAgreement
-        const validContact = hasValidEmail || hasValidMobile;
-        return hasName && validContact && isValidTime && hasSize;
-    }
-
-    function handleBooking(e) {
-        e.preventDefault();
-        navigate("/ConfirmCheckIn");
-    }
-
-
+export default function SendParcel() {
+    const { t } = useTranslation();
+    const [step, setStep] = useState(1);
+    const [animatedDirection, setAnimatedDirection] = useState("forward");
     return (
         <>
-            <Header link="/" isBackEnable={true}></Header>
-            <section>
-                <form>
-                    <div className="fieldset-columns">
-                        <div className="col">
-                            <fieldset className="group">
-                                <legend>{t("legendRenter")}</legend>
-                                <div className="fieldset-content mb-3">
-                                    <TextInput
-                                        label={t("labelRenterName")}
-                                        type="text"
-                                        transmitData={getFullNameValue}
-                                        value={order.customer.fullName || ""}></TextInput>
-                                    <AnimatePresence mode="wait">
-                                        {showMobile ? (
-                                            <Transition.SwipeLeft key="mobile">
-                                                <TextInput
-                                                    label={t("labelRenterPhone")}
-                                                    type="tel"
-                                                    transmitData={getMobileValue}
-                                                    value={order.customer.mobile || ""}></TextInput>
-                                            </Transition.SwipeLeft>
-                                        ) : (
-                                            <Transition.SwipeLeft key="email">
-                                                <TextInput
-                                                    label={t("labelRenterEmail")}
-                                                    type="email"
-                                                    transmitData={getEmailValue}
-                                                    value={order.customer.email || ""}></TextInput>
-                                            </Transition.SwipeLeft>
-                                        )}
-                                    </AnimatePresence>
+            <Header isBackEnable={true} link={"/"} />
+            <section className="text-gray-600 body-font">
 
+                <form className="w-full mx-auto">
+                    <div className="container mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 item-stretch mb-5">
+                            {/* TRÁI */}
+                            <div className="h-full flex flex-col overflow-hidden">
+                                <div
+                                    key={step}
+                                    className={`w-full transition-transform duration-300
+                                    ${animatedDirection==="forward"?"animate-slideInRight":"animate-slideInLeft"}`}>
+                                    {step === 1 ?
+                                        <SenderInput></SenderInput> :
+                                        <ChooseLocker></ChooseLocker>}
                                 </div>
-                                <a onClick={changeOtherMethod}>{showMobile == false ? t("btnSignUpViaMobile") : t("btnSignUpViaEmail")}</a>
-                            </fieldset>
-                            <fieldset className="group">
-                                <legend>{t("legendLocker")}</legend>
-                                <ButtonList
-                                    arrayList={Data.Lockers}
-                                    topic={t("labelChooseSize")}
-                                    group="grpSize"
-                                    changeButton={changeButton}
-                                    savedSelectedIndex={order.locker.sizeIndex}
-                                    amountList={availableBoxes}></ButtonList>
-                                <RentalTime topic={t("labelRentalTime")}
-                                    arrayList={t("rentalTimeChoices",{returnObjects:true})}
-                                    getRentalTime={setRentalTime}
-                                    getMaxRentalTime={setMaxRentalTime}
-                                    getInOutTime={getInOutTime}
-                                    getIsValidTime={setIsValidTime}></RentalTime>
-                            </fieldset>
-                        </div>
-                        <div className="col double">
-                            <fieldset className="group" style={{ flex: 1 }}>
-                                <legend>{t("legendOrder")}</legend>
 
-                                <div className="section-box">
-                                    <div className="columns is-mobile">
-                                        <div className="column is-two-third has-text-weight-semibold">
-                                            <p className="title is-6 ">{`${t("labelLockerSize")}`}</p>
-                                        </div>
-                                        <div className="column has-text-right">
-                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")} ${sizeLetter}`}</p>
-                                        </div>
+                                <div className="level mt-5 items-center">
+                                    <div className="level-left">
+                                        {
+                                            step === 2 &&
+                                            <a className="text-gray-500" onClick={() => { setAnimatedDirection("backward"); setStep(1); }}>
+                                                <i class="fa-solid fa-angles-left mr-2"></i>
+                                                <span className="text-base">{t("btnPrevStep")}</span>
+                                            </a>
+                                        }
+                                    </div>
+                                    <div className="level-right items-center">
+                                        {
+                                            step === 1 &&
+                                            <a className="text-gray-500" onClick={() => { setAnimatedDirection("forward"); setStep(2); }}>
+                                                <span className="text-base mr-2">{t("btnNextStep")}</span>
+                                                <i class="fa-solid fa-angles-right"></i>
+                                            </a>
+                                        }
 
                                     </div>
-                                    <div className="columns is-mobile">
-                                        <div className="column is-two-third has-text-weight-semibold">
+                                </div>
+                            </div>
+
+
+
+                            {/* PHẢI */}
+                            <div className="h-full flex flex-col">
+                                <h2 className="title-font sm:text-2xl text-xl font-medium text-gray-900 mb-4 text-left">
+                                    Đơn hàng
+                                </h2>
+                                <div className="bg-white border p-5 rounded-lg flex-1">
+                                    <div className="level">
+                                        <div className="level-left">
+                                            <p className="title is-6 ">{`${t("labelLockerSize")}`}</p>
+                                        </div>
+                                        <div className="level-right">
+                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
+                                        </div>
+                                    </div>
+                                    <div className="level">
+                                        <div className="level-left">
                                             <p className="title is-6 ">
                                                 <span>{t("labelRentalTimeOrder")}</span>
                                                 <span className="has-text-danger"> *</span>
                                             </p>
                                         </div>
-                                        <div className="column has-text-right">
-                                            <p className="subtitle is-6 has-text-right">
-                                                {`${rentalTime} ${t("rentalTimeUnit")}`}
-                                            </p>
+                                        <div className="level-right">
+                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
                                         </div>
                                     </div>
-                                    <div className="columns is-mobile">
-                                        <div className="column is-two-third has-text-weight-semibold">
+                                    <div className="level">
+                                        <div className="level-left">
                                             <p className="title is-6 ">
                                                 <span>{t("labelMaxRentalTimeOrder")}</span>
                                                 <span className="has-text-danger">*</span>
                                             </p>
                                         </div>
-                                        <div className="column has-text-right">
-                                            <p className="subtitle is-6 has-text-right">
-                                                {`${maxRentalTime} ${t("rentalTimeUnit")}`}
-                                            </p>
+                                        <div className="level-right">
+                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
                                         </div>
                                     </div>
-                                </div>
-                                <DiscountPart
-                                    getDiscountPrice={getDiscount}
-                                    transmitData={getDiscountCode}
-                                    savedValue={order.order.discountCode || ""}></DiscountPart>
-
-                                <div className="section-box">
-                                    <div className="columns is-mobile">
-                                        <div className="column is-two-third has-text-weight-semibold">
+                                    <div className="divider"></div>
+                                    <DiscountPart
+                                    ></DiscountPart>
+                                    <div className="divider mb-5"></div>
+                                    <div className="level">
+                                        <div className="level-left">
                                             <p className="title is-6">{t("labelSubTotal")}</p>
                                         </div>
-                                        <div className="column has-text-right">
-                                            <p className="subtitle is-6 has-text-right">{CurrencyFormat(subTotal)}</p>
+                                        <div className="level-right">
+                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
                                         </div>
                                     </div>
-                                    <div className="columns is-mobile">
-                                        <div className="column is-two-third has-text-weight-semibold">
+                                    <div className="level">
+                                        <div className="level-left">
                                             <p className="title is-6">{t("labelDiscount")}</p>
                                         </div>
-                                        <div className="column has-text-right">
-                                            <p className="subtitle is-6 has-text-right">{CurrencyFormat(discount)}</p>
+                                        <div className="level-right">
+                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
                                         </div>
-
                                     </div>
-                                    <div className="columns is-mobile">
-                                        <div className="column is-two-third has-text-weight-semibold">
+                                    <div className="level">
+                                        <div className="level-left">
                                             <p className="title is-6">{t("labelTax")}</p>
                                         </div>
-                                        <div className="column has-text-right">
-                                            <p className="subtitle is-6 has-text-right">{CurrencyFormat(tax)}</p>
+                                        <div className="level-right">
+                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="section-box">
-                                    <div className="columns is-mobile">
-                                        <div className="column is-two-third has-text-weight-semibold">
+                                    <div className="divider mb-5"></div>
+                                    <div className="level">
+                                        <div className="level-left">
                                             <p className="title is-5">{t("labelTotal")}</p>
                                         </div>
-                                        <div className="column has-text-right">
-                                            <p className="subtitle is-5 has-text-right is-bold">{CurrencyFormat(total)}</p>
+                                        <div className="level-right">
+                                            <p className="subtitle is-5 has-text-right is-bold">{CurrencyFormat(55000)}</p>
                                         </div>
                                     </div>
 
-                                    <div className="columns is-mobile">
-                                        <div className="column">
-                                            <button className="button is-warning is-rounded is-fullwidth"
-                                                disabled={isDisabledSubmit}
-                                                onClick={showMsg}
-                                            >
-                                                <span className="icon">
-                                                    <i className="fa-solid fa-warehouse"></i>
-                                                </span>
-                                                <span>{t("btnReservation")}</span>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className={`modal ${isShowMsg ? "is-active" : ""} is-primary`}>
-                                        <div className="modal-background" onClick={() => setShowMsg(false)}></div>
-                                        <div className="modal-card">
-                                            <header className="modal-card-head has-background-warning">
-                                                <p className="modal-card-title">{t("terms.title")}</p>
-                                                <button className="delete has-background-warning-dark" aria-label="close"
-                                                    onClick={(e) => { e.preventDefault(); setShowMsg(false) }}></button>
-                                            </header>
-                                            <section ref={contentRef} className="modal-card-body has-background-warning-light">
-
-                                                {t("terms.contents", { returnObjects: true }).map(function (e, i) {
-                                                    return (
-                                                        <div className="content" key={"p" + i}>
-                                                            <p className="chapter-title">{e.chapter}</p>
-                                                            <ul>
-                                                                {e.content.map(function (subE, subI) {
-                                                                    //Trường hợp Điều 4, đầu dòng 2 có chia mục con thì phát sinh lệnh này
-                                                                    if (i == 3 && subI == 2 || i == 4 && subI % 2 != 0) {
-                                                                        let smallArr = new Array();
-
-                                                                        smallArr.push(subE.map(function (smallSubE, smallSubI) {
-                                                                            return (
-                                                                                <li key={"x" + smallSubI}>{smallSubE}</li>
-                                                                            );
-                                                                        }));
-                                                                        return (<ol key={"z" + subI}>
-                                                                            {smallArr}
-                                                                        </ol>);
-                                                                    }
-                                                                    else
-                                                                        return (
-                                                                            <li key={"s" + subI}>{subE}</li>
-
-                                                                        );
-                                                                })}
-                                                            </ul>
-                                                        </div>
-
-                                                    );
-                                                })}
-                                            </section>
-                                            <footer className="modal-card-foot" style={{ flexDirection: "column", alignItems: "stretch" }}>
-                                                <div className="block">
-                                                    <Checkbox isChecked={isAgreement} onChange={setIsAgreement} disabled={!isScrollEnd}>
-                                                        <span>{t("msgConfirm.0")} </span>
-                                                        <span><strong>{t("msgConfirm.1")} </strong></span>
-                                                        <span>{t("msgConfirm.2")} </span>
-                                                        <span><strong>{t("msgConfirm.3")}</strong> </span>
-                                                        <span>{t("msgConfirm.4")} </span>
-                                                    </Checkbox>
-
-                                                </div>
-
-                                                <button className="button is-warning is-rounded"
-                                                    disabled={!isAgreement}
-                                                    onClick={handleBooking}
-                                                >
-                                                    <span className="icon">
-                                                        <i class="fa-solid fa-clipboard-check"></i>
-                                                    </span>
-                                                    <span>{t("btnConfirm")}</span>
-                                                </button>
+                                    <button className="button is-warning rounded-xl is-fullwidth"
+                                        disabled={true}
+                                        onClick={true}
+                                    >
+                                        <span className="icon">
+                                            <i className="fa-solid fa-warehouse"></i>
+                                        </span>
+                                        <span>{t("btnReservation")}</span>
+                                    </button>
 
 
-                                            </footer>
-                                        </div>
-                                    </div>
                                 </div>
-                            </fieldset>
+                            </div>
+
                         </div>
 
-                    </div>
-                    <div className="content">
-
-                        <p className="title is-6 has-text-weight-bold">{t("notes.title")}</p>
-                        <ul>
-                            {
-                                t("notes.content", { returnObjects: true }).map(function (e, i) {
-                                    return (
-                                        <li key={i}>{e}</li>
-                                    );
-                                })
-                            }
-                        </ul>
 
                     </div>
+
+
+
 
                 </form>
-            </section>
-
+            </section >
         </>
-    )
+    );
 }
-
-export default SendParcel;

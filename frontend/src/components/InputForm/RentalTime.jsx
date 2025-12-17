@@ -18,6 +18,7 @@ export default function RentalTime({
   getRentalTime,
   getInOutTime,
   getIsValidTime,
+  getChoice
 }) {
 
   const { order, setOrder } = useContext(OrderContext);
@@ -142,6 +143,7 @@ export default function RentalTime({
     getMaxRentalTime(initMax);
     getInOutTime(initStart, tempEnd, initStart.add(initMax, "hour"));
     getIsValidTime(true);
+    getChoice(initChoice);
   }, [order]);
 
   // --- Khi user thay đổi radio ---
@@ -205,6 +207,7 @@ export default function RentalTime({
     getMaxRentalTime(newMax);
     getInOutTime(newStart, newEnd, newStart.add(newMax, "hour"));
     getIsValidTime(!isOutWorkingTime(newEnd));
+    getChoice(value);
   };
 
   // --- Khi user thay đổi endDate trực tiếp ---

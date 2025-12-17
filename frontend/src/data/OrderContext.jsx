@@ -28,6 +28,7 @@ export const defaultOrder = {
     order: {
         id: undefined,
         subID: undefined,
+        rentalTimeChoice:null,
         rentalTime: Promotion.rentalTime,
         maxRentalTime: Promotion.rentalTime,
         checkIn: null,
