@@ -101,6 +101,23 @@ export async function getCampus(deviceNo) {
     return castingResult;
 }
 
+export async function getLockersAmount(deviceNo){
+    const query=`SELECT LCK.SIZE, COUNT(LCK.SIZE) AS AMOUNT
+    FROM \`LUG.LOCKER\` as LCK, \`LUG.CAMPUS\` as CMP
+    WHERE  LCK.CAMPUS_ID=CMP.CAMPUS_ID AND CMP.DEVICE_NO=@deviceNo
+    GROUP BY LCK.SIZE`;
+
+    const option={
+        query,
+        params:{
+            deviceNo:deviceNo
+        }
+    }
+
+    const [rows]=await bq.query(option);
+    return rows;
+}
+
 function castingBigQueryData(data) {
     const afterCasting = {};
 

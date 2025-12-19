@@ -36,42 +36,52 @@ export async function checkExistCustomer(req, res) {
 
 export async function insertCustomer(req, res) {
     try {
-        const customer=req.body?.obj;
-        const results=await query.checkExistCustomer(customer);
-        if(results.length===0){
+        const customer = req.body?.obj;
+        const results = await query.checkExistCustomer(customer);
+        if (results.length === 0) {
             // console.log("Chưa có tài khoản người dùng");
             // console.log("Generate mã khách hàng mới");
-            const customerID=generateCustomerID();
-            customer.id=customerID;
+            const customerID = generateCustomerID();
+            customer.id = customerID;
             // console.log("Dữ liệu khách hàng: ",customer);
             // console.log("Insert thông tin khách hàng");
             await query.insertCustomer(customer);
             // console.log("Trả về mã khách hàng mới");
-            return res.json({customerID:customerID,message:"Insert customer successfully"});
-        }else{
+            return res.json({ customerID: customerID, message: "Insert customer successfully" });
+        } else {
             // console.log("Đã có tài khoản người dùng");
             // console.log(results);
             // console.log("Lấy mã khách hàng từ CSDL");
             // console.log("Trả về mã khách hàng");
-            return res.json({customerID:results[0].CUSTOMER_ID,message:"Get customer ID from database"});
+            return res.json({ customerID: results[0].CUSTOMER_ID, message: "Get customer ID from database" });
         }
-        
+
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).json({ err: "Inserting customer failed: ",err});
+        res.status(500).json({ err: "Inserting customer failed: ", err });
     }
 
 }
 
-export async function getInitialData(req,res) {
-    try{
-        const priceList=await query.getPriceList(process.env.DEVICE_NO);
-        const campus=await query.getCampus(process.env.DEVICE_NO);
-        return res.json({code:1, message:"Lấy dữ liệu khởi tạo thành công",data:{priceList,campus}});
-        
-    }catch(err){
-        return res.json({code:0, message:"Lấy dữ liệu khởi tạo thất bại: ",err});
+export async function getInitialData(req, res) {
+    try {
+        const priceList = await query.getPriceList(process.env.DEVICE_NO);
+        const campus = await query.getCampus(process.env.DEVICE_NO);
+        const availableLockers=await query.getLockersAmount(process.env.DEVICE_NO);
+        return res.json({ code: 1, message: "Lấy dữ liệu khởi tạo thành công", data: { priceList, campus,availableLockers } });
+
+    } catch (err) {
+        return res.json({ code: 0, message: "Lấy dữ liệu khởi tạo thất bại: ", err });
     }
-    
+
+}
+
+export async function getAvailableLockerAmount(req, res) {
+    try {
+        const rows = await query.getLockersAmount(process.env.DEVICE_NO);
+        return res.json({ code: 1, message: "Lấy dữ liệu thành công", data: { rows } });
+    } catch (err) {
+        return res.json({ code: 0, message: "Lấy dữ liệu thất bại: ", err });
+    }
 }
