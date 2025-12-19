@@ -6,6 +6,7 @@
     "legendRenter": "Thông tin người thuê tủ",
     "headerDropOff": "Thông tin ký gửi",
     "headerPickUp": "Thông tin nhận lại",
+    "headerChooseLocker":"Chọn tủ",
     "labelRenterName": "Họ và tên người thuê tủ",
     "labelReceiverName": "Họ và tên người nhận hàng",
     "labelRenterEmail": "Email đăng ký nhận xác thực",
@@ -31,6 +32,7 @@
     "labelTax": "Thuế (nếu có)",
     "labelTotal": "Tổng cộng",
     "labelSessionDuration": "Giao dịch sẽ kết thúc trong",
+    "labelAvailableBoxes":"Số tủ trống",
     "btnCheckout": "Thanh toán",
     "alertEmpty": "Thông tin không được bỏ trống",
     "alertEmailInvalid": "Email không đúng",
@@ -47,6 +49,7 @@
     "divFillInfo":"Sử dụng thông tin từ",
     "btnScanIDCard":"Quét thẻ căn cước",
     "btnReservation": "Đặt tủ",
+    "btnApply":"Áp dụng",
     "houseRule": [
         {
             "title": "Quy định ký gửi hành lý",
@@ -181,10 +184,12 @@
             "Lưu ý về thời gian hoạt động tại cơ sở ký gửi có thể ảnh hưởng đến việc lấy hàng của quý khách."
         ]
     },
+     "labelPaymentMethods": "Phương thức thanh toán",
     "labelChangePaymentMethod": "Thay đổi phương thức thanh toán",
     "paymentMethod": [
-        "Thanh toán chạm",
-        "Quét mã QR"
+        "Quét mã QR",
+        "Zalo Pay",
+        "Thanh toán chạm"
     ],
     "progressStatus": [
         "Thanh toán",

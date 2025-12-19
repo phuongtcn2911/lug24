@@ -5,7 +5,9 @@ export const InitialDataContext = createContext();
 
 export function InitialDataProvider({ children }) {
     const [priceList, setPriceList] = useState([]);
-    const [campus, setCampus] = useState([]);
+    const [campus, setCampus] = useState(null);
+    const [availableBoxes,setAvailableBoxes]=useState([]);
+    const [loading, setLoading] = useState(true);
 
 
     function saveToStorage(key, value) {
@@ -34,45 +36,50 @@ export function InitialDataProvider({ children }) {
 
     function getLockersInfo() {
         var lockers = priceList?.reduce(function (storage, item) {
-            const classifiedSize=item.SIZE;
-            const index=storage.findIndex(function(item)
-            {return item.size===classifiedSize;})
+            const classifiedSize = item.SIZE;
+            const index = storage.findIndex(function (item) { return item.size === classifiedSize; })
 
-            if (index===-1) {
+            if (index === -1) {
                 storage.push({
-                    size:classifiedSize,
-                    priceInfo:[]
+                    size: classifiedSize,
+                    availableBoxes:0,
+                    priceInfo: []
                 });
             }
 
-            storage[storage.length-1].priceInfo.push({
+            storage[storage.length - 1].priceInfo.push({
                 priceID: item.PRICE_LIST_ID,
                 unitPrice: item.UNIT_PRICE,
                 tax: item.TAX_RATE,
                 timeAllowance: String(item.PRICE_LIST_ID).startsWith("PBUS") ? 1 : 4,
             });
 
+            const amt=availableBoxes.find(function(item){
+                return item.SIZE===classifiedSize;
+            })?.AMOUNT;
+
+            storage[storage.length-1].availableBoxes=amt;
+
             return storage;
-        },[]);
+        }, []);
         return lockers;
     }
 
-    function getALockerBySize(size)
-    {
-        var locker=priceList?.reduce(function(storage,item){
-            const classifiedSize=item.SIZE;
+    function getALockerBySize(size) {
+        var locker = priceList?.reduce(function (storage, item) {
+            const classifiedSize = item.SIZE;
 
-            if(classifiedSize===size){
+            if (classifiedSize === size) {
                 storage.priceInfo.push({
-                    priceID:item.PRICE_LIST_ID,
-                    unitPrice:item.UNIT_PRICE,
-                    tax:item.TAX_RATE,
-                    timeAllowance:String(item.PRICE_LIST_ID).startsWith("PBUS") ? 1 : 4,
+                    priceID: item.PRICE_LIST_ID,
+                    unitPrice: item.UNIT_PRICE,
+                    tax: item.TAX_RATE,
+                    timeAllowance: String(item.PRICE_LIST_ID).startsWith("PBUS") ? 1 : 4,
                 });
             }
 
             return storage;
-        },{size:size,priceInfo:[]});
+        }, { size: size, priceInfo: [] });
         return locker;
     }
 
@@ -91,40 +98,48 @@ export function InitialDataProvider({ children }) {
 
     async function initData() {
         try {
+            setLoading(true);
             let localPrice = loadFromStorage("priceList");
             let localCampus = loadFromStorage("campus");
+            let localAvailableBoxes=loadFromStorage("availableBoxes");
 
-            const isExistLocal = Array.isArray(localPrice) && localPrice.length > 0 && Array.isArray(localCampus) && localCampus.length > 0;
+            const isExistLocal =    Array.isArray(localPrice) && localPrice.length > 0 && 
+                                    Array.isArray(localCampus) && localCampus.length > 0&&
+                                    Array.isArray(localAvailableBoxes) && localAvailableBoxes.length > 0;
 
 
             if (isExistLocal) {
                 setPriceList(localPrice);
                 setCampus(localCampus);
-                // console.log("Local tồn tại:", { localPrice, localCampus });
+                setAvailableBoxes(localAvailableBoxes);
+                // console.log("Local tồn tại:", { localPrice, localCampus,localAvailableBoxes });
                 return;
             }
 
             const res = await api.get("/api/getInitialData");
             localPrice = res.data?.data?.priceList || [];
             localCampus = res.data?.data?.campus || [];
+            localAvailableBoxes=res.data?.data?.availableLockers||[];
+            
 
-            // console.log("API trả về:", { localPrice, localCampus });
+            // console.log("API trả về:", { localPrice, localCampus,localAvailableBoxes });
 
             setPriceList(localPrice);
             setCampus(localCampus);
+            setAvailableBoxes(localAvailableBoxes);
 
             saveToStorage("priceList", localPrice);
             saveToStorage("campus", localCampus);
+            saveToStorage("availableBoxes",localAvailableBoxes);
 
         } catch (err) {
             console.log("Có vấn đề rồi:", err);
+        } finally{
+            setLoading(false);
         }
-
-
     }
 
     useEffect(() => {
-
         initData();
     }, []);
 
@@ -135,7 +150,7 @@ export function InitialDataProvider({ children }) {
     }
 
     return (
-        <InitialDataContext.Provider value={{ priceList, campus, setPriceList, setCampus, resetInitialData, filterTrialPrice, getLockerPriceInfo, getLockersInfo,getALockerBySize }}>{children}</InitialDataContext.Provider>
+        <InitialDataContext.Provider value={{ priceList, campus,loading, setPriceList, setCampus, resetInitialData, filterTrialPrice, getLockerPriceInfo, getLockersInfo, getALockerBySize }}>{children}</InitialDataContext.Provider>
     );
 
 

@@ -2,13 +2,13 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import validator from "validator"
 
-export default function Input({ id, name, label, type, placeholder, value, onChange }) {
+export default function Input({ id, name, label, type, placeholder, value, onBlur, onChange,disable=false,tabIndex=0 }) {
     const { t, i18n } = useTranslation();
     const [error, setError] = useState("");
     const [isFocus, setFocus] = useState(false);
 
-    function checkValidation() {
-        console.log("Rời khỏi input");
+    function checkValidation(e) {
+
         if (value.trim() === "") {
             setError(t("alertEmpty"));
             return;
@@ -22,7 +22,8 @@ export default function Input({ id, name, label, type, placeholder, value, onCha
             return;
         }
         setError("");
-        setFocus(false);
+        setFocus(false);   
+        onBlur?.(e);
     }
 
     function focusHandler(){
@@ -49,7 +50,9 @@ export default function Input({ id, name, label, type, placeholder, value, onCha
                 onChange={onChange}
                 placeholder={placeholder}
                 value={value}
-                name={name} />
+                name={name}
+                disabled={disable}
+                tabIndex={tabIndex} />
             {error && <p className="text-xs text-red-500 italic text-right">{error}</p>}
         </div>
     );

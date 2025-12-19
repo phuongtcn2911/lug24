@@ -1,310 +1,281 @@
-import { useContext, useEffect, useState, useRef } from "react";
-import RadioButton from "./RadioButton";
+import { useTranslation } from "react-i18next";
 import DatePicker from "./DatePicker.jsx";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 import { Stack } from "@mui/material";
-import { OrderContext } from "../../data/OrderContext.jsx";
-import { WorkingTime, Promotion } from "../../data/Data.js";
-import { useTranslation } from "react-i18next";
+import { useContext, useEffect, useState } from "react";
+import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import "dayjs/locale/en";
+import { InitialDataContext } from "../../data/InitialDataContext.jsx";
+import { OrderContext } from "../../data/OrderContext.jsx";
 
-export default function RentalTime({
-  arrayList,
-  topic,
-  getMaxRentalTime,
-  getRentalTime,
-  getInOutTime,
-  getIsValidTime,
-  getChoice
-}) {
+export default function RentalTime() {
+    const { t, i18n } = useTranslation();
+    const items = t("rentalTimeChoices", { returnObjects: true });
+    const { order, setOrder, updateOrder } = useContext(OrderContext);
+    const { campus, loading } = useContext(InitialDataContext);
+    const [workingTime, setWorkingTime] = useState({
+        open: dayjs(),
+        closed: dayjs()
+    });
 
-  const { order, setOrder } = useContext(OrderContext);
-  const { t, i18n } = useTranslation();
-
-  const [selectedValue, setSelectedValue] = useState({ rentalTimeChoices: 0 });
-  const [startDate, setStartDate] = useState(roundDate());
-  const [rentalTime, setRentalTime] = useState(Promotion.rentalTime); // default 4h
-  const [maxRentalTime, setMaxRentalTime] = useState(Promotion.rentalTime);
-  const [endDate, setEndDate] = useState(startDate.add(rentalTime, "hour"));
-  const [timeAlert, setTimeAlert] = useState("");
-  const [isTimeValid, setIsTimeValid] = useState(true);
-
-  const hasInit = useRef(false);
-  const skipEndChange=useRef(false);
+    const [isTimeValid, setIsTimeValid] = useState(true);
+    const [timeAlert, setTimeAlert] = useState("");
+    const [chooseRentalChoices, setChooseRentalChoices] = useState([true, true]);
 
 
-  // --- Utils ---
-  function roundMaxRentalTime(hours) {
-    // console.log("Trước khi làm tròn: ", hours);
-    const fullRoundHour = Math.trunc(hours / 12);
-    // console.log("Phần đủ: ", fullRoundHour);
-    const remainedHour = hours % 12;
-    // console.log("Phần dư: ", remainedHour);
-    let roundedRemainedHour = 0;
-    if (remainedHour === 0 || remainedHour === 4 || remainedHour === 6 || remainedHour === 12) {
-      roundedRemainedHour = remainedHour;
-    }
-    else if (remainedHour < 6) {
-      roundedRemainedHour = 6;
-    }
-    else {
-      roundedRemainedHour = 12;
-    }
-    // console.log("Phần dư sau khi làm tròn: ", roundedRemainedHour);
+    const [draft, setDraft] = useState({
+        order: {
+            rentalTimeChoice: 0,
+            checkIn: null,
+            checkOut: null,
+            finalCheckOut: null,
+            rentalTime: 0,
+            maxRentalTime: 0
+        }
+    });
 
-    const totalHour = fullRoundHour * 12 + roundedRemainedHour;
-    // console.log("Tổng: ", totalHour);
-    return totalHour;
-  }
 
-  function calcEndDate(start, duration) {
-    let end = start.add(duration, "hour");
-    if (isOutWorkingTime(end)) {
-      const nextOpen = getNextOpenDay(start);
-      end = nextOpen;
-    }
-    return end;
-  }
+    useEffect(() => { console.log(draft) }, [draft]);
 
-  function roundDate(date = dayjs()) {
-    const roundMinutes = Math.ceil(date.minute() / 15) * 15;
-    const roundDate = date.set("minute", roundMinutes).set("second", 0);
-    return roundDate;
-  }
+    useEffect(() => {
+        if (!campus) return;
+        setWorkingTime({
+            open: dayjs(String(campus[0]?.OPEN_TIME), "HH:mm:ss"),
+            closed: dayjs(String(campus[0]?.CLOSE_TIME), "HH:mm:ss")
+        });
+    }, [campus]);
 
-  function getNextOpenDay(date) {
-    let nextOpen = date
-      .set("hour", WorkingTime.open.hour())
-      .set("minute", WorkingTime.open.minute())
-      .set("second", 0);
-    if (!nextOpen.isAfter(date)) nextOpen = nextOpen.add(1, "day");
-    return nextOpen;
-  }
+    useEffect(() => {
+        if (!workingTime.open || !workingTime.closed) return;
 
-  function isOutWorkingTime(timeValue) {
-    const hour = timeValue.hour();
-    const minute = timeValue.minute();
-    const open = WorkingTime.open;
-    const closed = WorkingTime.closed;
-    const beforeOpen = hour < open.hour() || (hour === open.hour() && minute < open.minute());
-    const afterClosed = hour > closed.hour() || (hour === closed.hour() && minute > closed.minute());
-    return beforeOpen || afterClosed;
-  }
+        let opt = order?.order.rentalTimeChoice !== undefined ? order.order.rentalTimeChoice : draft.order.rentalTimeChoice;
+        console.log("opt lúc khởi tạo: ",opt);
+        const hourChoices = [4, 6];
+        let rentalTime = hourChoices[opt];
 
-  // --- Init khi load page ---
-  useEffect(() => {
-    // console.log("Khởi tạo comp Rental Time: ", order);
-    if (!order || hasInit.current) return;
-    hasInit.current = true;
+        const startDate = order?.order.checkIn ? dayjs(order.order.checkIn) : roundDate();
+        let predictEnd = order?.order.checkOut ? dayjs(order.order.checkOut) : startDate.add(rentalTime, "hour");
+        let choiceList = [true, true];
 
-    let initStart = roundDate(order.order.startDate ? dayjs(order.order.startDate) : undefined)
-    let initRental = order.order.rentalTime || Promotion.rentalTime; // default 4h
-    let initChoice = 0; // 0 = standard, 1 = custom
-    let tempEnd = initStart.add(4, 'hour');
+        if (isOutWorkingTime(predictEnd)) {
+            opt =1;
+            rentalTime = hourChoices[opt];
+            choiceList[opt] = false;
+            predictEnd = calcEndDate(startDate, rentalTime);
+        }
 
-    if (isOutWorkingTime(initStart) || isOutWorkingTime(tempEnd)) {
-      initChoice = 1;
-      initRental = 6;
-      tempEnd = initStart.add(6, "hour");
-    }
+        let endDate = predictEnd;
 
-    if (isOutWorkingTime(tempEnd)) {
-      const nextOpen = getNextOpenDay(initStart);
-      tempEnd = nextOpen;
-      initRental = Math.ceil(tempEnd.diff(initStart, "hour", true));
+        console.log(choiceList);
+        console.log("Chọn cái option: ",opt);
+
+        setChooseRentalChoices(choiceList);
+
+        setDraft(prev => ({
+            ...prev,
+            order: {
+                ...prev.order,
+                rentalTimeChoice: opt,
+                rentalTime,
+                checkIn: startDate,
+                checkOut: endDate
+            }
+        }));
+
+        // updateOrder("order", "rentalTimeChoice", opt);
+        // updateOrder("order", "rentalTime", rentalTime);
+        // updateOrder("order", "checkIn", startDate);
+        // updateOrder("order", "checkOut", endDate);
+    }, [workingTime]);
+
+    useEffect(() => {
+        if (!draft.order.checkOut) return;
+        if (!isOutWorkingTime(draft.order.checkOut)) {
+            setIsTimeValid(true);
+            setTimeAlert("");
+        }
+    }, [draft.order.checkOut])
+
+
+
+    //ULTILITES
+    function roundDate(date = dayjs()) {
+        const roundMinutes = Math.ceil(date.minute() / 15) * 15;
+        const roundDate = date.set("minute", roundMinutes).set("second", 0);
+        return roundDate;
     }
 
-    const initMax = roundMaxRentalTime(initRental);
-
-    setSelectedValue({ rentalTimeChoices: initChoice });
-    setStartDate(initStart);
-    setRentalTime(initRental);
-    setEndDate(tempEnd);
-    setMaxRentalTime(initMax);
-    setIsTimeValid(true);
-    setTimeAlert("");
-
-    // đồng bộ orderContext
-    setOrder(prev => ({
-      ...prev,
-      order: {
-        ...prev.order,
-        startDate: initStart.toISOString(),
-        rentalTime: initRental,
-        maxRentalTime: initMax,
-        finalEndDate: initStart.add(initMax, "hour").toISOString(),
-      }
-    }));
-
-    getRentalTime(initRental);
-    getMaxRentalTime(initMax);
-    getInOutTime(initStart, tempEnd, initStart.add(initMax, "hour"));
-    getIsValidTime(true);
-    getChoice(initChoice);
-  }, [order]);
-
-  // --- Khi user thay đổi radio ---
-  const changeValue = (groupName, value) => {
-    let newStart = startDate;
-    let newEnd;
-    let newRental;
-
-    if(value===0){
-      newRental=4;
-      newEnd = calcEndDate(newStart, newRental);
-    }
-    else{
-      const tempEnd=newStart.add(6,'hour');
-      newEnd=isOutWorkingTime(tempEnd)?getNextOpenDay(newStart):tempEnd;
-      newRental=Math.ceil(newEnd.diff(newStart,"hour",true));
+    function calcEndDate(start, duration) {
+        let end = start.add(duration, "hour");
+        if (isOutWorkingTime(end)) {
+            const nextOpen = getNextOpenDay(start);
+            end = nextOpen;
+        }
+        return end;
     }
 
-    let newMax = roundMaxRentalTime(newRental);
+    function getNextOpenDay(date) {
+        let nextOpen = date
+            .set("hour", workingTime.open.hour())
+            .set("minute", workingTime.open.minute())
+            .set("second", 0);
+        if (!nextOpen.isAfter(date)) nextOpen = nextOpen.add(1, "day");
+        return nextOpen;
+    }
+
+    function isOutWorkingTime(timeValue) {
+        const hour = timeValue.hour();
+        const minute = timeValue.minute();
+        const open = workingTime.open;
+        const closed = workingTime.closed;
+
+        const beforeOpen = hour < open.hour() || (hour === open.hour() && minute < open.minute());
+        const afterClosed = hour > closed.hour() || (hour === closed.hour() && minute > closed.minute());
+        return beforeOpen || afterClosed;
+    }
+
+    //HANDLER
+
+    function changeRentalOpt(e) {
+        const opt = parseInt(e.target.value);
+        const rentalTime = opt === 0 ? 4 : 6;
+        let startDate = roundDate();
+        let endDate = calcEndDate(startDate, rentalTime);
+
+        setDraft(prev => ({
+            ...prev,
+            order: {
+                ...prev.order,
+                rentalTimeChoice: opt,
+                rentalTime: rentalTime,
+                checkIn: startDate,
+                checkOut: endDate,
+            }
+        }));
+
+        updateOrder("order", "rentalTimeChoice", opt);
+        updateOrder("order", "rentalTime", rentalTime);
+        updateOrder("order", "checkIn", startDate);
+        updateOrder("order", "checkOut", endDate);
+    }
+
+    const handleEndDateChange = (newValue) => {
+        if (!newValue || !newValue.isValid()) return;
+
+        if (!draft.order.checkIn) return;
+
+        const startDate = draft.order.checkIn;
+        const roundedEnd = roundDate(newValue);
+
+        // Không cho nhỏ hơn hoặc bằng check-in
+        if (!roundedEnd.isAfter(startDate)) {
+            setIsTimeValid(false);
+            setTimeAlert(t("alertRentalTime.0"));
+            return;
+        }
+
+        // Ngoài giờ làm việc
+        if (isOutWorkingTime(roundedEnd)) {
+            setIsTimeValid(false);
+            setTimeAlert(t("alertRentalTime.1", {
+                openHour: String(workingTime.open.hour()).padStart(2, "0"),
+                openMinute: String(workingTime.open.minute()).padStart(2, "0"),
+                closeHour: String(workingTime.closed.hour()).padStart(2, "0"),
+                closeMinute: String(workingTime.closed.minute()).padStart(2, "0")
+            }));
+            return;
+        }
+
+        const duration = Math.ceil(roundedEnd.diff(startDate, "hour", true));
+
+        setIsTimeValid(true);
+        setTimeAlert("");
+
+        // Update draft
+        setDraft(prev => ({
+            ...prev,
+            order: {
+                ...prev.order,
+                checkOut: roundedEnd,
+                rentalTime: duration
+            }
+        }));
+
+        // Sync OrderContext
     
-    skipEndChange.current=true;
+        updateOrder("order","rentalTime",duration);
+        updateOrder("order","checkOut",roundedEnd);
+    };
 
-    setSelectedValue(prev => ({ ...prev, [groupName]: value }));
-    setRentalTime(newRental);
-    setMaxRentalTime(newMax);
-    setEndDate(newEnd);
-    setStartDate(newStart);
-    setIsTimeValid(!isOutWorkingTime(newEnd));
-
-    if (newEnd.isBefore(newStart)) {
-      setIsTimeValid(false);
-      setTimeAlert(t("alertRentalTime.0"));
-    } else if (isOutWorkingTime(newEnd)) {
-      setIsTimeValid(false);
-      setTimeAlert(t("alertRentalTime.1", {
-        openHour: String(WorkingTime.open.hour()).padStart(2, '0'),
-        openMinute: String(WorkingTime.open.minute()).padStart(2, '0'),
-        closeHour: String(WorkingTime.closed.hour()).padStart(2, '0'),
-        closeMinute: String(WorkingTime.closed.minute()).padStart(2, '0')
-      }));
-    } else {
-      setIsTimeValid(true);
-      setTimeAlert("");
+    function setDraftField(field, e) {
+        setDraft(prev => ({
+            ...prev,
+            order: {
+                ...prev.order,
+                [field]: e.target.value
+            }
+        }))
     }
 
-    // setTimeAlert(isOutWorkingTime(newEnd) ? t("alertRentalTime[1] : "");
+    return (
+        <>
+            <h3 className="mb-3 text-left text-lg font-medium text-gray-900 ">{t("labelRentalTimeOrder")}</h3>
+            <ul class="w-full bg-white border border-default rounded-base rounded-lg">
+                {
+                    items?.map(function (item, key) {
+                        return (
+                            <li key={"item" + key}
+                                className={`w-full ${key == 0 ? "border-b border-default" : ""}`}>
+                                <div className={`flex items-center ps-3 `}>
+                                    <input
+                                        id={`rentalChoice_${key}`}
+                                        type="radio"
+                                        value={key}
+                                        checked={order.order.rentalTimeChoice === key||draft.order.rentalTimeChoice===key}
+                                        disabled={chooseRentalChoices[key]}
+                                        name="order.rentalTimeChoice"
+                                        onChange={changeRentalOpt}
+                                        className={`w-4 h-4  border-default-medium bg-neutral-secondary-medium rounded-full 
+                                                    checked:border-brand 
+                                                    focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none
+                                                    ${chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}`} />
+                                    <label
+                                        for={`rentalChoice_${key}`}
+                                        className={`w-full py-3 select-none ms-2 text-base font-medium text-heading text-left
+                                        ${chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}`}>{item}</label>
+                                </div>
+                            </li>
+                        );
+                    })
 
-    // đồng bộ orderContext
-    setOrder(prev => ({
-      ...prev,
-      order: {
-        ...prev.order,
-        startDate: newStart.toISOString(),
-        rentalTime: newRental,
-        maxRentalTime: newMax,
-        finalEndDate: newStart.add(newMax, "hour").toISOString(),
-      }
-    }));
-
-    getRentalTime(newRental);
-    getMaxRentalTime(newMax);
-    getInOutTime(newStart, newEnd, newStart.add(newMax, "hour"));
-    getIsValidTime(!isOutWorkingTime(newEnd));
-    getChoice(value);
-  };
-
-  // --- Khi user thay đổi endDate trực tiếp ---
-  const handleEndDateChange = newValue => {
-
-    if(skipEndChange.current){
-      skipEndChange.current=false;
-      return;
-    }
-
-    if (!newValue || !newValue.isValid()) return;
-
-    // let valid = !isOutWorkingTime(newValue) && newValue.isAfter(startDate);
-    newValue = roundDate(newValue);
-    let duration = Math.ceil(newValue.diff(startDate, "hour", true));
-    const roundedMax = roundMaxRentalTime(duration);
-
-    setEndDate(newValue);
-    setRentalTime(duration);
-    setMaxRentalTime(roundedMax);
-    // setIsTimeValid(valid);
-
-    if (newValue.isBefore(startDate) || newValue.diff(startDate) == 0) {
-      setIsTimeValid(false);
-      setTimeAlert(t("alertRentalTime.0"));
-    }
-    else if (isOutWorkingTime(newValue)) {
-      setIsTimeValid(false);
-      setTimeAlert(t("alertRentalTime.1", {
-        openHour: String(WorkingTime.open.hour()).padStart(2, '0'),
-        openMinute: String(WorkingTime.open.minute()).padStart(2, '0'),
-        closeHour: String(WorkingTime.closed.hour()).padStart(2, '0'),
-        closeMinute: String(WorkingTime.closed.minute()).padStart(2, '0')
-      }));
-    }
-    else {
-      setIsTimeValid(true);
-      setTimeAlert("");
-    }
-
-
-
-    // đồng bộ orderContext
-    setOrder(prev => ({
-      ...prev,
-      order:{
-        ...prev.order,
-        rentalTime: duration,
-        maxRentalTime: roundedMax,
-        finalEndDate: startDate.add(roundedMax, "hour").toISOString(),
-      }
-    }));
-
-    getRentalTime(duration);
-    getMaxRentalTime(roundedMax);
-    getInOutTime(startDate, newValue, startDate.add(roundedMax, "hour"));
-    getIsValidTime(isTimeValid);
-  };
-
-  return (
-    <div className="field">
-      <label className="label">{topic}</label>
-      {arrayList.map((label, index) => (
-        <div className="field" key={index}>
-          <RadioButton
-            label={label}
-            value={index}
-            selectedValue={selectedValue}
-            onChange={changeValue}
-            groupName="rentalTimeChoices"
-          />
-        </div>
-      ))}
-      <div className="container mt-5">
-        <LocalizationProvider dateAdapter={AdapterDayjs}
-          adapterLocale={i18n.language === "vi-VN" ? "vi" : "en"}>
-          <Stack spacing={3}>
-            <DatePicker
-              label={t("labelCheckInTime")}
-              value={startDate}
-              isDisabled={true}
-              isTimeValid={true}
-              timeAlert=""
-              onChange={v => setStartDate(v)}
-            />
-            <DatePicker
-              label={t("labelCheckOutTime")}
-              value={endDate}
-              disablePast={true}
-              isDisabled={selectedValue.rentalTimeChoices === 0}
-              onChange={handleEndDateChange}
-              isTimeValid={isTimeValid}
-              timeAlert={timeAlert}
-            />
-          </Stack>
-        </LocalizationProvider>
-      </div>
-    </div>
-  );
+                }
+            </ul>
+            <div className="w-full mt-5 mb-5">
+                <LocalizationProvider dateAdapter={AdapterDayjs}
+                    adapterLocale={i18n.language === "vi" ? "vi" : "en"}>
+                    <Stack spacing={2}>
+                        <DatePicker
+                            label={t("labelCheckInTime")}
+                            value={draft.order.checkIn}
+                            isDisabled={true}
+                            isTimeValid={true}
+                            timeAlert=""
+                        />
+                        <DatePicker
+                            label={t("labelCheckOutTime")}
+                            value={draft.order.checkOut}
+                            disablePast={true}
+                            maxDateTime={dayjs().add(1, "year")}
+                            isDisabled={draft.order.rentalTimeChoice === 0}
+                            onChange={handleEndDateChange}
+                            isTimeValid={isTimeValid}
+                            timeAlert={timeAlert}
+                        />
+                    </Stack>
+                </LocalizationProvider>
+            </div>
+        </>
+    );
 }

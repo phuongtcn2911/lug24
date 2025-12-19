@@ -1,109 +1,116 @@
 import { useTranslation } from "react-i18next";
 import LockerRadio from "./LockerRadio";
-import { useContext, useState, useMemo } from "react";
-import DatePicker from "./DatePicker.jsx";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Stack } from "@mui/material";
+import { useContext, useState, useMemo, useEffect } from "react";
+
+
 import { InitialDataContext } from "../../data/InitialDataContext.jsx";
+import PaymentMethods from "../ExtraPart/PaymentMethods.jsx";
+import RentalTime from "./RentalTime.jsx";
+import { OrderContext } from "../../data/OrderContext.jsx";
 
 export default function ChooseLocker() {
     const { t, i18n } = useTranslation();
-    const { getLockersInfo, getALockerBySize } = useContext(InitialDataContext);
+    const [lockerPriceList, setLockerPriceList] = useState([]);
+    const { priceList, getLockersInfo, loading } = useContext(InitialDataContext);
+    const { order, setOrder,updateOrder } = useContext(OrderContext);
+    const [ draft, setDraft ] = useState({
+        locker: {
+            id: "",
+            sizeIndex: "",
+            sizeLetter: ""
+        },
+        order: {
+            priceListID: "",
+            id: "",
+            subId: "",
+            rentalTimeChoice: "",
+            rentalTime: "",
+            maxRentalTime: "",
+            checkIn: "",
+            checkOut: "",
+            finalCheckOut: "",
+            discountCodes: [],
+            discountPrice: 0,
+            subTotal: 0,
+            tax: 0,
+            total: 0
+        }
+    });
+   
+    useEffect(() => {
+        if (priceList.length > 0) {
+            setLockerPriceList(getLockersInfo());
+        }
+    }, [priceList]);
 
-    const lockerPriceList = useMemo(() => {
-        const result = getLockersInfo();
-        console.log(result);
-        return result;
-    }, [getLockersInfo]);
+    useEffect(() => {
+        console.log(lockerPriceList);
+        
+    }, [lockerPriceList]);
+
+    function changeSize(e){
+        const [group,indexField,letterField]=e.target.name.split(".");
+        const amount=e.target.availableBoxes;
+        let sizeLetter=null;
+        let sizeIndex=null;
+        
+        if(amount!==0){
+            sizeLetter=e.target.value;
+
+            if(sizeLetter=="S")sizeIndex=1;
+            else if(sizeLetter=="M")sizeIndex=2;
+            else if(sizeLetter=="L")sizeIndex=3;
+            else if(sizeLetter=="XL")sizeIndex=4;
+        }
+
+
+        updateOrder(group,letterField,e.target.value);
+        updateOrder(group,indexField,sizeIndex);
+
+        setDraft(prev=>({
+            ...prev,
+            locker:{
+                ...prev.locker,
+                sizeIndex,
+                sizeLetter
+            }
+        }));
+    }
+
+    useEffect(()=>{console.log(draft)},[draft]);
+
+
 
     return (
 
         <div className="h-full flex flex-col">
             <h2 className="title-font sm:text-2xl text-xl font-medium text-gray-900 mb-5 text-left">
-                Chọn tủ
+                {t("headerChooseLocker")}
             </h2>
-            <h3 class="mb-2 text-left text-lg font-medium text-gray-900 ">Kích thước tủ</h3>
+            <h3 class="mb-2 text-left text-lg font-medium text-gray-900 ">{t("labelLockerSize")}</h3>
             <div className="flex gap-3 mb-5">
                 {
-                    lockerPriceList?.map(function(e,index){
-                        return(<LockerRadio key={index} title={`${t("sizeUnit")} ${e.size}`} sizeDesc={t("sizeDescription."+index)} amount="2" name="locker"
-                        ></LockerRadio>);
-                    })
+                    loading ?
+                        <span class="loading loading-dots loading-xl"></span>
+                        :
+                        lockerPriceList?.map(function (e, index) {
+                            return (
+                                <LockerRadio
+                                    key={index}
+                                    name="locker.sizeIndex.sizeLetter"
+                                    title={`${t("sizeUnit")} ${e.size}`}
+                                    sizeDesc={t("sizeDescription." + index)}
+                                    amount={e.availableBoxes}
+                                    value={e.size}
+                                    checked={draft.locker.sizeLetter===e.size||order.locker.sizeLetter===e.size}                                    
+                                    onChange={changeSize}
+                                    disabled={e.availableBoxes===0?true:false}
+                                ></LockerRadio>);
+                        })
                 }
             </div>
-            <h3 className="mb-3 text-left text-lg font-medium text-gray-900 ">Thời gian thuê</h3>
-            <ul class="w-full bg-white border border-default rounded-base rounded-lg">
-                <li class="w-full border-b border-default">
-                    <div class="flex items-center ps-3">
-                        <input id="list-radio-license"
-                            type="radio"
-                            value={1}
-                            name="rentalOption"
-                            className="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full 
-                        checked:border-brand 
-                        focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"/>
-                        <label for="list-radio-license"
-                            className="w-full py-3 select-none ms-2 text-base font-medium text-heading text-left">Giá dùng thử: 4 giờ</label>
-                    </div>
-                </li>
-                <li class="w-full ">
-                    <div class="flex items-center ps-3">
-                        <input id="list-radio-id"
-                            type="radio" value={2}
-                            name="rentalOption"
-                            className="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none" />
-                        <label for="list-radio-id"
-                            className="w-full py-3 select-none ms-2 text-base font-medium text-heading text-left">Chọn giờ lấy hàng</label>
-                    </div>
-                </li>
-            </ul>
-
-            <div className="w-full mt-2 mb-5">
-                <LocalizationProvider dateAdapter={AdapterDayjs}
-                    adapterLocale={i18n.language === "vi-VN" ? "vi" : "en"}>
-                    <Stack spacing={1}>
-                        <DatePicker
-                            label={t("labelCheckInTime")}
-                            // value={startDate}
-                            isDisabled={true}
-                            isTimeValid={true}
-                            timeAlert=""
-                        // onChange={v => setStartDate(v)}
-                        />
-                        <DatePicker
-                            label={t("labelCheckOutTime")}
-                            // value={endDate}
-                            disablePast={true}
-                        // isDisabled={selectedValue.rentalTimeChoices === 0}
-                        // onChange={handleEndDateChange}
-                        // isTimeValid={isTimeValid}
-                        // timeAlert={timeAlert}
-                        />
-                    </Stack>
-                </LocalizationProvider>
-            </div>
-            <h3 className="mb-2 text-left text-lg font-medium text-gray-900 ">Phương thức thanh toán</h3>
-            <ul class="items-center w-full text-sm font-medium text-heading bg-neutral-primary-soft border border-default rounded-lg sm:flex">
-                <li class="w-full border-b border-default sm:border-b-0 sm:border-r">
-                    <div class="flex items-center ps-3">
-                        <input id="horizontal-list-radio-license" type="radio" value="" name="list-radio" class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none" />
-                        <label for="horizontal-list-radio-license" class="w-full py-3 select-none ms-2 text-sm font-medium text-heading">Quét mã</label>
-                    </div>
-                </li>
-                <li class="w-full border-b border-default sm:border-b-0 sm:border-r">
-                    <div class="flex items-center ps-3">
-                        <input id="horizontal-list-radio-id" type="radio" value="" name="list-radio" class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none" />
-                        <label for="horizontal-list-radio-id" class="w-full py-3 select-none ms-2 text-sm font-medium text-heading">Zalo Pay</label>
-                    </div>
-                </li>
-                <li class="w-full border-b border-default sm:border-b-0 sm:border-r">
-                    <div class="flex items-center ps-3">
-                        <input id="horizontal-list-radio-military" type="radio" value="" name="list-radio" class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none" />
-                        <label for="horizontal-list-radio-military" class="w-full py-3 select-none ms-2 text-sm font-medium text-heading">Tap thẻ</label>
-                    </div>
-                </li>
-            </ul>
+            <RentalTime></RentalTime>
+            <PaymentMethods></PaymentMethods>
         </div>
     );
 }

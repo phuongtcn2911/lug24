@@ -13,7 +13,7 @@ import DiscountPart from "../components/InputForm/DiscountPart.jsx";
 import CurrencyFormat from "../utils/CurrencyFormat.jsx";
 import { OrderContext } from "../data/OrderContext.jsx";
 
-import RentalTime from "../components/InputForm/RentalTime.jsx";
+import RentalTime from "../components/InputForm/RentalTime_cur.jsx";
 import Checkbox from "../components/InputForm/CheckBox.jsx";
 import validator from "validator"
 

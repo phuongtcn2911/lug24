@@ -23,14 +23,14 @@ export const defaultOrder = {
     locker: {
         id: undefined,
         sizeIndex: undefined,
-        sizeLetter: ''
+        sizeLetter: 'M'
     },
     order: {
         id: undefined,
         subID: undefined,
-        rentalTimeChoice:null,
-        rentalTime: Promotion.rentalTime,
-        maxRentalTime: Promotion.rentalTime,
+        rentalTimeChoice: undefined,
+        rentalTime: 4,
+        maxRentalTime: 4,
         checkIn: null,
         checkOut: null,
         finalCheckOut: null,
@@ -39,7 +39,7 @@ export const defaultOrder = {
         subTotal: 0,
         tax: 0,
         total: 0,
-        priceListID:""
+        priceListID: ""
     },
     transaction: {
         uuid: undefined,
@@ -77,9 +77,19 @@ export function OrderProvider({ children }) {
         setOrder(defaultOrder);
     }
 
+    function updateOrder(group,field,value) {
+        setOrder(prev => ({
+            ...prev,
+            [group]: {
+                ...prev[group],
+                [field]: value
+            }
+        }));
+    }
+
 
     return (
-        <OrderContext.Provider value={{ order, setOrder, resetOrder }}>
+        <OrderContext.Provider value={{ order, setOrder, resetOrder,updateOrder }}>
             {children}
         </OrderContext.Provider>
     );

@@ -6,6 +6,7 @@
     "legendRenter": "Locker renter information",
     "headerDropOff": "Drop-off Information",
     "headerPickUp": "Pick-up Information",
+    "headerChooseLocker": "Locker's options",
     "labelRenterName": "Renter's full name",
     "labelReceiverName": "Receiver's Full Name",
     "labelRenterEmail": "Email",
@@ -31,6 +32,7 @@
     "labelTax": "Tax (if capable)",
     "labelTotal": "Total",
     "labelSessionDuration": "The session will end in",
+    "labelAvailableBoxes":"Empty Boxes",
     "btnCheckout": "Checkout",
     "alertEmpty": "This field is required",
     "alertEmailInvalid": "Invalid email",
@@ -65,7 +67,7 @@
         }
     ],
     "sizeUnit": "Size ",
-    "sizeDescription":[
+    "sizeDescription": [
         "40 x 40 x 60 cm",
         "40 x 85 x 60 cm"
     ],
@@ -77,10 +79,11 @@
     "labelCheckInTime": "Check-in Time",
     "labelCheckOutTime": "Check-out Time",
     "btnNextStep": "Next step",
-    "btnPrevStep":"Back",
+    "btnPrevStep": "Back",
     "divFillInfo": "Use information from",
     "btnScanIDCard": "Scan Citizen ID Card",
     "btnReservation": "Book a locker",
+    "btnApply":"Apply",
     "msgConfirm": [
         "By selecting",
         "\"Confirmation\"",
@@ -182,8 +185,7 @@
         ]
     },
     "paymentMethod": [
-        "Tap to Pay",
-        "QR Code Payment"
+        "QR Code Payment","Zalo Pay","Tap to Pay"
     ],
     "labelChangePaymentMethod": "Change another payment method",
     "progressStatus": [

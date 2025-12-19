@@ -4,12 +4,24 @@ import DiscountPart from "../components/InputForm/DiscountPart";
 import CurrencyFormat from "../utils/CurrencyFormat.jsx";
 import SenderInput from "../components/InputForm/SenderInput.jsx";
 import ChooseLocker from "../components/InputForm/ChooseLocker.jsx";
-import { useState } from "react";
+import { useEffect, useState,useContext } from "react";
+import OrderForm from "../components/InputForm/OrderForm.jsx";
+import { TimerContext } from "../data/TimerContext.jsx";
+import { OrderContext } from "../data/OrderContext.jsx";
 
 export default function SendParcel() {
     const { t } = useTranslation();
     const [step, setStep] = useState(1);
     const [animatedDirection, setAnimatedDirection] = useState("forward");
+    const {startTimer}=useContext(TimerContext);
+    const {resetOrder}=useContext(OrderContext);
+    
+    useEffect(()=>{
+        startTimer();
+        resetOrder();
+        
+    },[]);
+
     return (
         <>
             <Header isBackEnable={true} link={"/"} />
@@ -55,92 +67,7 @@ export default function SendParcel() {
 
 
                             {/* PHẢI */}
-                            <div className="h-full flex flex-col">
-                                <h2 className="title-font sm:text-2xl text-xl font-medium text-gray-900 mb-4 text-left">
-                                    Đơn hàng
-                                </h2>
-                                <div className="bg-white border p-5 rounded-lg flex-1">
-                                    <div className="level">
-                                        <div className="level-left">
-                                            <p className="title is-6 ">{`${t("labelLockerSize")}`}</p>
-                                        </div>
-                                        <div className="level-right">
-                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
-                                        </div>
-                                    </div>
-                                    <div className="level">
-                                        <div className="level-left">
-                                            <p className="title is-6 ">
-                                                <span>{t("labelRentalTimeOrder")}</span>
-                                                <span className="has-text-danger"> *</span>
-                                            </p>
-                                        </div>
-                                        <div className="level-right">
-                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
-                                        </div>
-                                    </div>
-                                    <div className="level">
-                                        <div className="level-left">
-                                            <p className="title is-6 ">
-                                                <span>{t("labelMaxRentalTimeOrder")}</span>
-                                                <span className="has-text-danger">*</span>
-                                            </p>
-                                        </div>
-                                        <div className="level-right">
-                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
-                                        </div>
-                                    </div>
-                                    <div className="divider"></div>
-                                    <DiscountPart
-                                    ></DiscountPart>
-                                    <div className="divider mb-5"></div>
-                                    <div className="level">
-                                        <div className="level-left">
-                                            <p className="title is-6">{t("labelSubTotal")}</p>
-                                        </div>
-                                        <div className="level-right">
-                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
-                                        </div>
-                                    </div>
-                                    <div className="level">
-                                        <div className="level-left">
-                                            <p className="title is-6">{t("labelDiscount")}</p>
-                                        </div>
-                                        <div className="level-right">
-                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
-                                        </div>
-                                    </div>
-                                    <div className="level">
-                                        <div className="level-left">
-                                            <p className="title is-6">{t("labelTax")}</p>
-                                        </div>
-                                        <div className="level-right">
-                                            <p className="subtitle is-6 has-text-right">{`${t("sizeUnit")}`}</p>
-                                        </div>
-                                    </div>
-                                    <div className="divider mb-5"></div>
-                                    <div className="level">
-                                        <div className="level-left">
-                                            <p className="title is-5">{t("labelTotal")}</p>
-                                        </div>
-                                        <div className="level-right">
-                                            <p className="subtitle is-5 has-text-right is-bold">{CurrencyFormat(55000)}</p>
-                                        </div>
-                                    </div>
-
-                                    <button className="button is-warning rounded-xl is-fullwidth"
-                                        disabled={true}
-                                        onClick={true}
-                                    >
-                                        <span className="icon">
-                                            <i className="fa-solid fa-warehouse"></i>
-                                        </span>
-                                        <span>{t("btnReservation")}</span>
-                                    </button>
-
-
-                                </div>
-                            </div>
+                            <OrderForm></OrderForm>
 
                         </div>
 

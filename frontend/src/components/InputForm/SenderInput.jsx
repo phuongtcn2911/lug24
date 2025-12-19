@@ -1,30 +1,35 @@
 import { AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Input from "./Input";
+import { OrderContext } from "../../data/OrderContext";
 
 export default function SenderInput() {
     const { t } = useTranslation();
 
-    const [showMobileRenter, setShowMobileRenter] = useState(false);
+    const [showMobilecustomer, setShowMobilecustomer] = useState(false);
     const [showMobileReceiver, setShowMobileReceiver] = useState(false);
 
     const [isSameDelivery, setIsSameDelivery] = useState(true);
     const [form, setForm] = useState({
-        renter: {
-            fullname: "",
+        customer: {
+            fullName: "",
             email: "",
             mobile: "",
         },
         receiver: {
-            fullname: "",
+            fullName: "",
             email: "",
             mobile: "",
         }
     });
 
+    const { order, setOrder, updateOrder } = useContext(OrderContext);
+
+    useEffect(() => { console.log(order) }, [order]);
+
     function setValueInFormHandler(e) {
-        console.log(e.target);
+        // console.log(e.target);
         const obj = e.target.name;
 
         const [group, field] = obj.split(".");
@@ -40,13 +45,18 @@ export default function SenderInput() {
         }));
     }
 
+    function updateOrderHandler(e) {
+        const obj = e.target.name;
+        const [group, field] = obj.split(".");
+        const value = e.target.value;
 
-    const [renterName, setRenterName] = useState("");
+        updateOrder(group, field, value);
+    }
 
     function changeOtherMethod(e, who) {
         e.preventDefault();
-        if (who === "renter")
-            setShowMobileRenter(!showMobileRenter);
+        if (who === "customer")
+            setShowMobilecustomer(!showMobilecustomer);
         else setShowMobileReceiver(!showMobileReceiver);
     }
 
@@ -63,35 +73,45 @@ export default function SenderInput() {
 
             <div className="flex flex-col gap-4 flex-1">
                 <Input label={t("labelRenterName")}
-                    id="inpRenterName"
-                    name="renter.fullname"
+                    id="inpcustomerName"
+                    name="customer.fullName"
                     type="text"
                     placeholder={t("plcFullname")}
-                    value={form.renter.fullname}
-                    onChange={e => setValueInFormHandler(e)} />
+                    value={form.customer.fullName||order.customer.fullName}
+                    onChange={setValueInFormHandler}
+                    onBlur={updateOrderHandler}
+                />
 
                 <div className="relative overflow-hidden h-[90px]">
-                    <div className={`absolute inset-0 ${showMobileRenter ? "animate-slideOutLeft pointer-events-none" : "animate-slideInLeft"}`}>
+                    <div className={`absolute inset-0 ${showMobilecustomer ? "animate-slideOutLeft" : "animate-slideInLeft"}`}>
                         <Input label={t("labelRenterEmail")}
-                            id="inpRenterEmail"
-                            name="renter.email"
+                            id="inpcustomerEmail"
+                            name="customer.email"
                             type="email"
                             placeholder={t("plcEmail")}
-                            value={form.renter.email}
-                            onChange={e => setValueInFormHandler(e)} />
+                            value={form.customer.email||order.customer.email}
+                            onChange={setValueInFormHandler}
+                            onBlur={updateOrderHandler}
+                            disabled={showMobilecustomer}
+                            tabIndex={showMobilecustomer ? -1 : 0}
+                        />
                     </div>
 
-                    <div className={`absolute inset-0 ${showMobileRenter ? "animate-slideInRight" : "animate-slideOutRight pointer-events-none"}`}>
+                    <div className={`absolute inset-0 ${showMobilecustomer ? "animate-slideInRight" : "animate-slideOutRight"}`}>
                         <Input label={t("labelRenterPhone")}
                             id="inpPhoneSender"
-                            name="renter.mobile"
+                            name="customer.mobile"
                             type="tel"
                             placeholder={t("plcPhone")}
-                            value={form.renter.mobile}
-                            onChange={e => setValueInFormHandler(e)} />
+                            value={form.customer.mobile||order.customer.mobile}
+                            onChange={setValueInFormHandler}
+                            onBlur={updateOrderHandler}
+                            disabled={!showMobilecustomer}
+                            tabIndex={!showMobilecustomer ? -1 : 0}
+                        />
                     </div>
                 </div>
-                <a onClick={(e) => changeOtherMethod(e, "renter")} className="text-sm text-left mb-5 text-gray-500 hover:text-yellow-500">{showMobileRenter == false ? t("btnSignUpViaMobile") : t("btnSignUpViaEmail")}</a>
+                <a onClick={(e) => changeOtherMethod(e, "customer")} className="text-sm text-left mb-5 text-gray-500 hover:text-yellow-500">{showMobilecustomer == false ? t("btnSignUpViaMobile") : t("btnSignUpViaEmail")}</a>
 
 
                 <div className="divider mb-3">
@@ -104,10 +124,10 @@ export default function SenderInput() {
                         <i class="fa-solid fa-qrcode mr-2"></i>
                         {t("btnScanIDCard")}
                     </button>
-                    <button class="flex-1 text-white bg-yellow-500 border-0 p-2 focus:outline-none hover:bg-yellow-600 rounded text-base">
+                    {/* <button class="flex-1 text-white bg-yellow-500 border-0 p-2 focus:outline-none hover:bg-yellow-600 rounded text-base">
                         <i class="fa-solid fa-users-viewfinder mr-2"></i>
                         {t("btnFaceRecognize")}
-                    </button>
+                    </button> */}
                 </div>
 
 
@@ -133,34 +153,44 @@ export default function SenderInput() {
                         <div>
                             <Input label={t("labelReceiverName")}
                                 id="inpReceiverFullname"
-                                name="receiver.fullname"
+                                name="receiver.fullName"
                                 type="text"
                                 placeholder={t("plcFullname")}
-                                value={form.receiver.fullname}
-                                onChange={e => setValueInFormHandler(e)} />
+                                value={form.receiver.fullName||order.receiver.fullName}
+                                onChange={setValueInFormHandler}
+                                onBlur={updateOrderHandler}
+                            />
                         </div>
 
                         <div className="relative overflow-hidden h-[88px] mb-0">
-                            <div className={`absolute inset-0 ${showMobileReceiver ? "animate-slideOutLeft pointer-events-none" : "animate-slideInLeft"}`}>
+                            <div className={`absolute inset-0 ${showMobileReceiver ? "animate-slideOutLeft" : "animate-slideInLeft"}`}>
                                 <Input label={t("labelRenterEmail")}
                                     id="inpEmailReceiver"
                                     name="receiver.email"
                                     type="email"
                                     placeholder={t("plcEmail")}
-                                    value={form.receiver.email}
-                                    onChange={e => setValueInFormHandler(e)} />
+                                    value={form.receiver.email||order.receiver.email}
+                                    onChange={setValueInFormHandler}
+                                    onBlur={updateOrderHandler}
+                                    disabled={showMobileReceiver}
+                                    tabIndex={showMobileReceiver ? -1 : 0}
+                                />
 
 
                             </div>
 
-                            <div className={`absolute inset-0 ${showMobileReceiver ? "animate-slideInRight" : "animate-slideOutRight pointer-events-none"}`}>
+                            <div className={`absolute inset-0 ${showMobileReceiver ? "animate-slideInRight" : "animate-slideOutRight"}`}>
                                 <Input label={t("labelRenterPhone")}
                                     id="inpPhoneReceiver"
                                     name="receiver.mobile"
                                     type="tel"
                                     placeholder={t("plcPhone")}
-                                    value={form.receiver.mobile}
-                                    onChange={e => setValueInFormHandler(e)} />
+                                    value={form.receiver.mobile||order.receiver.mobile}
+                                    onChange={setValueInFormHandler}
+                                    onBlur={updateOrderHandler}
+                                    disabled={!showMobileReceiver}
+                                    tabIndex={!showMobileReceiver ? -1 : 0}
+                                />
                             </div>
                         </div>
 
@@ -168,7 +198,7 @@ export default function SenderInput() {
                     </div>
                 </div>
 
-                
+
             </div>
 
 
