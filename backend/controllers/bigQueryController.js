@@ -69,7 +69,8 @@ export async function getInitialData(req, res) {
         const priceList = await query.getPriceList(process.env.DEVICE_NO);
         const campus = await query.getCampus(process.env.DEVICE_NO);
         const availableLockers=await query.getLockersAmount(process.env.DEVICE_NO);
-        return res.json({ code: 1, message: "Lấy dữ liệu khởi tạo thành công", data: { priceList, campus,availableLockers } });
+        const vouchers=await query.getPublicVoucher();
+        return res.json({ code: 1, message: "Lấy dữ liệu khởi tạo thành công", data: { priceList, campus,availableLockers,vouchers } });
 
     } catch (err) {
         return res.json({ code: 0, message: "Lấy dữ liệu khởi tạo thất bại: ", err });

@@ -101,20 +101,30 @@ export async function getCampus(deviceNo) {
     return castingResult;
 }
 
-export async function getLockersAmount(deviceNo){
-    const query=`SELECT LCK.SIZE, COUNT(LCK.SIZE) AS AMOUNT
+export async function getLockersAmount(deviceNo) {
+    const query = `SELECT LCK.SIZE, COUNT(LCK.SIZE) AS AMOUNT
     FROM \`LUG.LOCKER\` as LCK, \`LUG.CAMPUS\` as CMP
     WHERE  LCK.CAMPUS_ID=CMP.CAMPUS_ID AND CMP.DEVICE_NO=@deviceNo
     GROUP BY LCK.SIZE`;
 
-    const option={
+    const option = {
         query,
-        params:{
-            deviceNo:deviceNo
+        params: {
+            deviceNo: deviceNo
         }
     }
 
-    const [rows]=await bq.query(option);
+    const [rows] = await bq.query(option);
+    return rows;
+}
+
+export async function getPublicVoucher() {
+    const table = ["PROMOTION_CAMPAIGN", "VOUCHER"];
+    const query = `   SELECT VOUC.VOUCHER_ID,CAMP.CAMPAIGN_TITLE,CAMP.DISCOUNT_VALUE,CAMP.EXPIRED_DATE,CAMP.CAMPAIGN_DESCRIPTION,CAMP.IS_PARALLEL
+                    FROM \`${dataset}.${table[0]}\` as CAMP,  \`${dataset}.${table[1]}\` as VOUC
+                    WHERE CAMP.CAMPAIGN_ID=VOUC.CAMPAIGN_ID AND IS_PUBLIC=1 AND VOUC.VALID_STATUS=0 
+                    AND CAMP.APPLIED_DATE<=CURRENT_TIMESTAMP() AND CAMP.EXPIRED_DATE IS NULL OR CAMP.EXPIRED_DATE>CURRENT_TIMESTAMP()`;
+    const [rows] = await bq.query(query);
     return rows;
 }
 
