@@ -6,6 +6,7 @@ export const InitialDataContext = createContext();
 export function InitialDataProvider({ children }) {
     const [priceList, setPriceList] = useState([]);
     const [campus, setCampus] = useState(null);
+    const [vouchers, setVouchers]=useState([]);
     const [availableBoxes,setAvailableBoxes]=useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -102,16 +103,19 @@ export function InitialDataProvider({ children }) {
             let localPrice = loadFromStorage("priceList");
             let localCampus = loadFromStorage("campus");
             let localAvailableBoxes=loadFromStorage("availableBoxes");
+            let localVouchers=loadFromStorage("vouchers");
 
             const isExistLocal =    Array.isArray(localPrice) && localPrice.length > 0 && 
                                     Array.isArray(localCampus) && localCampus.length > 0&&
-                                    Array.isArray(localAvailableBoxes) && localAvailableBoxes.length > 0;
+                                    Array.isArray(localAvailableBoxes) && localAvailableBoxes.length > 0&&
+                                    Array.isArray(localVouchers) && localVouchers.length > 0;
 
 
             if (isExistLocal) {
                 setPriceList(localPrice);
                 setCampus(localCampus);
                 setAvailableBoxes(localAvailableBoxes);
+                setVouchers(localVouchers);
                 // console.log("Local tồn tại:", { localPrice, localCampus,localAvailableBoxes });
                 return;
             }
@@ -120,6 +124,7 @@ export function InitialDataProvider({ children }) {
             localPrice = res.data?.data?.priceList || [];
             localCampus = res.data?.data?.campus || [];
             localAvailableBoxes=res.data?.data?.availableLockers||[];
+            localVouchers=res.data?.data?.vouchers||[];
             
 
             // console.log("API trả về:", { localPrice, localCampus,localAvailableBoxes });
@@ -127,13 +132,15 @@ export function InitialDataProvider({ children }) {
             setPriceList(localPrice);
             setCampus(localCampus);
             setAvailableBoxes(localAvailableBoxes);
+            setVouchers(localVouchers);
 
             saveToStorage("priceList", localPrice);
             saveToStorage("campus", localCampus);
             saveToStorage("availableBoxes",localAvailableBoxes);
+            saveToStorage("vouchers",localVouchers);
 
         } catch (err) {
-            console.log("Có vấn đề rồi:", err);
+            console.log("Khởi tạo toàn trang thất bại", err);
         } finally{
             setLoading(false);
         }
@@ -143,14 +150,37 @@ export function InitialDataProvider({ children }) {
         initData();
     }, []);
 
+    function getUnitPriceByPriceListID(priceListID){
+        if(!priceList.length)return 0;
+        const priceItem=priceList.find(function(item){
+            return item.PRICE_LIST_ID===priceListID;
+        })
+        const price=priceItem?priceItem.UNIT_PRICE:0;
+        return price;
+    }
+     function getTaxRateByPriceListID(priceListID){
+        if(!priceList.length)return 0;
+        const priceItem=priceList.find(function(item){
+            return item.PRICE_LIST_ID===priceListID;
+        })
+        const taxRate=priceItem?priceItem.TAX_RATE:0;
+        return taxRate;
+    }
+
     function resetInitialData() {
         localStorage.removeItem("priceList");
         localStorage.removeItem("campus");
+        localStorage.removeItem("availableBoxes");
+        localStorage.removeItem("vouchers");
         initData();
     }
 
     return (
-        <InitialDataContext.Provider value={{ priceList, campus,loading, setPriceList, setCampus, resetInitialData, filterTrialPrice, getLockerPriceInfo, getLockersInfo, getALockerBySize }}>{children}</InitialDataContext.Provider>
+        <InitialDataContext.Provider value={{ 
+            priceList, campus,vouchers,loading, 
+            setPriceList, setCampus, resetInitialData, filterTrialPrice, 
+            getLockerPriceInfo, getLockersInfo, getALockerBySize,
+            getUnitPriceByPriceListID,getTaxRateByPriceListID}}>{children}</InitialDataContext.Provider>
     );
 
 

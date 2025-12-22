@@ -1,6 +1,4 @@
 import { createContext, useState, useEffect } from "react";
-import { Promotion } from '../data/Data';
-
 export const OrderContext = createContext();
 
 export const defaultOrder = {
@@ -23,18 +21,18 @@ export const defaultOrder = {
     locker: {
         id: undefined,
         sizeIndex: undefined,
-        sizeLetter: 'M'
+        sizeLetter: undefined
     },
     order: {
         id: undefined,
         subID: undefined,
         rentalTimeChoice: undefined,
-        rentalTime: 4,
-        maxRentalTime: 4,
+        rentalTime: 0,
+        maxRentalTime: 0,
         checkIn: null,
         checkOut: null,
         finalCheckOut: null,
-        discountCode: "",
+        discountCodes: [],
         discountPrice: 0,
         subTotal: 0,
         tax: 0,
@@ -70,6 +68,7 @@ export function OrderProvider({ children }) {
         localStorage.setItem("order", JSON.stringify(order));
         // console.log("OrderContext order changed:", order);
     }, [order]);
+    
 
 
     function resetOrder() {

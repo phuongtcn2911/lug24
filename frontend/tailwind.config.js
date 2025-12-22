@@ -43,8 +43,16 @@ export default {
           "100%": { maxHeight: "400px", opacity: "1", transform: "translateY(0)" },
         },
         collapse: {
-          "0%": {maxHeight: "400px",opacity: "1",transform: "translateY(0)"},
-          "100%": {maxHeight: "0",opacity: "0",transform: "translateY(-12px)"},
+          "0%": { maxHeight: "400px", opacity: "1", transform: "translateY(0)" },
+          "100%": { maxHeight: "0", opacity: "0", transform: "translateY(-12px)" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0", transform: "scale(0.95)", },
+          "100%": { opacity: "1", transform: "scale(1)", },
+        },
+        fadeOut: {
+          "0%": { opacity: "1", transform: "scale(1)", },
+          "100%": { opacity: "0", transform: "scale(0.95)", },
         }
       },
       animation: {
@@ -54,8 +62,10 @@ export default {
         slideInRight: "slideInRight 0.3s ease-in-out forwards",
         slideOutRight: "slideOutRight 0.3s ease-in-out forwards",
         slideInLeft: "slideInLeft 0.3s ease-in-out forwards",
-        expand:"expand 0.35s ease-out forwards",
-        collapse:"collapse 0.25s ease-in forwards",
+        expand: "expand 0.35s ease-out forwards",
+        collapse: "collapse 0.25s ease-in forwards",
+        fadeIn: "fadeIn 0.5s ease-out forwards",
+        fadeOut: "fadeOut 0.5s ease-in forwards",
       },
     },
   },

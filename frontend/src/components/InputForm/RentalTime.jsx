@@ -3,12 +3,15 @@ import DatePicker from "./DatePicker.jsx";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Stack } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
+
 import "dayjs/locale/vi";
 import "dayjs/locale/en";
+
 import { InitialDataContext } from "../../data/InitialDataContext.jsx";
 import { OrderContext } from "../../data/OrderContext.jsx";
+import { createPriceListID } from "./OrderForm.jsx";
 
 export default function RentalTime() {
     const { t, i18n } = useTranslation();
@@ -16,9 +19,10 @@ export default function RentalTime() {
     const { order, setOrder, updateOrder } = useContext(OrderContext);
     const { campus, loading } = useContext(InitialDataContext);
     const [workingTime, setWorkingTime] = useState({
-        open: dayjs(),
-        closed: dayjs()
+        open: null,
+        closed: null
     });
+    const hasLoadFirstTime = useRef(false);
 
     const [isTimeValid, setIsTimeValid] = useState(true);
     const [timeAlert, setTimeAlert] = useState("");
@@ -36,31 +40,40 @@ export default function RentalTime() {
         }
     });
 
-
-    useEffect(() => { console.log(draft) }, [draft]);
-
     useEffect(() => {
         if (!campus) return;
         setWorkingTime({
-            open: dayjs(String(campus[0]?.OPEN_TIME), "HH:mm:ss"),
-            closed: dayjs(String(campus[0]?.CLOSE_TIME), "HH:mm:ss")
+            open: parseTime(campus[0]?.OPEN_TIME),
+            closed: parseTime(campus[0]?.CLOSE_TIME)
         });
+
     }, [campus]);
 
+    // useEffect(() => {
+    //     console.log("Khởi tạo giờ mở cửa: ", workingTime.open);
+    //     console.log("Khởi tạo giờ đóng cửa: ", workingTime.closed);
+    // }, [workingTime]);
+
     useEffect(() => {
+        if (hasLoadFirstTime.current) return;
         if (!workingTime.open || !workingTime.closed) return;
 
-        let opt = order?.order.rentalTimeChoice !== undefined ? order.order.rentalTimeChoice : draft.order.rentalTimeChoice;
-        console.log("opt lúc khởi tạo: ",opt);
+        hasLoadFirstTime.current = true;
+
+        let opt = order?.order.rentalTimeChoice !== undefined ? parseInt(order.order.rentalTimeChoice) : parseInt(draft.order.rentalTimeChoice);
         const hourChoices = [4, 6];
         let rentalTime = hourChoices[opt];
+        console.log("rentalTime lúc khởi tạo: ", rentalTime);
 
         const startDate = order?.order.checkIn ? dayjs(order.order.checkIn) : roundDate();
         let predictEnd = order?.order.checkOut ? dayjs(order.order.checkOut) : startDate.add(rentalTime, "hour");
+        console.log("Dự đoán ngày trả lúc khởi tạo: ", predictEnd);
         let choiceList = [true, true];
 
+        console.log("Có ngoài giờ không? ", isOutWorkingTime(predictEnd));
+
         if (isOutWorkingTime(predictEnd)) {
-            opt =1;
+            opt = 1;
             rentalTime = hourChoices[opt];
             choiceList[opt] = false;
             predictEnd = calcEndDate(startDate, rentalTime);
@@ -69,7 +82,7 @@ export default function RentalTime() {
         let endDate = predictEnd;
 
         console.log(choiceList);
-        console.log("Chọn cái option: ",opt);
+        console.log("Chọn cái option: ", opt);
 
         setChooseRentalChoices(choiceList);
 
@@ -83,11 +96,6 @@ export default function RentalTime() {
                 checkOut: endDate
             }
         }));
-
-        // updateOrder("order", "rentalTimeChoice", opt);
-        // updateOrder("order", "rentalTime", rentalTime);
-        // updateOrder("order", "checkIn", startDate);
-        // updateOrder("order", "checkOut", endDate);
     }, [workingTime]);
 
     useEffect(() => {
@@ -96,7 +104,13 @@ export default function RentalTime() {
             setIsTimeValid(true);
             setTimeAlert("");
         }
-    }, [draft.order.checkOut])
+    }, [draft.order.checkOut]);
+
+    useEffect(()=>{
+         if(order.order.rentalTimeChoice===null||order.locker.sizeLetter===null) return;
+        const priceListID=createPriceListID(order.order.rentalTimeChoice,order.locker.sizeLetter);
+        updateOrder("order","priceListID",priceListID);
+    },[order.order.rentalTimeChoice,order.locker.sizeLetter]);
 
 
 
@@ -127,13 +141,46 @@ export default function RentalTime() {
 
     function isOutWorkingTime(timeValue) {
         const hour = timeValue.hour();
+        // console.log("Giờ dự đoán: ", hour);
         const minute = timeValue.minute();
+        // console.log("Phút dự đoán: ", minute);
         const open = workingTime.open;
+        // console.log("Giờ mở cửa: ", open);
         const closed = workingTime.closed;
+        // console.log("Giờ đóng cửa: ", closed);
 
         const beforeOpen = hour < open.hour() || (hour === open.hour() && minute < open.minute());
         const afterClosed = hour > closed.hour() || (hour === closed.hour() && minute > closed.minute());
         return beforeOpen || afterClosed;
+    }
+
+    function parseTime(time) {
+        const [hour, min, sec] = time.split(":").map(Number);
+        const newTime = dayjs().set("hour", hour).set("minute", min).set("second", sec).set("millisecond", 0);
+        return newTime;
+    }
+
+    function roundMaxRentalTime(hours) {
+        // console.log("Trước khi làm tròn: ", hours);
+        const fullRoundHour = Math.trunc(hours / 12);
+        // console.log("Phần đủ: ", fullRoundHour);
+        const remainedHour = hours % 12;
+        // console.log("Phần dư: ", remainedHour);
+        let roundedRemainedHour = 0;
+        if (remainedHour === 0 || remainedHour === 4 || remainedHour === 6 || remainedHour === 12) {
+            roundedRemainedHour = remainedHour;
+        }
+        else if (remainedHour < 6) {
+            roundedRemainedHour = 6;
+        }
+        else {
+            roundedRemainedHour = 12;
+        }
+        // console.log("Phần dư sau khi làm tròn: ", roundedRemainedHour);
+
+        const totalHour = fullRoundHour * 12 + roundedRemainedHour;
+        // console.log("Tổng: ", totalHour);
+        return totalHour;
     }
 
     //HANDLER
@@ -150,13 +197,16 @@ export default function RentalTime() {
                 ...prev.order,
                 rentalTimeChoice: opt,
                 rentalTime: rentalTime,
+                maxRentalTime: rentalTime,
                 checkIn: startDate,
                 checkOut: endDate,
             }
         }));
 
+
         updateOrder("order", "rentalTimeChoice", opt);
         updateOrder("order", "rentalTime", rentalTime);
+        updateOrder("order", "maxRentalTime", rentalTime);
         updateOrder("order", "checkIn", startDate);
         updateOrder("order", "checkOut", endDate);
     }
@@ -193,20 +243,24 @@ export default function RentalTime() {
         setIsTimeValid(true);
         setTimeAlert("");
 
+        const actualRentalTime=roundMaxRentalTime(duration);
+
         // Update draft
         setDraft(prev => ({
             ...prev,
             order: {
                 ...prev.order,
                 checkOut: roundedEnd,
-                rentalTime: duration
+                rentalTime: duration,
+                maxRentalTime:actualRentalTime,
             }
         }));
 
         // Sync OrderContext
-    
-        updateOrder("order","rentalTime",duration);
-        updateOrder("order","checkOut",roundedEnd);
+
+        updateOrder("order", "rentalTime", duration);
+        updateOrder("order", "checkOut", roundedEnd);
+        updateOrder("order","maxRentalTime",actualRentalTime);
     };
 
     function setDraftField(field, e) {
@@ -233,18 +287,22 @@ export default function RentalTime() {
                                         id={`rentalChoice_${key}`}
                                         type="radio"
                                         value={key}
-                                        checked={order.order.rentalTimeChoice === key||draft.order.rentalTimeChoice===key}
-                                        disabled={chooseRentalChoices[key]}
+                                        checked={order.order.rentalTimeChoice === key || draft.order.rentalTimeChoice === key}
+                                        // disabled={!chooseRentalChoices[key]}
                                         name="order.rentalTimeChoice"
                                         onChange={changeRentalOpt}
                                         className={`w-4 h-4  border-default-medium bg-neutral-secondary-medium rounded-full 
                                                     checked:border-brand 
                                                     focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none
-                                                    ${chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}`} />
+                                                    `} />
+
+                                    {/* ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"} */}
                                     <label
                                         for={`rentalChoice_${key}`}
                                         className={`w-full py-3 select-none ms-2 text-base font-medium text-heading text-left
-                                        ${chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}`}>{item}</label>
+                                        `}>{item}</label>
+
+                                    {/* ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"} */}
                                 </div>
                             </li>
                         );

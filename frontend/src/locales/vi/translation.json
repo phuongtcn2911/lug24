@@ -180,7 +180,7 @@
         "title": "Lưu ý",
         "content": [
             "Thời gian thuê được làm tròn gần nhất với các bội số: 6h, 12h, 24h và 48h. Trong trường hợp quý khách lựa chọn ký gửi vượt các mốc thời gian trên thì sẽ được tính ở mốc thời gian kế tiếp.",
-            "Thời gian kí gửi tối đa của quý khách là 48 giờ. Sau thời gian lấy hàng được niêm yết, quý khách có 15 phút quá hạn không tính phí. Sau thời gian này, phí quá hạn sẽ được áp dụng.",
+            "Thời gian kí gửi tối đa của quý khách là 48 giờ. Sau thời gian lấy hàng được niêm yết, quý khách có 10 phút quá hạn không tính phí. Sau thời gian này, phí quá hạn sẽ được áp dụng.",
             "Lưu ý về thời gian hoạt động tại cơ sở ký gửi có thể ảnh hưởng đến việc lấy hàng của quý khách."
         ]
     },
@@ -269,5 +269,8 @@
     "labelOtherMethod": "hoặc mở tủ bằng",
     "btnFaceRecognize": "Nhận diện gương mặt",
     "scanQRInvalidNoti": "Mã QR không hợp lệ",
-    "plchldScanCodeID": "Đưa mã QR vào khung quét"
+    "plchldScanCodeID": "Đưa mã QR vào khung quét",
+    "labelExpiredDate":"Hạn sử dụng",
+    "labelUnlimited":"Không giới hạn",
+    "btnCancel":"Hủy bỏ"
 }

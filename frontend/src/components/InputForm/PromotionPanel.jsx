@@ -1,37 +1,36 @@
 import { useTranslation } from "react-i18next";
 import VoucherBadge from "./VoucherBadge";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import ModalPromotion from "../Modal/ModalPromotion";
+import { VoucherContext } from "../../data/VoucherContext";
 
 export default function PromotionPanel() {
+    const { voucherList, addItem, removeItem } = useContext(VoucherContext);
     const { t } = useTranslation();
-    const [codeList, setCodeList] = useState([]);
     const [isEmptyCode, setIsEmptyCode] = useState(true);
     const [error, setError] = useState();
     const inputRef = useRef(null);
+    const [codeList, setCodeList] = useState([]);
+    const [isOpenDialog, setIsOpenDialog] = useState(false);
 
     function inputCodeHandler() {
-        const value = inputRef.current.value.replace(/\s+/g,"").toUpperCase();
+        const value = inputRef.current.value.replace(/\s+/g, "").toUpperCase();
 
-        if (!value) return;
-        if (isExistCode(value)!==-1) {
+        if (addItem(value) == false) {
             setError("Mã đã được thêm");
             return;
         }
 
-        setCodeList(prev => [...prev, value]);
+        // setCodeList(prev => [...prev, value]);
         inputRef.current.value = "";
         inputRef.current.focus();
         setIsEmptyCode(true);
         setError("");
     }
 
-    function isExistCode(code) {
-        return codeList.findIndex(function (item) { return code === item; });
-    }
 
     function removeCodeHandler(code) {
-        const newList = codeList.filter(function (item) { return item !== code; });
-        setCodeList(newList);
+        removeItem(code);
     }
 
     function changeCodeHandler() {
@@ -43,12 +42,13 @@ export default function PromotionPanel() {
         }
     }
 
-    useEffect(() => { console.log(codeList) }, [codeList]);
-
 
     return (
         <>
-            <h3 className="my-2 text-left text-lg font-medium text-gray-900 ">{t("labelPromoCode")}</h3>
+            <h3 className="my-2 text-left text-lg font-medium text-gray-900 ">
+                <span>{`${t("labelPromoCode")} `}</span>
+                <i class="fa-solid fa-circle-info text-emerald-500 cursor-pointer" onClick={() => setIsOpenDialog(true)}></i>
+            </h3>
 
             <div class="relative flex h-10 w-full min-w-[200px] max-w-[24rem]">
                 <button
@@ -68,7 +68,7 @@ export default function PromotionPanel() {
                     ref={inputRef}
                     type="text"
                     class=" peer h-full w-full rounded-[7px]
-                            border border-blue-gray-200
+                            border border-gray-300
                             placeholder-shown:border-t-blue-gray-200
                             bg-transparent
                             px-3 py-3 pr-20
@@ -77,7 +77,7 @@ export default function PromotionPanel() {
                             outline-none"
                     placeholder=" "
                     onChange={() => changeCodeHandler()}
-                    onFocus={()=>setError("")}
+                    onFocus={() => setError("")}
                     required
                 />
                 <label class="before:content[' '] after:content[' '] pointer-events-none 
@@ -101,26 +101,20 @@ export default function PromotionPanel() {
             {error && <p className="text-xs text-red-500 italic text-right">{error}</p>}
 
             <div className="my-3 flex flex-wrap gap-2">
-                {codeList.map(function (item) {
+                {voucherList.map(function (item) {
                     return (
                         <VoucherBadge key={item} vcCode={item} removeHandler={removeCodeHandler}></VoucherBadge>
                     )
-
                 })}
-
-
             </div>
-
-
 
             <link
                 rel="stylesheet"
                 href="https://unpkg.com/@material-tailwind/html@latest/styles/material-tailwind.css"
             />
 
-
             <script src="https://unpkg.com/@material-tailwind/html@latest/scripts/ripple.js"></script>
 
-
+            <ModalPromotion isOpen={isOpenDialog} onClose={() => setIsOpenDialog(false)}></ModalPromotion>
         </>);
 }

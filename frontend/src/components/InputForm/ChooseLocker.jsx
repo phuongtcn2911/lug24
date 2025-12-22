@@ -7,13 +7,14 @@ import { InitialDataContext } from "../../data/InitialDataContext.jsx";
 import PaymentMethods from "../ExtraPart/PaymentMethods.jsx";
 import RentalTime from "./RentalTime.jsx";
 import { OrderContext } from "../../data/OrderContext.jsx";
+import { createPriceListID } from "./OrderForm.jsx";
 
 export default function ChooseLocker() {
     const { t, i18n } = useTranslation();
     const [lockerPriceList, setLockerPriceList] = useState([]);
     const { priceList, getLockersInfo, loading } = useContext(InitialDataContext);
-    const { order, setOrder,updateOrder } = useContext(OrderContext);
-    const [ draft, setDraft ] = useState({
+    const { order, setOrder, updateOrder } = useContext(OrderContext);
+    const [draft, setDraft] = useState({
         locker: {
             id: "",
             sizeIndex: "",
@@ -36,7 +37,7 @@ export default function ChooseLocker() {
             total: 0
         }
     });
-   
+
     useEffect(() => {
         if (priceList.length > 0) {
             setLockerPriceList(getLockersInfo());
@@ -45,31 +46,30 @@ export default function ChooseLocker() {
 
     useEffect(() => {
         console.log(lockerPriceList);
-        
     }, [lockerPriceList]);
 
-    function changeSize(e){
-        const [group,indexField,letterField]=e.target.name.split(".");
-        const amount=e.target.availableBoxes;
-        let sizeLetter=null;
-        let sizeIndex=null;
-        
-        if(amount!==0){
-            sizeLetter=e.target.value;
+    function changeSize(e) {
+        const [group, indexField, letterField] = e.target.name.split(".");
+        const amount = e.target.availableBoxes;
+        let sizeLetter = null;
+        let sizeIndex = null;
 
-            if(sizeLetter=="S")sizeIndex=1;
-            else if(sizeLetter=="M")sizeIndex=2;
-            else if(sizeLetter=="L")sizeIndex=3;
-            else if(sizeLetter=="XL")sizeIndex=4;
+        if (amount !== 0) {
+            sizeLetter = e.target.value;
+
+            if (sizeLetter == "S") sizeIndex = 1;
+            else if (sizeLetter == "M") sizeIndex = 2;
+            else if (sizeLetter == "L") sizeIndex = 3;
+            else if (sizeLetter == "XL") sizeIndex = 4;
         }
 
 
-        updateOrder(group,letterField,e.target.value);
-        updateOrder(group,indexField,sizeIndex);
+        updateOrder(group, letterField, sizeLetter);
+        updateOrder(group, indexField, sizeIndex);
 
-        setDraft(prev=>({
+        setDraft(prev => ({
             ...prev,
-            locker:{
+            locker: {
                 ...prev.locker,
                 sizeIndex,
                 sizeLetter
@@ -77,9 +77,13 @@ export default function ChooseLocker() {
         }));
     }
 
-    useEffect(()=>{console.log(draft)},[draft]);
+    useEffect(() => {
+        if (order.order.rentalTimeChoice === null || order.locker.sizeLetter === null) return;
+        const priceListID = createPriceListID(order.order.rentalTimeChoice, order.locker.sizeLetter);
+        updateOrder("order", "priceListID", priceListID);
+    }, [order.order.rentalTimeChoice, order.locker.sizeLetter]);
 
-
+    useEffect(() => { console.log(draft) }, [draft]);
 
     return (
 
@@ -102,9 +106,9 @@ export default function ChooseLocker() {
                                     sizeDesc={t("sizeDescription." + index)}
                                     amount={e.availableBoxes}
                                     value={e.size}
-                                    checked={draft.locker.sizeLetter===e.size||order.locker.sizeLetter===e.size}                                    
+                                    checked={draft.locker.sizeLetter === e.size || order.locker.sizeLetter === e.size}
                                     onChange={changeSize}
-                                    disabled={e.availableBoxes===0?true:false}
+                                    disabled={e.availableBoxes === 0 ? true : false}
                                 ></LockerRadio>);
                         })
                 }

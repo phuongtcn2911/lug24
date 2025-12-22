@@ -9,6 +9,8 @@ import { PaymentProgressProvider } from '../data/PaymentProgressContext.jsx';
 import "../i18n.js";
 import { InitialDataProvider } from '../data/InitialDataContext.jsx';
 import 'flowbite'
+import { VoucherProvider } from '../data/VoucherContext.jsx';
+
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
 
@@ -16,9 +18,11 @@ createRoot(document.getElementById('root')).render(
     <InitialDataProvider>
       <TimerProvider>
         <OrderProvider>
-          <PaymentProgressProvider>
-            <App />
-          </PaymentProgressProvider>
+          <VoucherProvider>
+            <PaymentProgressProvider>
+              <App />
+            </PaymentProgressProvider>
+          </VoucherProvider>
         </OrderProvider>
       </TimerProvider>
     </InitialDataProvider>

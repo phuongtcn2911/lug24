@@ -32,7 +32,7 @@
     "labelTax": "Tax (if capable)",
     "labelTotal": "Total",
     "labelSessionDuration": "The session will end in",
-    "labelAvailableBoxes":"Empty Boxes",
+    "labelAvailableBoxes": "Empty Boxes",
     "btnCheckout": "Checkout",
     "alertEmpty": "This field is required",
     "alertEmailInvalid": "Invalid email",
@@ -83,7 +83,7 @@
     "divFillInfo": "Use information from",
     "btnScanIDCard": "Scan Citizen ID Card",
     "btnReservation": "Book a locker",
-    "btnApply":"Apply",
+    "btnApply": "Apply",
     "msgConfirm": [
         "By selecting",
         "\"Confirmation\"",
@@ -180,12 +180,14 @@
         "title": "Note:",
         "content": [
             "Rental time is rounded up to the nearest multiple of 6h, 12h, 24h, or 48h. If you choose a deposit duration that exceeds these thresholds, it will be charged at the next applicable time block.",
-            "The maximum deposit time allowed is 48 hours. After the posted pickup time, you have a 15-minute grace period free of charge. Beyond this period, overtime fees will apply.",
+            "The maximum deposit time allowed is 48 hours. After the posted pickup time, you have a 10-minute grace period free of charge. Beyond this period, overtime fees will apply.",
             "Please note that the operating hours of the baggage deposit facility may affect your ability to pick up your items."
         ]
     },
     "paymentMethod": [
-        "QR Code Payment","Zalo Pay","Tap to Pay"
+        "QR Code Payment",
+        "Zalo Pay",
+        "Tap to Pay"
     ],
     "labelChangePaymentMethod": "Change another payment method",
     "progressStatus": [
@@ -266,5 +268,8 @@
     "labelOtherMethod": "or unlock using",
     "btnFaceRecognize": "Face Recognition",
     "scanQRInvalidNoti": "Invalid QR code",
-    "plchldScanCodeID": "Place QR code inside the frame"
+    "plchldScanCodeID": "Place QR code inside the frame",
+    "labelExpiredDate": "Expiration Date",
+    "labelUnlimited": "Unlimited",
+    "btnCancel":"Cancel"
 }
