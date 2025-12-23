@@ -10,7 +10,6 @@ export default function PromotionPanel() {
     const [isEmptyCode, setIsEmptyCode] = useState(true);
     const [error, setError] = useState();
     const inputRef = useRef(null);
-    const [codeList, setCodeList] = useState([]);
     const [isOpenDialog, setIsOpenDialog] = useState(false);
 
     function inputCodeHandler() {

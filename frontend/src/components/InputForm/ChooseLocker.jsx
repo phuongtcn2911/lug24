@@ -7,7 +7,7 @@ import { InitialDataContext } from "../../data/InitialDataContext.jsx";
 import PaymentMethods from "../ExtraPart/PaymentMethods.jsx";
 import RentalTime from "./RentalTime.jsx";
 import { OrderContext } from "../../data/OrderContext.jsx";
-import { createPriceListID } from "./OrderForm.jsx";
+// import { createPriceListID } from "./OrderForm.jsx";
 
 export default function ChooseLocker() {
     const { t, i18n } = useTranslation();
@@ -46,7 +46,39 @@ export default function ChooseLocker() {
 
     useEffect(() => {
         console.log(lockerPriceList);
+        if (lockerPriceList.length === 0) return;
+
+        const firstAvailable = lockerPriceList.find(function (item) {
+            return item.availableBoxes > 0;
+        });
+
+        if (!firstAvailable) return;
+
+        const sizeLetter = firstAvailable?.size;
+        const sizeIndex = convertSizeIndex(sizeLetter);
+
+        setDraft(prev => ({
+            ...prev,
+            locker: {
+                ...prev.locker,
+                sizeIndex,
+                sizeLetter
+            }
+        }));
+
+        updateOrder("locker", "sizeLetter", sizeLetter);
+        updateOrder("locker", "sizeIndex", sizeIndex);
+
     }, [lockerPriceList]);
+
+    function convertSizeIndex(sizeLetter) {
+        let sizeIndex = 0;
+        if (sizeLetter == "S") sizeIndex = 1;
+        else if (sizeLetter == "M") sizeIndex = 2;
+        else if (sizeLetter == "L") sizeIndex = 3;
+        else if (sizeLetter == "XL") sizeIndex = 4;
+        return sizeIndex;
+    }
 
     function changeSize(e) {
         const [group, indexField, letterField] = e.target.name.split(".");
@@ -56,11 +88,7 @@ export default function ChooseLocker() {
 
         if (amount !== 0) {
             sizeLetter = e.target.value;
-
-            if (sizeLetter == "S") sizeIndex = 1;
-            else if (sizeLetter == "M") sizeIndex = 2;
-            else if (sizeLetter == "L") sizeIndex = 3;
-            else if (sizeLetter == "XL") sizeIndex = 4;
+            sizeIndex = convertSizeIndex(sizeLetter);
         }
 
 
@@ -77,13 +105,13 @@ export default function ChooseLocker() {
         }));
     }
 
-    useEffect(() => {
-        if (order.order.rentalTimeChoice === null || order.locker.sizeLetter === null) return;
-        const priceListID = createPriceListID(order.order.rentalTimeChoice, order.locker.sizeLetter);
-        updateOrder("order", "priceListID", priceListID);
-    }, [order.order.rentalTimeChoice, order.locker.sizeLetter]);
+    // useEffect(() => {
+    //     if (order.order.rentalTimeChoice === null || order.locker.sizeLetter === null) return;
+    //     const priceListID = createPriceListID(order.order.rentalTimeChoice, order.locker.sizeLetter);
+    //     updateOrder("order", "priceListID", priceListID);
+    // }, [order.order.rentalTimeChoice, order.locker.sizeLetter]);
 
-    useEffect(() => { console.log(draft) }, [draft]);
+    // useEffect(() => { console.log(draft) }, [draft]);
 
     return (
 

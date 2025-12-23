@@ -11,7 +11,7 @@ import "dayjs/locale/en";
 
 import { InitialDataContext } from "../../data/InitialDataContext.jsx";
 import { OrderContext } from "../../data/OrderContext.jsx";
-import { createPriceListID } from "./OrderForm.jsx";
+// import { createPriceListID } from "./OrderForm.jsx";
 
 export default function RentalTime() {
     const { t, i18n } = useTranslation();
@@ -96,6 +96,13 @@ export default function RentalTime() {
                 checkOut: endDate
             }
         }));
+
+        updateOrder("order", "rentalTimeChoice", opt);
+        updateOrder("order", "rentalTime", rentalTime);
+        updateOrder("order", "maxRentalTime", rentalTime);
+        updateOrder("order","checkIn",startDate);
+        updateOrder("order","checkOut",endDate);
+
     }, [workingTime]);
 
     useEffect(() => {
@@ -106,11 +113,6 @@ export default function RentalTime() {
         }
     }, [draft.order.checkOut]);
 
-    useEffect(()=>{
-         if(order.order.rentalTimeChoice===null||order.locker.sizeLetter===null) return;
-        const priceListID=createPriceListID(order.order.rentalTimeChoice,order.locker.sizeLetter);
-        updateOrder("order","priceListID",priceListID);
-    },[order.order.rentalTimeChoice,order.locker.sizeLetter]);
 
 
 
@@ -243,7 +245,7 @@ export default function RentalTime() {
         setIsTimeValid(true);
         setTimeAlert("");
 
-        const actualRentalTime=roundMaxRentalTime(duration);
+        const actualRentalTime = roundMaxRentalTime(duration);
 
         // Update draft
         setDraft(prev => ({
@@ -252,7 +254,7 @@ export default function RentalTime() {
                 ...prev.order,
                 checkOut: roundedEnd,
                 rentalTime: duration,
-                maxRentalTime:actualRentalTime,
+                maxRentalTime: actualRentalTime,
             }
         }));
 
@@ -260,7 +262,7 @@ export default function RentalTime() {
 
         updateOrder("order", "rentalTime", duration);
         updateOrder("order", "checkOut", roundedEnd);
-        updateOrder("order","maxRentalTime",actualRentalTime);
+        updateOrder("order", "maxRentalTime", actualRentalTime);
     };
 
     function setDraftField(field, e) {

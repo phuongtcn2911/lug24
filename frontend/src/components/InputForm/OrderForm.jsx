@@ -4,22 +4,15 @@ import PromotionPanel from "./PromotionPanel.jsx";
 import { useContext, useEffect, useState } from "react";
 import { OrderContext } from "../../data/OrderContext.jsx";
 import { InitialDataContext } from "../../data/InitialDataContext.jsx";
+import ModalHouseRule from "../Modal/ModalHouseRule.jsx";
 
-export function createPriceListID(rentalOpt = null, size = "") {
-
-    if (rentalOpt === null || size === "") return;
-    const rentalID = parseInt(rentalOpt) === 0 ? "PP4H" : "PBUS";
-    const priceListID = `${rentalID}.${size}`;
-    console.log("Price List ID: ", priceListID);
-
-    return priceListID;
-}
 
 export function OrderForm() {
     const { t } = useTranslation();
     const { order, updateOrder } = useContext(OrderContext);
     const { priceList, loading } = useContext(InitialDataContext);
-    const [priceItem, setPriceItem] = useState();
+    const [isEnabledBookingStatus, setsEnabledBookingStatus] = useState(false);
+    const [isOpenHouseRule,setOpenHouseRule]=useState(false);
 
     const [draft, setDraft] = useState({
         priceListID: "",
@@ -43,6 +36,9 @@ export function OrderForm() {
             total: order.order.total
         }
         setDraft(newOrder);
+
+        setsEnabledBookingStatus(checkValidOrderForm());
+
     }, [order]);
 
     useEffect(() => {
@@ -53,7 +49,7 @@ export function OrderForm() {
         const priceItem = priceList.find(
             item => item.PRICE_LIST_ID === order.order.priceListID
         );
-        console.log("Hạng mục giá đã lọc: ",priceItem);
+        console.log("Hạng mục giá đã lọc: ", priceItem);
         if (!priceItem) return;
 
         console.log(priceItem.TAX_RATE);
@@ -79,11 +75,33 @@ export function OrderForm() {
         order.order.discountPrice,
         priceList,
         loading
-
     ]);
 
 
-   
+    function checkValidOrderForm() {
+        //Kiểm tra tính hợp lệ từ thông tin của người dùng
+        //Không kiểm tra dữ liệu liên quan đến việc tính toán
+        const isValidPerson = order.customer.fullName!=="" && (order.customer.mobile!=="" || order.customer.email!=="") && order.receiver.fullName!== ""&& (order.receiver.mobile!=="" || order.receiver.email!=="");
+        const isValidLockerSize = order.locker.sizeLetter !== undefined;
+        const isValidRentalTime = order.order.rentalTime!==0 && order.order.checkIn!==null && order.order.checkOut!==null;
+        const isValidPaymentMethod = order.transaction.paymentMethod !== undefined;
+
+        console.log("Người dùng hợp lệ: ",isValidPerson);
+        console.log("Hộc tủ hợp lệ: ",isValidLockerSize);
+        console.log("Thời gian thuê hợp lệ: ",isValidRentalTime);
+        console.log("Phương thức thanh toán hợp lệ: ",isValidPaymentMethod);
+
+        return isValidPerson && isValidLockerSize && isValidRentalTime && isValidPaymentMethod;
+    }
+
+    function showHouseRule(e){
+        e.preventDefault();
+        setOpenHouseRule(true);
+    }
+
+
+
+
     return (
         <div className="h-full flex flex-col">
             <h2 className="title-font sm:text-2xl text-xl font-medium text-gray-900 mb-4 text-left">
@@ -95,7 +113,7 @@ export function OrderForm() {
                         <p className="text-base font-medium text-heading">{t("labelLockerSize")}</p>
                     </div>
                     <div className="level-right">
-                        <p className="subtitle is-6 has-text-right">{`${draft.sizeLetter ? `${t("sizeUnit")} ${draft.sizeLetter}` : "-"}`}</p>
+                        <p className="text-base text-right">{`${draft.sizeLetter ? `${t("sizeUnit")} ${draft.sizeLetter}` : "-"}`}</p>
                     </div>
                 </div>
                 <div className="level">
@@ -106,7 +124,7 @@ export function OrderForm() {
                         </p>
                     </div>
                     <div className="level-right">
-                        <p className="subtitle is-6 has-text-right">{`${draft.rentalTime ? `${draft.rentalTime} ${t("rentalTimeUnit")}` : "-"}`}</p>
+                        <p className="text-base text-right">{`${draft.rentalTime ? `${draft.rentalTime} ${t("rentalTimeUnit")}` : "-"}`}</p>
                     </div>
                 </div>
                 <div className="level">
@@ -117,7 +135,7 @@ export function OrderForm() {
                         </p>
                     </div>
                     <div className="level-right">
-                        <p className="subtitle is-6 has-text-right">{`${draft.maxRentalTime ? `${draft.maxRentalTime} ${t("rentalTimeUnit")}` : "-"}`}</p>
+                        <p className="text-base text-right">{`${draft.maxRentalTime ? `${draft.maxRentalTime} ${t("rentalTimeUnit")}` : "-"}`}</p>
                     </div>
                 </div>
                 <div className="divider"></div>
@@ -128,7 +146,7 @@ export function OrderForm() {
                         <p className="text-base font-medium text-heading">{t("labelSubTotal")}</p>
                     </div>
                     <div className="level-right">
-                        <p className="subtitle is-6 has-text-right">
+                        <p className="text-base text-right">
                             {
                                 loading ?
                                     <span class="loading loading-spinner loading-xs"></span>
@@ -143,7 +161,7 @@ export function OrderForm() {
                         <p className="text-base font-medium text-heading">{t("labelDiscount")}</p>
                     </div>
                     <div className="level-right">
-                        <p className="subtitle is-6 has-text-right">{CurrencyFormat(draft.discountPrice)}</p>
+                        <p className="text-base text-right">{CurrencyFormat(draft.discountPrice)}</p>
                     </div>
                 </div>
                 <div className="level">
@@ -151,7 +169,7 @@ export function OrderForm() {
                         <p className="text-base font-medium text-heading">{t("labelTax")}</p>
                     </div>
                     <div className="level-right">
-                        <p className="subtitle is-6 has-text-right">{CurrencyFormat(draft.tax)}</p>
+                        <p className="text-base text-right">{CurrencyFormat(draft.tax)}</p>
                     </div>
                 </div>
                 <div className="divider mb-5"></div>
@@ -160,22 +178,24 @@ export function OrderForm() {
                         <p className="text-lg font-medium text-heading">{t("labelTotal")}</p>
                     </div>
                     <div className="level-right">
-                        <p className="subtitle is-5 has-text-right is-bold">{CurrencyFormat(draft.total)}</p>
+                        <p className="text-lg text-right">{CurrencyFormat(draft.total)}</p>
                     </div>
                 </div>
 
                 <button className="button is-warning rounded-xl is-fullwidth"
-                    disabled={true}
-                    onClick={true}
+                    // disabled={!isEnabledBookingStatus}
+                    disabled={false}
+                    onClick={showHouseRule}
                 >
                     <span className="icon">
                         <i className="fa-solid fa-warehouse"></i>
                     </span>
                     <span>{t("btnReservation")}</span>
                 </button>
-
-
             </div>
+            <ModalHouseRule
+            isOpen={isOpenHouseRule}
+            onClose={()=>setOpenHouseRule(false)}></ModalHouseRule>
         </div>
     );
 

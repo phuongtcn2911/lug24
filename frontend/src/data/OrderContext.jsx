@@ -68,15 +68,29 @@ export function OrderProvider({ children }) {
         localStorage.setItem("order", JSON.stringify(order));
         // console.log("OrderContext order changed:", order);
     }, [order]);
-    
 
+    useEffect(() => {
+        if (order.order.rentalTimeChoice === null || order.locker.sizeLetter === null) return;
+        const priceListID = createPriceListID(order.order.rentalTimeChoice, order.locker.sizeLetter);
+        updateOrder("order", "priceListID", priceListID);
+    }, [order.order.rentalTimeChoice, order.locker.sizeLetter]);
+
+    function createPriceListID(rentalOpt = null, size = "") {
+    
+        if (rentalOpt === null || size === "") return;
+        const rentalID = parseInt(rentalOpt) === 0 ? "PP4H" : "PBUS";
+        const priceListID = `${rentalID}.${size}`;
+        console.log("Price List ID: ", priceListID);
+    
+        return priceListID;
+    }
 
     function resetOrder() {
         localStorage.removeItem("order");
         setOrder(defaultOrder);
     }
 
-    function updateOrder(group,field,value) {
+    function updateOrder(group, field, value) {
         setOrder(prev => ({
             ...prev,
             [group]: {
@@ -88,7 +102,7 @@ export function OrderProvider({ children }) {
 
 
     return (
-        <OrderContext.Provider value={{ order, setOrder, resetOrder,updateOrder }}>
+        <OrderContext.Provider value={{ order, setOrder, resetOrder, updateOrder }}>
             {children}
         </OrderContext.Provider>
     );
