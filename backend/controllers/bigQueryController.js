@@ -64,13 +64,25 @@ export async function insertCustomer(req, res) {
 
 }
 
+export async function getPrivateVoucher(req, res) {
+    try {
+        const code = req?.query.code;
+        const result = await query.getPrivateVoucher(code);
+        console.log(result);
+        return res.json({ code: 1, message: "Truy vấn thành công",  result  });
+
+    } catch (err) {
+        return res.json({ code: 0, message: "Truy vấn thất bại: ", err });
+    }
+}
+
 export async function getInitialData(req, res) {
     try {
         const priceList = await query.getPriceList(process.env.DEVICE_NO);
         const campus = await query.getCampus(process.env.DEVICE_NO);
-        const availableLockers=await query.getLockersAmount(process.env.DEVICE_NO);
-        const vouchers=await query.getPublicVoucher();
-        return res.json({ code: 1, message: "Lấy dữ liệu khởi tạo thành công", data: { priceList, campus,availableLockers,vouchers } });
+        const availableLockers = await query.getLockersAmount(process.env.DEVICE_NO);
+        const vouchers = await query.getPublicVoucher();
+        return res.json({ code: 1, message: "Lấy dữ liệu khởi tạo thành công", data: { priceList, campus, availableLockers, vouchers } });
 
     } catch (err) {
         return res.json({ code: 0, message: "Lấy dữ liệu khởi tạo thất bại: ", err });

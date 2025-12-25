@@ -1,4 +1,4 @@
-import { BigQueryDate, BigQueryDatetime, BigQueryTime } from "@google-cloud/bigquery";
+import { BigQueryDate, BigQueryDatetime, BigQueryTime, BigQueryTimestamp } from "@google-cloud/bigquery";
 import { getBigQueryConfig } from "../config.js";
 
 const bq = getBigQueryConfig();
@@ -120,12 +120,30 @@ export async function getLockersAmount(deviceNo) {
 
 export async function getPublicVoucher() {
     const table = ["PROMOTION_CAMPAIGN", "VOUCHER"];
-    const query = `   SELECT VOUC.VOUCHER_ID,CAMP.CAMPAIGN_TITLE,CAMP.DISCOUNT_VALUE,CAMP.EXPIRED_DATE,CAMP.CAMPAIGN_DESCRIPTION,CAMP.IS_PARALLEL
+    const query = `   SELECT VOUC.VOUCHER_ID,CAMP.CAMPAIGN_TITLE,CAMP.DISCOUNT_VALUE,CAMP.EXPIRED_DATE,CAMP.CAMPAIGN_DESCRIPTION,CAMP.IS_PARALLEL,VOUC.VALID_STATUS,CAMP.IS_PUBLIC
                     FROM \`${dataset}.${table[0]}\` as CAMP,  \`${dataset}.${table[1]}\` as VOUC
-                    WHERE CAMP.CAMPAIGN_ID=VOUC.CAMPAIGN_ID AND IS_PUBLIC=1 AND VOUC.VALID_STATUS=0 
-                    AND CAMP.APPLIED_DATE<=CURRENT_TIMESTAMP() AND CAMP.EXPIRED_DATE IS NULL OR CAMP.EXPIRED_DATE>CURRENT_TIMESTAMP()`;
+                    WHERE CAMP.CAMPAIGN_ID=VOUC.CAMPAIGN_ID AND CAMP.IS_PUBLIC=1 AND VOUC.VALID_STATUS=0 
+                    AND CAMP.APPLIED_DATE<=CURRENT_TIMESTAMP() AND (CAMP.EXPIRED_DATE IS NULL OR CAMP.EXPIRED_DATE>CURRENT_TIMESTAMP())`;
     const [rows] = await bq.query(query);
     return rows;
+}
+
+export async function getPrivateVoucher(voucherCode) {
+    const table = ["PROMOTION_CAMPAIGN", "VOUCHER"];
+    const query = `  SELECT VOUC.VOUCHER_ID,CAMP.CAMPAIGN_TITLE,CAMP.DISCOUNT_VALUE,CAMP.EXPIRED_DATE,CAMP.CAMPAIGN_DESCRIPTION,CAMP.IS_PARALLEL,VOUC.VALID_STATUS,CAMP.IS_PUBLIC
+                    FROM \`${dataset}.${table[0]}\` as CAMP,  \`${dataset}.${table[1]}\` as VOUC
+                    WHERE CAMP.CAMPAIGN_ID=VOUC.CAMPAIGN_ID AND CAMP.IS_PUBLIC=0 AND VOUC.VALID_STATUS=0 
+                    AND VOUC.VOUCHER_ID=@voucherCode`;
+    const option = {
+        query,
+        params: {
+            voucherCode: voucherCode
+        }
+    }
+    const [results] = await bq.query(option);
+    const castingResult = results.map(row => castingBigQueryData(row));
+    return castingResult;
+
 }
 
 function castingBigQueryData(data) {
@@ -145,6 +163,9 @@ function castingBigQueryData(data) {
         }
         else if (val?.constructor?.name === "Big") {
             afterCasting[key] = Number(val.toString());
+        }
+        else if (val instanceof BigQueryTimestamp) {
+            afterCasting[key] = val.value;
         }
         else {
             afterCasting[key] = val;

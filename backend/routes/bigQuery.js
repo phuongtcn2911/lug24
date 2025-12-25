@@ -8,6 +8,7 @@ router.post("/checkExistCustomer",bigQueryController.checkExistCustomer);
 router.post("/insertCustomer",bigQueryController.insertCustomer);
 router.get("/getInitialData",bigQueryController.getInitialData);
 router.get("/getAvailableLockerAmount",bigQueryController.getAvailableLockerAmount);
+router.get("/getPrivateVoucher",bigQueryController.getPrivateVoucher);
 
 
 export default router;
