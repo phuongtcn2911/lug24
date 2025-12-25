@@ -51,6 +51,11 @@ export default function SenderInput() {
         const value = e.target.value;
 
         updateOrder(group, field, value);
+        //Nếu là nhóm thông tin của người gửi thì phải quan sát nút kê khai ủy quyền có bật hay ko
+        //Nếu nút đang tắt thì sao chép thông tin từ customer
+        if (group === "customer"&&isSameDelivery){
+            updateOrder("receiver",field,value);
+        }
     }
 
     function changeOtherMethod(e, who) {
@@ -61,6 +66,30 @@ export default function SenderInput() {
     }
 
     function setDifferentDelivery(e) {
+        const isDifferentPerson = e.target.checked;
+        console.log("Khác người nhận: ",isDifferentPerson);
+
+        if (isDifferentPerson === true) {
+            console.log("Làm trống nội dung receiver");
+            setForm(prev => ({
+                ...prev,
+                receiver: {
+                    fullName: "",
+                    email: "",
+                    mobile: "",
+                }
+            }));
+
+            setOrder(prev=>({
+                 ...prev,
+                receiver: {
+                    fullName: "",
+                    email: "",
+                    mobile: "",
+                }
+            }));
+        }
+       
         setIsSameDelivery(!isSameDelivery);
     }
 
@@ -77,7 +106,7 @@ export default function SenderInput() {
                     name="customer.fullName"
                     type="text"
                     placeholder={t("plcFullname")}
-                    value={form.customer.fullName||order.customer.fullName}
+                    value={form.customer.fullName || order.customer.fullName}
                     onChange={setValueInFormHandler}
                     onBlur={updateOrderHandler}
                 />
@@ -89,7 +118,7 @@ export default function SenderInput() {
                             name="customer.email"
                             type="email"
                             placeholder={t("plcEmail")}
-                            value={form.customer.email||order.customer.email}
+                            value={form.customer.email || order.customer.email}
                             onChange={setValueInFormHandler}
                             onBlur={updateOrderHandler}
                             disabled={showMobilecustomer}
@@ -103,7 +132,7 @@ export default function SenderInput() {
                             name="customer.mobile"
                             type="tel"
                             placeholder={t("plcPhone")}
-                            value={form.customer.mobile||order.customer.mobile}
+                            value={form.customer.mobile || order.customer.mobile}
                             onChange={setValueInFormHandler}
                             onBlur={updateOrderHandler}
                             disabled={!showMobilecustomer}
@@ -156,7 +185,7 @@ export default function SenderInput() {
                                 name="receiver.fullName"
                                 type="text"
                                 placeholder={t("plcFullname")}
-                                value={form.receiver.fullName||order.receiver.fullName}
+                                value={form.receiver.fullName || order.receiver.fullName}
                                 onChange={setValueInFormHandler}
                                 onBlur={updateOrderHandler}
                             />
@@ -169,7 +198,7 @@ export default function SenderInput() {
                                     name="receiver.email"
                                     type="email"
                                     placeholder={t("plcEmail")}
-                                    value={form.receiver.email||order.receiver.email}
+                                    value={form.receiver.email || order.receiver.email}
                                     onChange={setValueInFormHandler}
                                     onBlur={updateOrderHandler}
                                     disabled={showMobileReceiver}
@@ -185,7 +214,7 @@ export default function SenderInput() {
                                     name="receiver.mobile"
                                     type="tel"
                                     placeholder={t("plcPhone")}
-                                    value={form.receiver.mobile||order.receiver.mobile}
+                                    value={form.receiver.mobile || order.receiver.mobile}
                                     onChange={setValueInFormHandler}
                                     onBlur={updateOrderHandler}
                                     disabled={!showMobileReceiver}

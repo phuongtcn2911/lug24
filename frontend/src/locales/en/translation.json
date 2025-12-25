@@ -271,5 +271,11 @@
     "plchldScanCodeID": "Place QR code inside the frame",
     "labelExpiredDate": "Expiration Date",
     "labelUnlimited": "Unlimited",
-    "btnCancel":"Cancel"
+    "btnCancel": "Cancel",
+    "voucherError": [
+        "Code already added",
+        "Invalid code",
+        "Code has already been used",
+        "Code has expired"
+    ]
 }

@@ -1,12 +1,58 @@
 import { useTranslation } from "react-i18next";
 import ModalBase from "./ModalBase";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 export default function ModalHouseRule({ isOpen, onClose }) {
     const { t } = useTranslation();
+    const navigate = useNavigate();
+
+
+
+    //Phần cuộn chân trang điều khoản
+    const contentRef = useRef(null);
+    const [isScrollEnd, setIsScrollEnd] = useState(false);
+
+    //Sự kiện dò chân trang
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const el = contentRef.current;
+        if (!el) return;
+
+        // Reset khi mở modal
+        setIsScrollEnd(false);
+
+        const checkScrollEnd = () => {
+            const atBottom =
+                Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight;
+            if (atBottom) {
+                setIsScrollEnd(true);
+            }
+        };
+
+        // 👉 CASE 1: nội dung KHÔNG cần scroll
+        if (el.scrollHeight <= el.clientHeight) {
+            setIsScrollEnd(true);
+            return;
+        }
+
+        el.addEventListener("scroll", checkScrollEnd);
+        return () => el.removeEventListener("scroll", checkScrollEnd);
+    }, [isOpen]);
+
+    function handleBooking(e) {
+        e.preventDefault();
+        navigate("/ConfirmCheckIn");
+        // console.log("ORDER SUBMIT:", order);
+    }
+
+
 
     return (
         <>
             <ModalBase isOpen={isOpen} onClose={onClose}>
-                <div className="bg-yellow-50 w-[650px] p-5 border border-yellow-500 rounded-lg 
+                <div className="bg-white w-[650px] p-5 border border-yellow-500 rounded-lg 
                 max-h-[80vh] overflow-hidden flex flex-col">
                     {/* Header */}
                     <div className="flex items-center justify-between shrink-0 pb-4">
@@ -27,7 +73,7 @@ export default function ModalHouseRule({ isOpen, onClose }) {
 
 
                     {/* Body */}
-                    <div className="space-y-2 text-body flex-1 overflow-y-auto pr-3">
+                    <div ref={contentRef} className="space-y-2 text-body flex-1 overflow-y-auto pr-3">
                         {t("terms.contents", { returnObjects: true }).map(function (e, i) {
                             return (
                                 <div className="mb-2" key={"p" + i}>
@@ -68,12 +114,11 @@ export default function ModalHouseRule({ isOpen, onClose }) {
                     <div className="divider"></div>
 
                     {/* Footer */}
-                    <div className="flex justify-end gap-2 border-default pt-2 shrink-0">
+                    <div className="flex justify-end gap-2 border-default pt-2 shrink-0 items-center">
 
-                        <div className="block">
+                        <div className="block my-2">
                             <div class="flex items-center">
-                                {/* <input id="link-checkbox" type="checkbox" value="" className="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft" /> */}
-                                <label for="link-checkbox" className="select-none px-3 ms-2 text-sm font-medium text-heading text-justify">
+                                <label className="select-none pr-5 ms-2 text-heading text-justify">
                                     <span>{t("msgConfirm.0")} </span>
                                     <span><strong>{t("msgConfirm.1")} </strong></span>
                                     <span>{t("msgConfirm.2")} </span>
@@ -84,8 +129,8 @@ export default function ModalHouseRule({ isOpen, onClose }) {
                         </div>
 
                         <button className="button is-warning is-rounded"
-                        // disabled={!isAgreement}
-                        // onClick={handleBooking}
+                            disabled={!isScrollEnd}
+                            onClick={handleBooking}
                         >
                             <span className="icon">
                                 <i class="fa-solid fa-clipboard-check"></i>
@@ -93,17 +138,6 @@ export default function ModalHouseRule({ isOpen, onClose }) {
                             <span>{t("btnConfirm")}</span>
                         </button>
 
-                        {/* <button
-                            onClick={onClose}
-                            className="px-3 rounded-xl bg-gray-200 text-sm w-24">
-                            {t("btnCancel")}
-                        </button>
-                        <button
-                            onClick={onClose}
-                            className="px-3 rounded-xl text-sm w-24 bg-brand text-white bg-yellow-500"
-                        >
-                            {t("btnApply")}
-                        </button> */}
                     </div>
                 </div>
 

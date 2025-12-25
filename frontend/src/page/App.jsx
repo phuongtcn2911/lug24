@@ -11,13 +11,19 @@ import SendParcel from "./SendParcel.jsx";
 import ReceiveParcel from "./ReceiveParcel.jsx";
 import ConfirmCheckIn from "./ConfirmCheckIn.jsx";
 import OrderResult from "./OrderResult.jsx";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useEffect } from "react";
 import api from "../config/axios.js";
+import { InitialDataContext } from "../data/InitialDataContext.jsx";
 
 
 function App() {
     const location = useLocation();
+    const {resetInitialData}=useContext(InitialDataContext);
+
+    useEffect(()=>{
+        resetInitialData();
+    },[])
 
     return (
 // key={location.pathname}

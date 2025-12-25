@@ -272,5 +272,11 @@
     "plchldScanCodeID": "Đưa mã QR vào khung quét",
     "labelExpiredDate":"Hạn sử dụng",
     "labelUnlimited":"Không giới hạn",
-    "btnCancel":"Hủy bỏ"
+    "btnCancel":"Hủy bỏ",
+    "voucherError":[
+        "Mã đã được thêm",
+        "Mã không hợp lệ",
+        "Mã đã được sử dụng",
+        "Mã đã hết hạn sử dụng"
+    ]
 }

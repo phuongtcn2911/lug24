@@ -5,26 +5,34 @@ import ModalPromotion from "../Modal/ModalPromotion";
 import { VoucherContext } from "../../data/VoucherContext";
 
 export default function PromotionPanel() {
-    const { voucherList, addItem, removeItem } = useContext(VoucherContext);
+    const { voucherList, addItem, removeItem,errorVoucher,validLoading } = useContext(VoucherContext);
     const { t } = useTranslation();
     const [isEmptyCode, setIsEmptyCode] = useState(true);
     const [error, setError] = useState();
     const inputRef = useRef(null);
     const [isOpenDialog, setIsOpenDialog] = useState(false);
 
-    function inputCodeHandler() {
+    useEffect(()=>{
+       setError(errorVoucher);
+    },[errorVoucher]);
+
+    async function submitCodeHandler() {
         const value = inputRef.current.value.replace(/\s+/g, "").toUpperCase();
 
-        if (addItem(value) == false) {
-            setError("Mã đã được thêm");
+        if (await addItem(value) == false) {
             return;
         }
 
-        // setCodeList(prev => [...prev, value]);
         inputRef.current.value = "";
         inputRef.current.focus();
         setIsEmptyCode(true);
         setError("");
+    }
+
+    function focusInputHandler(){
+        setError("");
+        setIsEmptyCode(true);
+        inputRef.current.value="";
     }
 
 
@@ -51,17 +59,18 @@ export default function PromotionPanel() {
 
             <div class="relative flex h-10 w-full min-w-[200px] max-w-[24rem]">
                 <button
-                    class="!absolute right-1 top-1 z-10 select-none rounded bg-yellow-500 py-1.55 px-4 
+                    className="!absolute right-1 top-1 z-10 select-none rounded bg-yellow-500 py-1.55 px-4 
                     text-center align-middle font-sans text-xs font-bold uppercase text-white 
                     transition-all hover:shadow-lg hover:shadow-yellow-500/40 
                     focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none 
+                    disabled:cursor-not-allowed disabled:bg-gray-300
                     peer-placeholder-shown:pointer-events-none peer-placeholder-shown:bg-blue-gray-500 peer-placeholder-shown:opacity-50 peer-placeholder-shown:shadow-none"
                     type="button"
                     data-ripple-light="true"
-                    onClick={() => inputCodeHandler()}
-                    disabled={isEmptyCode}
+                    onClick={() => submitCodeHandler()}
+                    disabled={isEmptyCode||validLoading}
                 >
-                    {t("btnApply")}
+                    {validLoading?<span className="loading loading-spinner loading-xs"></span>:t("btnApply")}
                 </button>
                 <input
                     ref={inputRef}
@@ -76,7 +85,7 @@ export default function PromotionPanel() {
                             outline-none"
                     placeholder=" "
                     onChange={() => changeCodeHandler()}
-                    onFocus={() => setError("")}
+                    onFocus={() => focusInputHandler()}
                     required
                 />
                 <label class="before:content[' '] after:content[' '] pointer-events-none 
@@ -97,7 +106,7 @@ export default function PromotionPanel() {
                     {t("labelPromoCode")}
                 </label>
             </div>
-            {error && <p className="text-xs text-red-500 italic text-right">{error}</p>}
+            {errorVoucher && <p className="text-xs text-red-500 italic text-right">{error}</p>}
 
             <div className="my-3 flex flex-wrap gap-2">
                 {voucherList.map(function (item) {

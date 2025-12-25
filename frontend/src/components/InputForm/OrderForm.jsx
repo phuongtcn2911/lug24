@@ -183,8 +183,8 @@ export function OrderForm() {
                 </div>
 
                 <button className="button is-warning rounded-xl is-fullwidth"
-                    // disabled={!isEnabledBookingStatus}
-                    disabled={false}
+                    disabled={!isEnabledBookingStatus}
+                    // disabled={false}
                     onClick={showHouseRule}
                 >
                     <span className="icon">

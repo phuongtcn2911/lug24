@@ -10,7 +10,7 @@ import { OrderContext } from "../../data/OrderContext";
 export default function ModalPromotion({ isOpen, onClose }) {
     const { t, i18n } = useTranslation();
     const { loading, vouchers } = useContext(InitialDataContext);
-    const {order}=useContext(OrderContext);
+    const { order } = useContext(OrderContext);
 
 
     const inputRef = useRef(null);
@@ -87,17 +87,22 @@ export default function ModalPromotion({ isOpen, onClose }) {
                     {loading ?
                         <span className="loading loading-dots loading-lg"></span>
                         :
+
                         vouchers?.map(function (item, key) {
                             {
-                                return (
-                                    <PromotionItem id={`voucItem_${key}`}
-                                        name="voucherItem"
-                                        value={item.VOUCHER_ID}
-                                        voucherCode={item.VOUCHER_ID}
-                                        voucherTitle={item.CAMPAIGN_TITLE}
-                                        voucherExpireDate={item.EXPIRED_DATE}
-                                        note={item.CAMPAIGN_DESCRIPTION} />
-                                );
+                                if (item.IS_PUBLIC === 1) {
+                                    return (
+                                        <PromotionItem 
+                                        key={key}
+                                        id={`voucItem_${key}`}
+                                            name="voucherItem"
+                                            value={item.VOUCHER_ID}
+                                            voucherCode={item.VOUCHER_ID}
+                                            voucherTitle={item.CAMPAIGN_TITLE}
+                                            voucherExpireDate={item.EXPIRED_DATE}
+                                            note={item.CAMPAIGN_DESCRIPTION} />
+                                    );
+                                }
                             }
                         })
                     }

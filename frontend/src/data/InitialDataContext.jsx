@@ -178,7 +178,7 @@ export function InitialDataProvider({ children }) {
     return (
         <InitialDataContext.Provider value={{ 
             priceList, campus,vouchers,loading, 
-            setPriceList, setCampus, resetInitialData, filterTrialPrice, 
+            setPriceList, setCampus, setVouchers,resetInitialData, filterTrialPrice, 
             getLockerPriceInfo, getLockersInfo, getALockerBySize,
             getUnitPriceByPriceListID,getTaxRateByPriceListID}}>{children}</InitialDataContext.Provider>
     );

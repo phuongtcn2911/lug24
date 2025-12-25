@@ -8,6 +8,7 @@ import { useEffect, useState, useContext } from "react";
 import {OrderForm} from "../components/InputForm/OrderForm.jsx";
 import { TimerContext } from "../data/TimerContext.jsx";
 import { OrderContext } from "../data/OrderContext.jsx";
+import { VoucherContext } from "../data/VoucherContext.jsx";
 
 export default function SendParcel() {
     const { t } = useTranslation();
@@ -15,10 +16,12 @@ export default function SendParcel() {
     const [animatedDirection, setAnimatedDirection] = useState("forward");
     const { startTimer } = useContext(TimerContext);
     const { resetOrder } = useContext(OrderContext);
+    const {resetVoucherList}=useContext(VoucherContext);
 
     useEffect(() => {
         startTimer();
         resetOrder();
+        resetVoucherList();
 
     }, []);
 
