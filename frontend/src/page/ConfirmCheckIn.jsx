@@ -1,290 +1,170 @@
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext } from "react";
 import { Header } from "../components/ExtraPart/Header";
-import InfoLabel from "../components/InputForm/InfoLabel";
-import RadioButton from "../components/InputForm/RadioButton";
-import { useNavigate } from "react-router-dom";
-import { OrderContext } from "../data/OrderContext";
-import * as Data from "../data/Data";
 import CurrencyFormat from "../utils/CurrencyFormat";
 import * as DateStringFormat from "../utils/DateStringFormat";
-import api from "../config/axios";
-import { PaymentProgressContext } from "../data/PaymentProgressContext";
 import { useTranslation } from "react-i18next";
-
+import { OrderContext } from "../data/OrderContext";
+import { SizeIMG } from "../data/Data";
+import { InitialDataContext } from "../data/InitialDataContext";
 
 export default function ConfirmCheckIn() {
-    // const { lang, Languages } = useContext(LanguageContext);
-    const {t,i18n}=useTranslation();
-
-    const { order, setOrder } = useContext(OrderContext);
-    
-    const [selectedValue, setSelectedValue] = useState({ paymentMethods: 0 });
-    const [locker, setLocker] = useState();
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [isRedirecting, setIsRedirecting] = useState(false);
-
-    const navigate = useNavigate();
-    const orderRef = useRef(order);
-
-    useEffect(() => {
-        orderRef.current = order;
-    }, [order]);
-
-    // Lấy lockerID nếu chưa có
-    useEffect(() => {
-        if (order.locker.id === undefined || order.locker.id === null) {
-            getLockerID();
-        } else {
-            setLocker(order.locker.id);
-        }
-    }, [order.locker.id]);
-
-    useEffect(() => {
-        if (!locker) return;
-        setOrder(prev => ({
-            ...prev,
-            locker: {
-                ...prev.locker,
-                id: locker,
-            },
-        }));
-    }, [locker]);
-
-    // Đồng bộ phương thức thanh toán
-    useEffect(() => {
-        setOrder(prev => ({
-            ...prev,
-            transaction: {
-                ...prev.transaction,
-                paymentMethod: selectedValue.paymentMethods,
-            }
-        }));
-    }, [selectedValue]);
-
-    const changeValue = (groupName, value) => {
-        setSelectedValue(prev => ({
-            ...prev,
-            [groupName]: value,
-        }));
-    };
-
-    // Lấy lockerID từ API
-    const getLockerID = async () => {
-        let sizeID = order.locker.sizeIndex === 0 ? 1 : 3;
-        try {
-            const res = await api.post('api/getAvailableBox', { size: sizeID });
-            console.log("Get available box:", res.data);
-            setLocker(res.data.value.box.boxNo);
-        } catch (err) {
-            console.error("Không lấy được lockerID", err.message);
-        }
-    };
-
-    useEffect(() => {
-        if (order.transaction.checkoutURL) {
-            setIsRedirecting(true);
-            window.location.href = order.transaction.checkoutURL;
-        }
-        // return <p>Đang chuyển đến trang thanh toán SePay...</p>;
-    }, [order.transaction.checkoutURL]);
-
-    const createAnOrder = async () => {
-
-        async function bookABox(obj) {
-            try {
-                const res = await api.post('api/bookABox', { obj });
-                console.log("Order: ", res.data);
-                return res.data;
-            } catch (err) {
-                console.error("Không thể đặt box", err.message);
-                return { code: -1, message: "Network error" };
-            }
-        }
-
-        async function confirmPayment(bill) {
-            try {
-                const res = await api.post('api/confirmPayment', { bill });
-                console.log("Order: ", res.data);
-                return res.data;
-            } catch (err) {
-                console.error("Không thể xác nhận đơn hàng", err.message);
-                return { code: -1, message: "Network error" };
-            }
-        }
-
-        async function makeSepayTransaction(obj) {
-            try {
-                console.log("BackEnd nhận OBJ để thiết lập chuyển cho Sepay: ", obj)
-                const res = await api.post('api/createPaymentSePay', { obj });
-                console.log("Transact: ", res.data);
-                return res.data;
-            } catch (err) {
-                console.error("FrontEnd nhận phản hồi từ BackEnd: Không tạo được giao dịch", err.message);
-                return { code: -1, message: "Network error" };
-            }
-        }
-
-        if (orderRef.current.order.id) {
-            console.log("Order ID: ", order.order.id);
-            navigate("/OrderResult");
-            return;
-        }
-
-        setError("");
-        setIsLoading(true);
-        try {
-            const obj = {
-                boxNo: locker,
-                trackNo: orderRef.current.customer.fullName,
-                mobile: orderRef.current.customer.mobile,
-                email: orderRef.current.customer.email
-            };
-            console.log("Sending order object:", obj);
-            const response = await bookABox(obj);
-            let orderCode = "";
-
-            if (response.code === 0) {
-                const newSubID = `LUG${String(response.value.orderCode).slice(-6)}`;
-                const description = `${t("defaultBankingMsg")} ${newSubID}`;
-
-                orderRef.current = {
-                    ...orderRef.current,
-                    order: {
-                        ...orderRef.current.order,
-                        id: response.value.orderCode,
-                        subID: newSubID,
-                    },
-                    transaction: {
-                        ...orderRef.current.transaction,
-                        description: description,
-                    }
-                };
-
-                setOrder(orderRef.current);
-            }
-            else {
-                setError(response.message);
-                return;
-            }
-
-            const bill = {
-                orderCode: response.value.orderCode,
-                setPayment: 0,
-                money: orderRef.current.order.total,
-            };
-            console.log("Bill Confirm:", bill);
-            const response_stp2 = await confirmPayment(bill);
-
-            if (response_stp2.code !== 0) {
-                setError(response_stp2.message);
-                return;
-
-            }
-
-            const response_stp3 = await makeSepayTransaction(orderRef.current);
-
-            if (response_stp3?.code !== 1) {
-                orderRef.current = {
-                    ...orderRef.current = {
-                        ...orderRef.current,
-                        transaction: {
-                            ...orderRef.current.transaction,
-                            checkoutURL: response_stp3?.checkout_url
-                        }
-                    }
-                }
-                setOrder(orderRef.current);
-                localStorage.setItem("order", JSON.stringify(orderRef.current));
-            }
-            else {
-                setError(response_stp3?.message);
-                return;
-            }
-
-
-        } catch (err) {
-            setError("Có lỗi khi tạo đơn hàng! Vui lòng thử lại sau!");
-            console.log(err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const { t, i18n } = useTranslation();
+    const { order } = useContext(OrderContext);
+    const { campus,loading } = useContext(InitialDataContext);
 
     return (
         <>
-            <Header link="/SendParcel" isBackEnable={true} />
-            {isRedirecting && (
-                <div className="notification is-info">
-                {t("sepayTransitionNoti")}
+            <Header isBackEnable={true} link={"/SendParcel"} />
+            <div className="level">
+                <div className="level-left">
+                    <h1 className="text-heading text-2xl" >
+                        <span className="font-bold">{t("legendOrder")} </span>
+                        <span className="font-semibold">{order.order.subId ? `#${order.order.subId}` : "-"}</span>
+                    </h1>
                 </div>
-            )}
-
-            <article className="message is-warning">
-                <div className="message-body">
-                    <h1 className="title has-text-left">{t("labelConfirmCheckIn")}</h1>
-                    <div className="columns is-mobile">
-                        <InfoLabel layout="is-6" label={t("labelCustomer")}>
-                            {String(order.customer.fullName).toUpperCase()}
-                        </InfoLabel>
-                        <InfoLabel layout="is-6" label={`${t("labelRenterEmail")}/${t("labelRenterPhone")}`}>
-                            {order.customer.email || order.customer.mobile}
-                        </InfoLabel>
-                    </div>
-                    <div className="columns is-mobile">
-                        <InfoLabel layout="is-6" label={t("labelLockerSize")}>
-                            {Data.Lockers?.[order.locker.sizeIndex]?.size || "-"}
-                        </InfoLabel>
-                        <InfoLabel layout="is-2" label={t("labelLockerID")}>#{locker}</InfoLabel>
-                    </div>
-                    <div className="columns is-mobile">
-                        <InfoLabel layout="is-6" label={t("labelCheckInTime")}>
-                            {DateStringFormat.DateStringFormat(order.order.checkIn,i18n.language)}
-                        </InfoLabel>
-                        <InfoLabel layout="is-6" label={t("labelCheckOutTime")}>
-                            {DateStringFormat.DateStringFormat(order.order.finalCheckOut,i18n.language)}
-                        </InfoLabel>
-                    </div>
-                    <div className="columns is-mobile">
-                        <InfoLabel layout="is-6" label={t("labelMaxRentalTimeOrder")}>
-                            {`${order.order.maxRentalTime} ${t("rentalTimeUnit")}`}
-                        </InfoLabel>
-                        <InfoLabel layout="is-6" label={t("labelTotal")}>
-                            {CurrencyFormat(order.order.total)}
-                        </InfoLabel>
-                    </div>
+                <div className="level-right">
+                    <p >
+                        <span className="text-base font-normal">{t("labelOrderDate")}</span>
+                        <span className="text-base font-semibold"> {DateStringFormat.FullDateStringByLang(Date.now(), i18n.language)}</span>
+                    </p>
                 </div>
-            </article>
-
-            <div className="fieldset-columns">
-                <fieldset className="group">
-                    <legend>{t("labelPaymentMethod")}</legend>
-                    {t("paymentMethod",{returnObjects:true}).map((p, i) => (
-                        <div className="field" key={i}>
-                            <RadioButton
-                                label={p}
-                                value={i}
-                                selectedValue={selectedValue}
-                                onChange={changeValue}
-                                groupName="paymentMethods"
-                            />
+            </div>
+            <div className="w-full max-w-6xl mx-auto rounded-xl border border-gray-200 bg-white shadow-sm mb-5">
+                {/* ROW 1 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 p-5">
+                    {/* Delivery + Contact */}
+                    <div className="grid grid-cols-1 text-sm ">
+                        <div className="mb-3">
+                            <p className="font-semibold text-lg text-gray-900 text-left mb-3">Thông tin người gửi</p>
+                            <p className="mb-1 text-gray-900 text-left text-base font-semibold">{order.customer.fullName ? order.customer.fullName : "-"}</p>
+                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">CCCD: </span>{order.customer.identityCard ? order.customer.identityCard : "-"}</p>
+                            {
+                                order.customer.authMethod === "Email" ?
+                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Email: </span>{order.customer.email ? order.customer.email : "-"}</p>
+                                    :
+                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Điện thoại: </span>{order.customer.mobile ? order.customer.mobile : "-"}</p>
+                            }
+                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Phương thức gửi xác thực: </span>{order.customer.authMethod ? order.customer.authMethod : "-"}</p>
                         </div>
-                    ))}
-                </fieldset>
+
+                    </div>
+                    <div className="grid grid-cols-1 text-sm ">
+                        <div className="mb-3">
+                            <p className="font-semibold text-lg text-gray-900 text-left mb-3">Thông tin người nhận</p>
+                            <p className="mb-1 text-gray-900 text-left text-base font-semibold">{order.receiver.fullName ? order.receiver.fullName : "-"}</p>
+                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">CCCD: </span>{order.receiver.identityCard ? order.receiver.identityCard : "-"}</p>
+                            {
+                                order.receiver.authMethod === "Email" ?
+                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Email: </span>{order.receiver.email ? order.receiver.email : "-"}</p>
+                                    :
+                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Điện thoại: </span>{order.receiver.mobile ? order.receiver.mobile : "-"}</p>
+                            }
+                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Phương thức gửi xác thực: </span>{order.receiver.authMethod ? order.receiver.authMethod : "-"}</p>
+                        </div>
+                        <div className="grid grid-flow-col justify-items-end">
+                            <button className="w-42 mt-2 bg-yellow-400 hover:underline">Thay đổi thông tin</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                {/* DIVIDER */}
+                <div className="border-t border-gray-200"></div>
+
+                {/* ROW 2 */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 p-5">
+                    <div className="flex gap-4 md:col-span-2">
+                        <img
+                            src={order.locker.sizeLetter == "L" ? SizeIMG.sizeL : SizeIMG.sizeS}
+                            alt=""
+                            className="w-32 h-32 rounded-lg bg-gray-100 object-cover"
+                        />
+
+                        <div className="text-left place-self-center">
+                            <h3 className="font-black text-gray-900 text-3xl">{`${t("sizeUnit")} ${order.locker.sizeLetter ? order.locker.sizeLetter : "-"}`}</h3>
+                            <p className="text-sm text-gray-500">{order.locker.sizeIndex ? t("sizeDescription." + (order.locker.sizeIndex - 1)) : "-"}</p>
+                            <p className="mt-3 text-base font-semibold text-gray-500">{`${t("labelLockerID")}: ${order.locker.id ? `#${order.locker.id}` : "-"}`}</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-4 md:col-span-2">
+                        <div className="text-left place-self-center">
+                            <p className="font-semibold text-lg text-gray-900 text-left">{t("labelCheckInTime")}</p>
+                            <p className="mb-3 text-gray-600 text-left text-sm">  {DateStringFormat.DateStringFormat(order.order.checkIn, i18n.language)}</p>
+                            <p className="font-semibold text-lg text-gray-900 text-left">{t("labelCheckOutTime")}</p>
+                            <p className="mb-3 text-gray-600 text-left text-sm">  {DateStringFormat.DateStringFormat(order.order.finalCheckOut, i18n.language)}</p>
+                        </div>
+                    </div>
+                </div>
+            </div >
+            <div className="w-full max-w-6xl mx-auto rounded-xl bg-gray-100 border border-gray-200 shadow-sm">
+                <div className="grid grid-cols-1 gap-12 md:grid-cols-2 p-5">
+                    {/* Delivery + Contact */}
+                    <div className="flex grid-cols-1">
+                        <div>
+                            <p className="font-semibold text-lg text-gray-900 text-left mb-3">{t("labelCampus")}</p>
+                            <p className="mb-1 text-gray-900 text-left text-base font-semibold">{campus?.LOCATION_NAME}</p>
+                            <p className="mb-1 text-gray-600 text-left text-sm">
+                                {/* <span className="font-medium">{`${t("labelCampusAddress")}: `} </span> */}
+                                <span>{campus?.ADDRESS}</span>
+                            </p>
+                            <p className="mb-1 text-gray-600 text-left text-sm">
+                                <span className="font-medium">{`${t("labelMobile")}`}</span><br/>
+                                <span>000.0000.0000</span>
+                            </p>
+                            <p className="mb-1 text-gray-600 text-left text-sm">
+                                <span className="font-medium">{`${t("labelWorkingTime")}`}</span><br/>
+                                <span>{`${campus?.OPEN_TIME} - ${campus?.CLOSE_TIME}`}</span>
+                            </p>
+                        </div>
+
+                    </div>
+     
+                    <div className="flex flex-col h-full grid-cols-1">
+                        <div  className="mt-auto">
+                            <div className="level my-1">
+                                <div className="level-left">
+                                    <p className="text-gray-900 text-left text-base font-semibold">{t("labelSubTotal")}</p>
+                                </div>
+                                <div className="level-right">
+                                    <p className="text-gray-600 text-left text-base">{CurrencyFormat(order.order.subTotal)}</p>
+                                </div>
+                            </div>
+                            <div className="border-t border-gray-200 my-2"></div>
+                            <div className="level my-1">
+                                <div className="level-left">
+                                    <p className="mb-1 text-gray-900 text-left text-base font-semibold">{t("labelDiscount")}</p>
+                                </div>
+                                <div className="level-right">
+                                    <p className="mb-1 text-gray-600 text-left text-base">{CurrencyFormat(order.order.discountPrice)}</p>
+                                </div>
+                            </div>
+                            <div className="border-t border-gray-200 my-2"></div>
+                            <div className="level my-1">
+                                <div className="level-left">
+                                    <p className="mb-1 text-gray-900 text-left text-base font-semibold">{t("labelTax")}</p>
+                                </div>
+                                <div className="level-right">
+                                    <p className="mb-1 text-gray-600 text-left text-base">{CurrencyFormat(order.order.tax)}</p>
+                                </div>
+                            </div>
+                            <div className="border-t border-gray-200 my-2"></div>
+                            <div className="level my-1">
+                                <div className="level-left">
+                                    <p className="mb-1 text-gray-900 text-left text-lg font-bold">{t("labelTotal")}</p>
+                                </div>
+                                <div className="level-right">
+                                    <p className="mb-1 text-gray-900 text-left text-lg font-semibold">{CurrencyFormat(order.order.total)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div >
+            <div className="grid grid-flow-col justify-items-end">
+                <button className=" mt-5 bg-yellow-400">Xác thực thanh toán</button>
+
             </div>
 
-            <div className="container py-5">
-                <button
-                    className={`button is-warning is-rounded is-fullwidth ${isLoading ? "is-loading" : ""}`}
-                    onClick={createAnOrder}
-                    disabled={isLoading}
-                >
-                    <span className="icon"><i className="fa-solid fa-cart-shopping"></i></span>
-                    <span>{t("btnCheckout")}</span>
-                </button>
-                {error && <p className="help is-danger">{error}</p>}
-            </div>
         </>
-    );
+    )
 }
-

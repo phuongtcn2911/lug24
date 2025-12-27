@@ -8,7 +8,9 @@
     "headerPickUp": "Thông tin nhận lại",
     "headerChooseLocker":"Chọn tủ",
     "labelRenterName": "Họ và tên người thuê tủ",
+    "labelRenterIDCard":"Số thẻ căn cước người thuê tủ",
     "labelReceiverName": "Họ và tên người nhận hàng",
+    "labelReceiverIDCard":"Số thẻ căn cước người nhận hàng",
     "labelRenterEmail": "Email đăng ký nhận xác thực",
     "labelRenterPhone": "Số điện thoại đăng ký nhận xác thực",
     "btnSignUpViaMobile": "Đăng ký nhận xác thực bằng số điện thoại",
@@ -25,6 +27,7 @@
     "plcFullname": "VD: Bùi Bảo Nhân",
     "plcEmail": "VD: nhan.bb@gmail.com",
     "plcPhone": "VD: 84 123 456 789",
+     "plcIDCard": "VD: 079 XX XXX XXXX",
     "chkSameDelivery": "Kê khai ủy quyền cho người nhận khác",
     "btnEnterPromoCode": "Nhập mã",
     "labelSubTotal": "Tạm tính",
@@ -74,8 +77,10 @@
     ],
     "sizeUnit": "Cỡ ",
     "sizeDescription":[
+        "0 x 0 x 0 cm",
         "40 x 40 x 60 cm",
-        "40 x 85 x 60 cm"
+        "40 x 85 x 60 cm",
+        "0 x 0 x 0 cm"
     ],
     "rentalTimeUnit": " giờ",
     "rentalTimeChoices": [
@@ -278,5 +283,11 @@
         "Mã không hợp lệ",
         "Mã đã được sử dụng",
         "Mã đã hết hạn sử dụng"
-    ]
+    ],
+    "labelCampus":"Cơ sở ký gửi",
+    "labelCampusAddress": "Địa chỉ",
+    "labelMobile":"Số điện thoại",
+    "labelWorkingTime":"Thời gian hoạt động",
+    "labelOrderDate":"Đã được đặt vào"
+
 }

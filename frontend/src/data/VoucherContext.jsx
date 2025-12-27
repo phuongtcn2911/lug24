@@ -77,16 +77,16 @@ export function VoucherProvider({ children }) {
             const res = await api.get("/api/getPrivateVoucher", { params: { code } });
             voucherInfo = res.data.result[0];
             console.log("Thông tin voucher sau truy vấn: ", voucherInfo);
-            setValidLoading(false);
             //Check mã có tồn tại ko
             if (!voucherInfo) {
                 setErrorVoucher(t("voucherError.1"));
                 console.log(t("voucherError.1"));
+                setValidLoading(false);
                 return false;
             }
 
         }
-
+        setValidLoading(false);
         //Check mã đã được sử dụng chưa
         if (voucherInfo?.VALID_STATUS === 1) {
             setErrorVoucher(t("voucherError.2"));

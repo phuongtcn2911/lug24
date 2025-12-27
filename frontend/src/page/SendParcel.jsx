@@ -20,7 +20,7 @@ export default function SendParcel() {
 
     useEffect(() => {
         startTimer();
-        resetOrder();
+        // resetOrder();
         resetVoucherList();
 
     }, []);

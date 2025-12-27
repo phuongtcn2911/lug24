@@ -43,8 +43,8 @@ export default function RentalTime() {
     useEffect(() => {
         if (!campus) return;
         setWorkingTime({
-            open: parseTime(campus[0]?.OPEN_TIME),
-            closed: parseTime(campus[0]?.CLOSE_TIME)
+            open: parseTime(campus?.OPEN_TIME),
+            closed: parseTime(campus?.CLOSE_TIME)
         });
 
     }, [campus]);
@@ -100,8 +100,8 @@ export default function RentalTime() {
         updateOrder("order", "rentalTimeChoice", opt);
         updateOrder("order", "rentalTime", rentalTime);
         updateOrder("order", "maxRentalTime", rentalTime);
-        updateOrder("order","checkIn",startDate);
-        updateOrder("order","checkOut",endDate);
+        updateOrder("order", "checkIn", startDate);
+        updateOrder("order", "checkOut", endDate);
 
     }, [workingTime]);
 
@@ -246,6 +246,7 @@ export default function RentalTime() {
         setTimeAlert("");
 
         const actualRentalTime = roundMaxRentalTime(duration);
+        const finalCheckOut = startDate.add(actualRentalTime, "hour");
 
         // Update draft
         setDraft(prev => ({
@@ -255,6 +256,7 @@ export default function RentalTime() {
                 checkOut: roundedEnd,
                 rentalTime: duration,
                 maxRentalTime: actualRentalTime,
+                finalCheckOut: finalCheckOut
             }
         }));
 
@@ -263,6 +265,7 @@ export default function RentalTime() {
         updateOrder("order", "rentalTime", duration);
         updateOrder("order", "checkOut", roundedEnd);
         updateOrder("order", "maxRentalTime", actualRentalTime);
+        updateOrder("order", "finalCheckOut", finalCheckOut);
     };
 
     function setDraftField(field, e) {

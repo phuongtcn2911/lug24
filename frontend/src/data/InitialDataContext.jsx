@@ -122,7 +122,7 @@ export function InitialDataProvider({ children }) {
 
             const res = await api.get("/api/getInitialData");
             localPrice = res.data?.data?.priceList || [];
-            localCampus = res.data?.data?.campus || [];
+            localCampus = res.data?.data?.campus?.[0] || [];
             localAvailableBoxes=res.data?.data?.availableLockers||[];
             localVouchers=res.data?.data?.vouchers||[];
             

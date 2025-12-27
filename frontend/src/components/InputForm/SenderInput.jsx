@@ -7,8 +7,9 @@ import { OrderContext } from "../../data/OrderContext";
 export default function SenderInput() {
     const { t } = useTranslation();
 
-    const [showMobilecustomer, setShowMobilecustomer] = useState(false);
+    const [showMobileCustomer, setshowMobileCustomer] = useState(false);
     const [showMobileReceiver, setShowMobileReceiver] = useState(false);
+
 
     const [isSameDelivery, setIsSameDelivery] = useState(true);
     const [form, setForm] = useState({
@@ -16,17 +17,28 @@ export default function SenderInput() {
             fullName: "",
             email: "",
             mobile: "",
+            identityCard: "",
+            authMethod: "Email"
         },
         receiver: {
             fullName: "",
             email: "",
             mobile: "",
+            identityCard: "",
+            authMethod: "Email"
         }
     });
 
     const { order, setOrder, updateOrder } = useContext(OrderContext);
 
     useEffect(() => { console.log(order) }, [order]);
+    useEffect(() => {
+        updateOrder("customer", "authMethod", showMobileCustomer ? "Zalo" : "Email");
+    }, [showMobileCustomer]);
+    useEffect(() => {
+        updateOrder("receiver", "authMethod", showMobileReceiver ? "Zalo" : "Email");
+
+    }, [showMobileReceiver]);
 
     function setValueInFormHandler(e) {
         // console.log(e.target);
@@ -53,21 +65,27 @@ export default function SenderInput() {
         updateOrder(group, field, value);
         //Nếu là nhóm thông tin của người gửi thì phải quan sát nút kê khai ủy quyền có bật hay ko
         //Nếu nút đang tắt thì sao chép thông tin từ customer
-        if (group === "customer"&&isSameDelivery){
-            updateOrder("receiver",field,value);
+        if (group === "customer" && isSameDelivery) {
+            updateOrder("receiver", field, value);
         }
     }
 
     function changeOtherMethod(e, who) {
         e.preventDefault();
-        if (who === "customer")
-            setShowMobilecustomer(!showMobilecustomer);
-        else setShowMobileReceiver(!showMobileReceiver);
+        if (who === "customer") {
+            setshowMobileCustomer(!showMobileCustomer);
+            if (isSameDelivery) {
+                setShowMobileReceiver(!showMobileReceiver);
+            }
+        }
+        else {
+            setShowMobileReceiver(!showMobileReceiver);
+        }
     }
 
     function setDifferentDelivery(e) {
         const isDifferentPerson = e.target.checked;
-        console.log("Khác người nhận: ",isDifferentPerson);
+        console.log("Khác người nhận: ", isDifferentPerson);
 
         if (isDifferentPerson === true) {
             console.log("Làm trống nội dung receiver");
@@ -77,19 +95,22 @@ export default function SenderInput() {
                     fullName: "",
                     email: "",
                     mobile: "",
+                    identityCard: "",
+                    authMethod: "Email"
                 }
             }));
 
-            setOrder(prev=>({
-                 ...prev,
+            setOrder(prev => ({
+                ...prev,
                 receiver: {
                     fullName: "",
                     email: "",
                     mobile: "",
+                    authMethod: "Email"
                 }
             }));
         }
-       
+
         setIsSameDelivery(!isSameDelivery);
     }
 
@@ -111,8 +132,18 @@ export default function SenderInput() {
                     onBlur={updateOrderHandler}
                 />
 
+                <Input label={t("labelRenterIDCard")}
+                    id="inpcustomerIDCard"
+                    name="customer.identityCard"
+                    type="text"
+                    placeholder={t("plcIDCard")}
+                    value={form.customer.identityCard || order.customer.identityCard}
+                    onChange={setValueInFormHandler}
+                    onBlur={updateOrderHandler}
+                />
+
                 <div className="relative overflow-hidden h-[90px]">
-                    <div className={`absolute inset-0 ${showMobilecustomer ? "animate-slideOutLeft" : "animate-slideInLeft"}`}>
+                    <div className={`absolute inset-0 ${showMobileCustomer ? "animate-slideOutLeft" : "animate-slideInLeft"}`}>
                         <Input label={t("labelRenterEmail")}
                             id="inpcustomerEmail"
                             name="customer.email"
@@ -121,12 +152,12 @@ export default function SenderInput() {
                             value={form.customer.email || order.customer.email}
                             onChange={setValueInFormHandler}
                             onBlur={updateOrderHandler}
-                            disabled={showMobilecustomer}
-                            tabIndex={showMobilecustomer ? -1 : 0}
+                            disabled={showMobileCustomer}
+                            tabIndex={showMobileCustomer ? -1 : 0}
                         />
                     </div>
 
-                    <div className={`absolute inset-0 ${showMobilecustomer ? "animate-slideInRight" : "animate-slideOutRight"}`}>
+                    <div className={`absolute inset-0 ${showMobileCustomer ? "animate-slideInRight" : "animate-slideOutRight"}`}>
                         <Input label={t("labelRenterPhone")}
                             id="inpPhoneSender"
                             name="customer.mobile"
@@ -135,12 +166,12 @@ export default function SenderInput() {
                             value={form.customer.mobile || order.customer.mobile}
                             onChange={setValueInFormHandler}
                             onBlur={updateOrderHandler}
-                            disabled={!showMobilecustomer}
-                            tabIndex={!showMobilecustomer ? -1 : 0}
+                            disabled={!showMobileCustomer}
+                            tabIndex={!showMobileCustomer ? -1 : 0}
                         />
                     </div>
                 </div>
-                <a onClick={(e) => changeOtherMethod(e, "customer")} className="text-sm text-left mb-5 text-gray-500 hover:text-yellow-500">{showMobilecustomer == false ? t("btnSignUpViaMobile") : t("btnSignUpViaEmail")}</a>
+                <a onClick={(e) => changeOtherMethod(e, "customer")} className="text-sm text-left mb-5 text-gray-500 hover:text-yellow-500">{showMobileCustomer == false ? t("btnSignUpViaMobile") : t("btnSignUpViaEmail")}</a>
 
 
                 <div className="divider mb-3">
@@ -179,17 +210,26 @@ export default function SenderInput() {
                         {t("headerPickUp")}
                     </h2>
                     <div className="flex flex-col gap-4 flex-1">
-                        <div>
-                            <Input label={t("labelReceiverName")}
-                                id="inpReceiverFullname"
-                                name="receiver.fullName"
-                                type="text"
-                                placeholder={t("plcFullname")}
-                                value={form.receiver.fullName || order.receiver.fullName}
-                                onChange={setValueInFormHandler}
-                                onBlur={updateOrderHandler}
-                            />
-                        </div>
+
+                        <Input label={t("labelReceiverName")}
+                            id="inpReceiverFullname"
+                            name="receiver.fullName"
+                            type="text"
+                            placeholder={t("plcFullname")}
+                            value={form.receiver.fullName || order.receiver.fullName}
+                            onChange={setValueInFormHandler}
+                            onBlur={updateOrderHandler}
+                        />
+                        <Input label={t("labelReceiverIDCard")}
+                            id="inpreceiverIDCard"
+                            name="receiver.identityCard"
+                            type="text"
+                            placeholder={t("plcIDCard")}
+                            value={form.receiver.identityCard || order.receiver.identityCard}
+                            onChange={setValueInFormHandler}
+                            onBlur={updateOrderHandler}
+                        />
+
 
                         <div className="relative overflow-hidden h-[88px] mb-0">
                             <div className={`absolute inset-0 ${showMobileReceiver ? "animate-slideOutLeft" : "animate-slideInLeft"}`}>

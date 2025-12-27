@@ -8,7 +8,8 @@ export const defaultOrder = {
         mobile: "",
         email: "",
         identityCard: "",
-        imageURL: ""
+        imageURL: "",
+        authMethod: "Email"
     },
     receiver: {
         id: "",
@@ -16,7 +17,8 @@ export const defaultOrder = {
         mobile: "",
         email: "",
         identityCard: "",
-        imageURL: ""
+        imageURL: "",
+        authMethod: "Email"
     },
     locker: {
         id: undefined,
@@ -76,12 +78,12 @@ export function OrderProvider({ children }) {
     }, [order.order.rentalTimeChoice, order.locker.sizeLetter]);
 
     function createPriceListID(rentalOpt = null, size = "") {
-    
+
         if (rentalOpt === null || size === "") return;
         const rentalID = parseInt(rentalOpt) === 0 ? "PP4H" : "PBUS";
         const priceListID = `${rentalID}.${size}`;
         console.log("Price List ID: ", priceListID);
-    
+
         return priceListID;
     }
 

@@ -20,16 +20,23 @@ import inputOrder from '../assets/img/InputOrderCode.png'
 import dectectQR from '../assets/img/detect_QR.png'
 import dayjs from 'dayjs'
 import beepMP3 from '../assets/sound/Beep.mp3'
+import size_L from '../assets/img/SizeL.png'
+import size_S from '../assets/img/SizeS.jpg'
 
 
 
 
 export const Logo = logo;
-export const API_BASE=import.meta.env.VITE_API_URL;
+export const API_BASE = import.meta.env.VITE_API_URL;
 
 export const Flags = {
     flagVN: flagVN,
     flagEN: flagEN
+};
+
+export const SizeIMG = {
+    sizeS: size_S,
+    sizeL: size_L
 };
 
 export const AnimatedButtons = [
@@ -55,7 +62,7 @@ export const RuleImgs = [pic3, pic4, pic5, pic6];
 
 export const Promotion = {
     rentalTime: 4,
-   
+
     lockers: [
         {
             size: 'M',
@@ -81,31 +88,31 @@ export const Lockers = [
 export const TaxIndex = 0.1;
 
 export const OrderStatus = [
-    pendingPayment, 
+    pendingPayment,
     successPayment,
     failPayment,
-    cancelPayment 
+    cancelPayment
 ]
 
-export const TapToPay=tapToPay;
-export const OTP=otp;
-export const folder_Gap=folderGap;
-export const InputOrderCode=inputOrder;
-export const LockerStatus=[openLocker,closeLocker];
-export const Timer={
-    sessionDur:900,
-    transactDur:180,
-    lockerStatusDur:10,
-    ordStatusDur:5,
-    checkAvlBoxPing:10,
-    resendOTP:90,
-    validOTPDur:180
+export const TapToPay = tapToPay;
+export const OTP = otp;
+export const folder_Gap = folderGap;
+export const InputOrderCode = inputOrder;
+export const LockerStatus = [openLocker, closeLocker];
+export const Timer = {
+    sessionDur: 900,
+    transactDur: 180,
+    lockerStatusDur: 10,
+    ordStatusDur: 5,
+    checkAvlBoxPing: 10,
+    resendOTP: 90,
+    validOTPDur: 180
 }
 
-export const WorkingTime={
-    open:dayjs().hour(10).minute(0),
-    closed:dayjs().hour(22).minute(0),
+export const WorkingTime = {
+    open: dayjs().hour(10).minute(0),
+    closed: dayjs().hour(22).minute(0),
 };
 
-export const detect_QR=dectectQR;
-export const beepSound=beepMP3;
+export const detect_QR = dectectQR;
+export const beepSound = beepMP3;

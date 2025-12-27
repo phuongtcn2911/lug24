@@ -92,9 +92,9 @@ export default function ModalPromotion({ isOpen, onClose }) {
                             {
                                 if (item.IS_PUBLIC === 1) {
                                     return (
-                                        <PromotionItem 
-                                        key={key}
-                                        id={`voucItem_${key}`}
+                                        <PromotionItem
+                                            key={key}
+                                            id={`voucItem_${key}`}
                                             name="voucherItem"
                                             value={item.VOUCHER_ID}
                                             voucherCode={item.VOUCHER_ID}

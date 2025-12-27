@@ -8,7 +8,9 @@
     "headerPickUp": "Pick-up Information",
     "headerChooseLocker": "Locker's options",
     "labelRenterName": "Renter's full name",
+    "labelRenterIDCard": "Renter's Citizen ID Number",
     "labelReceiverName": "Receiver's Full Name",
+    "labelReceiverIDCard": "Receiver's Citizen ID Number",
     "labelRenterEmail": "Email",
     "labelRenterPhone": "Mobile",
     "btnSignUpViaMobile": "Sign up with phone number",
@@ -24,7 +26,8 @@
     "plcPromoCode": "Input your promo code",
     "plcFullname": "E.g: John Due",
     "plcEmail": "E.g: john.due@gmail.com",
-    "plcPhone": "VD: 84 123 456 789",
+    "plcPhone": "E.g: 84 123 456 789",
+    "plcIDCard": "E.g: 079 XX XXX XXXX",
     "chkSameDelivery": "Allow another person to collect",
     "btnEnterPromoCode": "Enter code",
     "labelSubTotal": "Subtotal",
@@ -68,8 +71,10 @@
     ],
     "sizeUnit": "Size ",
     "sizeDescription": [
+        "0 x 0 x 0 cm",
         "40 x 40 x 60 cm",
-        "40 x 85 x 60 cm"
+        "40 x 85 x 60 cm",
+        "0 x 0 x 0 cm"
     ],
     "rentalTimeUnit": "  hours",
     "rentalTimeChoices": [
@@ -277,5 +282,10 @@
         "Invalid code",
         "Code has already been used",
         "Code has expired"
-    ]
+    ],
+    "labelCampus": "Locker Location",
+    "labelCampusAddress": "Address",
+    "labelMobile": "Phone Number",
+    "labelWorkingTime": "Operating Hours",
+    "labelOrderDate": "Order booked on"
 }
