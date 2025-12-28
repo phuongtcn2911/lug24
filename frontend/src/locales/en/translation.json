@@ -41,6 +41,7 @@
     "alertEmailInvalid": "Invalid email",
     "alertPhoneInvalid": "Invalid phone number",
     "alertPromoInvalid": "Invalid code",
+    "alertIDCardInvalid":"Invalid identity number",
     "alertRentalTime": [
         "Pickup time must be after drop-off time!",
         "The storage facility operates only between {{openHour}}:{{openMinute}} and {{closeHour}}:{{closeMinute}}. Please select another pickup time."

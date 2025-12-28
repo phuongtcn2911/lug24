@@ -131,7 +131,7 @@ export default function ChooseLocker() {
                                     key={index}
                                     name="locker.sizeIndex.sizeLetter"
                                     title={`${t("sizeUnit")} ${e.size}`}
-                                    sizeDesc={t("sizeDescription." + index)}
+                                    sizeDesc={t("sizeDescription." + (convertSizeIndex(e.size)-1))}
                                     amount={e.availableBoxes}
                                     value={e.size}
                                     checked={draft.locker.sizeLetter === e.size || order.locker.sizeLetter === e.size}

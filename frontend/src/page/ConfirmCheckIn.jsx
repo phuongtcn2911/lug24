@@ -109,7 +109,7 @@ export default function ConfirmCheckIn() {
                             </p>
                             <p className="mb-1 text-gray-600 text-left text-sm">
                                 <span className="font-medium">{`${t("labelMobile")}`}</span><br/>
-                                <span>000.0000.0000</span>
+                                <span>{campus?.HOTLINE}</span>
                             </p>
                             <p className="mb-1 text-gray-600 text-left text-sm">
                                 <span className="font-medium">{`${t("labelWorkingTime")}`}</span><br/>

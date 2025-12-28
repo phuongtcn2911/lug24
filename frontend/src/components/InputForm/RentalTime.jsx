@@ -102,6 +102,7 @@ export default function RentalTime() {
         updateOrder("order", "maxRentalTime", rentalTime);
         updateOrder("order", "checkIn", startDate);
         updateOrder("order", "checkOut", endDate);
+        updateOrder("order", "finalCheckOut", endDate);
 
     }, [workingTime]);
 
@@ -293,20 +294,20 @@ export default function RentalTime() {
                                         type="radio"
                                         value={key}
                                         checked={order.order.rentalTimeChoice === key || draft.order.rentalTimeChoice === key}
-                                        disabled={chooseRentalChoices[key]}
+                                        disabled={!chooseRentalChoices[key]}
                                         name="order.rentalTimeChoice"
                                         onChange={changeRentalOpt}
                                         className={`w-4 h-4  border-default-medium bg-neutral-secondary-medium rounded-full 
                                                     checked:border-brand 
                                                     focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none
-                                                    ${chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
+                                                    ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
                                                     `} />
 
                                     {/* ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"} */}
                                     <label
                                         for={`rentalChoice_${key}`}
                                         className={`w-full py-3 select-none ms-2 text-base font-medium text-heading text-left
-                                            ${chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
+                                            ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
                                         `}>{item}</label>
 
                                     {/* ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"} */}

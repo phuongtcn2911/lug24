@@ -41,6 +41,7 @@
     "alertEmailInvalid": "Email không đúng",
     "alertPhoneInvalid": "Số điện thoại không đúng",
     "alertPromoInvalid": "Mã không hợp lệ",
+    "alertIDCardInvalid":"Số căn cước không đúng",
     "alertRentalTime": [
         "Thời gian lấy hàng phải diễn ra sau thời gian gửi hàng",
         "Cơ sở ký gửi chỉ hoạt động trong khung giờ từ {{openHour}}:{{openMinute}} đến {{closeHour}}:{{closeMinute}}. Vui lòng chọn lại khung giờ lấy hàng."

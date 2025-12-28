@@ -12,22 +12,22 @@ export default function SenderInput() {
 
 
     const [isSameDelivery, setIsSameDelivery] = useState(true);
-    const [form, setForm] = useState({
-        customer: {
-            fullName: "",
-            email: "",
-            mobile: "",
-            identityCard: "",
-            authMethod: "Email"
-        },
-        receiver: {
-            fullName: "",
-            email: "",
-            mobile: "",
-            identityCard: "",
-            authMethod: "Email"
-        }
-    });
+    // const [form, setForm] = useState({
+    //     customer: {
+    //         fullName: "",
+    //         email: "",
+    //         mobile: "",
+    //         identityCard: "",
+    //         authMethod: "Email"
+    //     },
+    //     receiver: {
+    //         fullName: "",
+    //         email: "",
+    //         mobile: "",
+    //         identityCard: "",
+    //         authMethod: "Email"
+    //     }
+    // });
 
     const { order, setOrder, updateOrder } = useContext(OrderContext);
 
@@ -42,31 +42,35 @@ export default function SenderInput() {
 
     function setValueInFormHandler(e) {
         // console.log(e.target);
-        const obj = e.target.name;
+        // const obj = e.target.name;
 
-        const [group, field] = obj.split(".");
-        const value = e.target.value;
+        // const [group, field] = obj.split(".");
+        // const value = e.target.value;
+        // updateOrder(group, field, value);
 
 
-        setForm(prev => ({
-            ...prev,
-            [group]: {
-                ...prev[group],
-                [field]: value
-            }
-        }));
+        // setForm(prev => ({
+        //     ...prev,
+        //     [group]: {
+        //         ...prev[group],
+        //         [field]: value
+        //     }
+        // }));
     }
 
-    function updateOrderHandler(e) {
+    function updateOrderHandler(e, error) {
         const obj = e.target.name;
         const [group, field] = obj.split(".");
         const value = e.target.value;
 
-        updateOrder(group, field, value);
-        //Nếu là nhóm thông tin của người gửi thì phải quan sát nút kê khai ủy quyền có bật hay ko
-        //Nếu nút đang tắt thì sao chép thông tin từ customer
-        if (group === "customer" && isSameDelivery) {
-            updateOrder("receiver", field, value);
+
+        if (error === "") {
+            updateOrder(group, field, value);
+            //Nếu là nhóm thông tin của người gửi thì phải quan sát nút kê khai ủy quyền có bật hay ko
+            //Nếu nút đang tắt thì sao chép thông tin từ customer
+            if (group === "customer" && isSameDelivery) {
+                updateOrder("receiver", field, value);
+            }
         }
     }
 
@@ -88,17 +92,17 @@ export default function SenderInput() {
         console.log("Khác người nhận: ", isDifferentPerson);
 
         if (isDifferentPerson === true) {
-            console.log("Làm trống nội dung receiver");
-            setForm(prev => ({
-                ...prev,
-                receiver: {
-                    fullName: "",
-                    email: "",
-                    mobile: "",
-                    identityCard: "",
-                    authMethod: "Email"
-                }
-            }));
+            // console.log("Làm trống nội dung receiver");
+            // setForm(prev => ({
+            //     ...prev,
+            //     receiver: {
+            //         fullName: "",
+            //         email: "",
+            //         mobile: "",
+            //         identityCard: "",
+            //         authMethod: "Email"
+            //     }
+            // }));
 
             setOrder(prev => ({
                 ...prev,
@@ -127,18 +131,17 @@ export default function SenderInput() {
                     name="customer.fullName"
                     type="text"
                     placeholder={t("plcFullname")}
-                    value={form.customer.fullName || order.customer.fullName}
-                    onChange={setValueInFormHandler}
+                    storeData={order.customer.fullName}
+                    // onChange={setValueInFormHandler}
                     onBlur={updateOrderHandler}
                 />
-
                 <Input label={t("labelRenterIDCard")}
                     id="inpcustomerIDCard"
                     name="customer.identityCard"
                     type="text"
                     placeholder={t("plcIDCard")}
-                    value={form.customer.identityCard || order.customer.identityCard}
-                    onChange={setValueInFormHandler}
+                    storeData={order.customer.identityCard}
+                    // onChange={setValueInFormHandler}
                     onBlur={updateOrderHandler}
                 />
 
@@ -149,8 +152,8 @@ export default function SenderInput() {
                             name="customer.email"
                             type="email"
                             placeholder={t("plcEmail")}
-                            value={form.customer.email || order.customer.email}
-                            onChange={setValueInFormHandler}
+                            storeData={order.customer.email}
+                            // onChange={setValueInFormHandler}
                             onBlur={updateOrderHandler}
                             disabled={showMobileCustomer}
                             tabIndex={showMobileCustomer ? -1 : 0}
@@ -163,8 +166,8 @@ export default function SenderInput() {
                             name="customer.mobile"
                             type="tel"
                             placeholder={t("plcPhone")}
-                            value={form.customer.mobile || order.customer.mobile}
-                            onChange={setValueInFormHandler}
+                            storeData={order.customer.mobile}
+                            // onChange={setValueInFormHandler}
                             onBlur={updateOrderHandler}
                             disabled={!showMobileCustomer}
                             tabIndex={!showMobileCustomer ? -1 : 0}
@@ -216,8 +219,8 @@ export default function SenderInput() {
                             name="receiver.fullName"
                             type="text"
                             placeholder={t("plcFullname")}
-                            value={form.receiver.fullName || order.receiver.fullName}
-                            onChange={setValueInFormHandler}
+                            storeData={order.receiver.fullName}
+                            // onChange={setValueInFormHandler}
                             onBlur={updateOrderHandler}
                         />
                         <Input label={t("labelReceiverIDCard")}
@@ -225,8 +228,8 @@ export default function SenderInput() {
                             name="receiver.identityCard"
                             type="text"
                             placeholder={t("plcIDCard")}
-                            value={form.receiver.identityCard || order.receiver.identityCard}
-                            onChange={setValueInFormHandler}
+                            storeData={order.receiver.identityCard}
+                            // onChange={setValueInFormHandler}
                             onBlur={updateOrderHandler}
                         />
 
@@ -238,8 +241,8 @@ export default function SenderInput() {
                                     name="receiver.email"
                                     type="email"
                                     placeholder={t("plcEmail")}
-                                    value={form.receiver.email || order.receiver.email}
-                                    onChange={setValueInFormHandler}
+                                    storeData={order.receiver.email}
+                                    // onChange={setValueInFormHandler}
                                     onBlur={updateOrderHandler}
                                     disabled={showMobileReceiver}
                                     tabIndex={showMobileReceiver ? -1 : 0}
@@ -254,8 +257,8 @@ export default function SenderInput() {
                                     name="receiver.mobile"
                                     type="tel"
                                     placeholder={t("plcPhone")}
-                                    value={form.receiver.mobile || order.receiver.mobile}
-                                    onChange={setValueInFormHandler}
+                                    storeData={order.receiver.mobile}
+                                    // onChange={setValueInFormHandler}
                                     onBlur={updateOrderHandler}
                                     disabled={!showMobileReceiver}
                                     tabIndex={!showMobileReceiver ? -1 : 0}
