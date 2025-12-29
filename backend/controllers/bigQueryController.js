@@ -69,7 +69,7 @@ export async function getPrivateVoucher(req, res) {
         const code = req?.query.code;
         const result = await query.getPrivateVoucher(code);
         console.log(result);
-        return res.json({ code: 1, message: "Truy vấn thành công",  result  });
+        return res.json({ code: 1, message: "Truy vấn thành công", result });
 
     } catch (err) {
         return res.json({ code: 0, message: "Truy vấn thất bại: ", err });
@@ -97,4 +97,19 @@ export async function getAvailableLockerAmount(req, res) {
     } catch (err) {
         return res.json({ code: 0, message: "Lấy dữ liệu thất bại: ", err });
     }
+}
+
+export async function getAvailableLocker(req, res) {
+    const size = req?.query.size;
+    try {
+        const rows = await query.getAvailableLocker(process.env.DEVICE_NO, size);
+        return res.json({ code: 1, message: "Lấy dữ liệu thành công", data: { rows } });
+
+    } catch (err) {
+        return res.json({ code: 0, message: "Lấy dữ liệu thất bại: ", err });
+    }
+}
+
+export async function checkExistOrderID(req,res){
+
 }

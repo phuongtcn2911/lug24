@@ -118,6 +118,25 @@ export async function getLockersAmount(deviceNo) {
     return rows;
 }
 
+export async function getAvailableLocker(deviceNo, sizeLetter) {
+
+    const query = `SELECT LCK.LOCKER_ID,LCK.LOCKER_NO,LCK.SIZE
+    FROM \`${dataset}.LOCKER\` as LCK, \`${dataset}.CAMPUS\` as CMP 
+    WHERE LCK.CAMPUS_ID=CMP.CAMPUS_ID AND CMP.DEVICE_NO=@deviceNo AND LCK.SIZE=@sizeLetter 
+    AND LCK.DEF_LCK_STATUS_ID=0 LIMIT 1`;
+
+    const option = {
+        query,
+        params: {
+            deviceNo: deviceNo,
+            sizeLetter: sizeLetter
+        }
+    }
+
+    const [rows] = await bq.query(option);
+    return rows;
+}
+
 export async function getPublicVoucher() {
     const table = ["PROMOTION_CAMPAIGN", "VOUCHER"];
     const query = `   SELECT VOUC.VOUCHER_ID,CAMP.CAMPAIGN_TITLE,CAMP.DISCOUNT_VALUE,CAMP.EXPIRED_DATE,CAMP.CAMPAIGN_DESCRIPTION,CAMP.IS_PARALLEL,VOUC.VALID_STATUS,CAMP.IS_PUBLIC

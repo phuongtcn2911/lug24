@@ -1,5 +1,5 @@
 import axios from "axios";
-import { generateOrderCode, verifySignature } from "../utils/generator.js";
+import { generateOrderID, verifySignature } from "../utils/generator.js";
 import { sendReceiptEmail } from "../utils/mailer.js";
 import { config } from "dotenv";
 import { sendReceiptZalo } from "./zaloController.js";
@@ -11,10 +11,10 @@ const apiURL = process.env.SMARTLOCKER_API;
 const apiKey = process.env.SMARTLOCKER_TOKEN;
 const deviceNo = process.env.DEVICE_NO;
 
-// export async function generateOrderCodeHandler(req, res) {
-//   const orderCode = generateOrderCode();
-//   res.json({ orderCode });
-// }
+export async function generateOrderCode(req, res) {
+  const orderID = generateOrderID();
+  res.json({ orderID });
+}
 
 export async function bookABox(req, res) {
   try {
