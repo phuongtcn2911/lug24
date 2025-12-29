@@ -2,15 +2,21 @@
     "greetings": "Lug24 kính chào quý khách",
     "sendParcel": "Gửi kiện hàng",
     "receiveParcel": "Lấy kiện hàng",
-    "btnBack": "Quay lại",
+    "btnEndSession": "Kết thúc giao dịch",
     "legendRenter": "Thông tin người thuê tủ",
+    "labelSenderInfo": "Thông tin người gửi",
+    "labelReceiverInfo": "Thông tin người nhận",
+    "labelIdentityNo": "Thẻ CCCD số",
+    "labelEmail": "Email",
+    "labelOTPMethod": "Phương thức gửi xác thực",
+    "btnChangeInfo": "Thay đổi thông tin",
     "headerDropOff": "Thông tin ký gửi",
     "headerPickUp": "Thông tin nhận lại",
-    "headerChooseLocker":"Chọn tủ",
+    "headerChooseLocker": "Chọn tủ",
     "labelRenterName": "Họ và tên người thuê tủ",
-    "labelRenterIDCard":"Số thẻ căn cước người thuê tủ",
+    "labelRenterIDCard": "Số thẻ căn cước người thuê tủ",
     "labelReceiverName": "Họ và tên người nhận hàng",
-    "labelReceiverIDCard":"Số thẻ căn cước người nhận hàng",
+    "labelReceiverIDCard": "Số thẻ căn cước người nhận hàng",
     "labelRenterEmail": "Email đăng ký nhận xác thực",
     "labelRenterPhone": "Số điện thoại đăng ký nhận xác thực",
     "btnSignUpViaMobile": "Đăng ký nhận xác thực bằng số điện thoại",
@@ -27,7 +33,7 @@
     "plcFullname": "VD: Bùi Bảo Nhân",
     "plcEmail": "VD: nhan.bb@gmail.com",
     "plcPhone": "VD: 84 123 456 789",
-     "plcIDCard": "VD: 079 XX XXX XXXX",
+    "plcIDCard": "VD: 079 XX XXX XXXX",
     "chkSameDelivery": "Kê khai ủy quyền cho người nhận khác",
     "btnEnterPromoCode": "Nhập mã",
     "labelSubTotal": "Tạm tính",
@@ -35,25 +41,25 @@
     "labelTax": "Thuế (nếu có)",
     "labelTotal": "Tổng cộng",
     "labelSessionDuration": "Giao dịch sẽ kết thúc trong",
-    "labelAvailableBoxes":"Số tủ trống",
-    "btnCheckout": "Thanh toán",
+    "labelAvailableBoxes": "Số tủ trống",
+    "btnCheckout": "Xác thực thanh toán",
     "alertEmpty": "Thông tin không được bỏ trống",
     "alertEmailInvalid": "Email không đúng",
     "alertPhoneInvalid": "Số điện thoại không đúng",
     "alertPromoInvalid": "Mã không hợp lệ",
-    "alertIDCardInvalid":"Số căn cước không đúng",
+    "alertIDCardInvalid": "Số căn cước không đúng",
     "alertRentalTime": [
         "Thời gian lấy hàng phải diễn ra sau thời gian gửi hàng",
         "Cơ sở ký gửi chỉ hoạt động trong khung giờ từ {{openHour}}:{{openMinute}} đến {{closeHour}}:{{closeMinute}}. Vui lòng chọn lại khung giờ lấy hàng."
     ],
     "alertOutOfLocker": "Tất cả tủ ký gửi đều đã đầy. Vui lòng quay lại sau.",
     "labConfirm": "Tôi chấp nhận các điều khoản dịch vụ",
-    "btnNextStep":"Bước tiếp theo",
-    "btnPrevStep":"Quay lại",
-    "divFillInfo":"Sử dụng thông tin từ",
-    "btnScanIDCard":"Quét thẻ căn cước",
+    "btnNextStep": "Bước tiếp theo",
+    "btnPrevStep": "Quay lại",
+    "divFillInfo": "Sử dụng thông tin từ",
+    "btnScanIDCard": "Quét thẻ căn cước",
     "btnReservation": "Đặt tủ",
-    "btnApply":"Áp dụng",
+    "btnApply": "Áp dụng",
     "houseRule": [
         {
             "title": "Quy định ký gửi hành lý",
@@ -77,7 +83,7 @@
         }
     ],
     "sizeUnit": "Cỡ ",
-    "sizeDescription":[
+    "sizeDescription": [
         "0 x 0 x 0 cm",
         "40 x 40 x 60 cm",
         "40 x 85 x 60 cm",
@@ -190,7 +196,7 @@
             "Lưu ý về thời gian hoạt động tại cơ sở ký gửi có thể ảnh hưởng đến việc lấy hàng của quý khách."
         ]
     },
-     "labelPaymentMethods": "Phương thức thanh toán",
+    "labelPaymentMethods": "Phương thức thanh toán",
     "labelChangePaymentMethod": "Thay đổi phương thức thanh toán",
     "paymentMethod": [
         "Quét mã QR",
@@ -276,19 +282,19 @@
     "btnFaceRecognize": "Nhận diện gương mặt",
     "scanQRInvalidNoti": "Mã QR không hợp lệ",
     "plchldScanCodeID": "Đưa mã QR vào khung quét",
-    "labelExpiredDate":"Hạn sử dụng",
-    "labelUnlimited":"Không giới hạn",
-    "btnCancel":"Hủy bỏ",
-    "voucherError":[
+    "labelExpiredDate": "Hạn sử dụng",
+    "labelUnlimited": "Không giới hạn",
+    "btnCancel": "Hủy bỏ",
+    "voucherError": [
         "Mã đã được thêm",
         "Mã không hợp lệ",
         "Mã đã được sử dụng",
         "Mã đã hết hạn sử dụng"
     ],
-    "labelCampus":"Cơ sở ký gửi",
+    "labelCampus": "Cơ sở ký gửi",
     "labelCampusAddress": "Địa chỉ",
-    "labelMobile":"Số điện thoại",
-    "labelWorkingTime":"Thời gian hoạt động",
-    "labelOrderDate":"Đã được đặt vào"
-
+    "labelMobile": "Số điện thoại",
+    "labelWorkingTime": "Thời gian hoạt động",
+    "labelOrderDate": "Đã được đặt vào"
+    
 }

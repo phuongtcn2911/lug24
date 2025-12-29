@@ -1,4 +1,6 @@
 import { createContext, useState, useEffect } from "react";
+import api from "../config/axios";
+
 export const OrderContext = createContext();
 
 export const defaultOrder = {
@@ -22,6 +24,7 @@ export const defaultOrder = {
     },
     locker: {
         id: undefined,
+        no: undefined,
         sizeIndex: undefined,
         sizeLetter: undefined
     },
@@ -53,6 +56,14 @@ export const defaultOrder = {
 export function OrderProvider({ children }) {
     const [order, setOrder] = useState(checkLocalStoreOrder);
 
+    async function createOrderCode() {
+        const res = await api.get('api/generateOrderCode');
+        const code = res?.data?.orderID;
+        console.log(code);
+
+        updateOrder("order", "id", code);
+    }
+
     function checkLocalStoreOrder() {
         try {
             const localOrder = localStorage.getItem("order");
@@ -68,11 +79,15 @@ export function OrderProvider({ children }) {
 
     useEffect(() => {
         localStorage.setItem("order", JSON.stringify(order));
+        if (!order.order.id) {
+            const orderCode = async () => { await createOrderCode(); }
+            orderCode();
+        }
         // console.log("OrderContext order changed:", order);
     }, [order]);
 
     useEffect(() => {
-        if (order.order.rentalTimeChoice === null || order.locker.sizeLetter === null) return;
+        if (order?.order.rentalTimeChoice === null || order?.locker.sizeLetter === null) return;
         const priceListID = createPriceListID(order.order.rentalTimeChoice, order.locker.sizeLetter);
         updateOrder("order", "priceListID", priceListID);
     }, [order.order.rentalTimeChoice, order.locker.sizeLetter]);

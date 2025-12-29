@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Header } from "../components/ExtraPart/Header";
 import CurrencyFormat from "../utils/CurrencyFormat";
 import * as DateStringFormat from "../utils/DateStringFormat";
@@ -6,20 +6,66 @@ import { useTranslation } from "react-i18next";
 import { OrderContext } from "../data/OrderContext";
 import { SizeIMG } from "../data/Data";
 import { InitialDataContext } from "../data/InitialDataContext";
+import api from "../config/axios";
+import { useNavigate } from "react-router-dom";
+import ModalFaceRecognize from "../components/Modal/ModalFaceRecognize";
 
 export default function ConfirmCheckIn() {
     const { t, i18n } = useTranslation();
-    const { order } = useContext(OrderContext);
-    const { campus,loading } = useContext(InitialDataContext);
+    const { order, updateOrder } = useContext(OrderContext);
+    const { campus, loading } = useContext(InitialDataContext);
+    const navigate = useNavigate();
+    const [isOpenFaceRec, setOpenFaceRec] = useState(false);
+
+    useEffect(() => {
+        const getAvailableLocker = async () => {
+            try {
+                const res = await api.get('api/getAvailableLocker', { params: { size: order.locker.sizeLetter } });
+                const locker = res?.data?.data?.rows?.[0];
+
+                console.log("Get available box:", locker);
+
+
+                updateOrder("locker", "id", locker?.LOCKER_ID);
+                updateOrder("locker", "no", locker?.LOCKER_NO);
+            } catch (err) {
+                console.log("Frontend nhận api getAvalableLocker không thành công", err);
+            }
+        };
+
+        if (order.locker.id === undefined) {
+            getAvailableLocker();
+        }
+    }, [order.locker.id, order.locker.no]);
+
+    function editInfo(e) {
+        e.preventDefault();
+        navigate("/sendParcel");
+    }
+
+    function showFaceRecognize(e) {
+        e.preventDefault();
+        setOpenFaceRec(true);
+    }
+
+    function getCapturedFile(img) {
+
+        console.log("Ảnh nhận được:", img);
+      
+    }
+
+
+
+
 
     return (
         <>
-            <Header isBackEnable={true} link={"/SendParcel"} />
+            <Header isBackEnable={true} link={"/"} />
             <div className="level">
                 <div className="level-left">
                     <h1 className="text-heading text-2xl" >
                         <span className="font-bold">{t("legendOrder")} </span>
-                        <span className="font-semibold">{order.order.subId ? `#${order.order.subId}` : "-"}</span>
+                        <span className="font-semibold">{order.order.id ? `#${order.order.id}` : "-"}</span>
                     </h1>
                 </div>
                 <div className="level-right">
@@ -35,34 +81,34 @@ export default function ConfirmCheckIn() {
                     {/* Delivery + Contact */}
                     <div className="grid grid-cols-1 text-sm ">
                         <div className="mb-3">
-                            <p className="font-semibold text-lg text-gray-900 text-left mb-3">Thông tin người gửi</p>
+                            <p className="font-semibold text-lg text-gray-900 text-left mb-3">{t("labelSenderInfo")}</p>
                             <p className="mb-1 text-gray-900 text-left text-base font-semibold">{order.customer.fullName ? order.customer.fullName : "-"}</p>
-                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">CCCD: </span>{order.customer.identityCard ? order.customer.identityCard : "-"}</p>
+                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">{t("labelIdentityNo")}: </span>{order.customer.identityCard ? order.customer.identityCard : "-"}</p>
                             {
                                 order.customer.authMethod === "Email" ?
-                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Email: </span>{order.customer.email ? order.customer.email : "-"}</p>
+                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">{t("labelEmail")}: </span>{order.customer.email ? order.customer.email : "-"}</p>
                                     :
-                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Điện thoại: </span>{order.customer.mobile ? order.customer.mobile : "-"}</p>
+                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">{t("labelMobile")}: </span>{order.customer.mobile ? order.customer.mobile : "-"}</p>
                             }
-                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Phương thức gửi xác thực: </span>{order.customer.authMethod ? order.customer.authMethod : "-"}</p>
+                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">{t("labelOTPMethod")}: </span>{order.customer.authMethod ? order.customer.authMethod : "-"}</p>
                         </div>
 
                     </div>
                     <div className="grid grid-cols-1 text-sm ">
                         <div className="mb-3">
-                            <p className="font-semibold text-lg text-gray-900 text-left mb-3">Thông tin người nhận</p>
+                            <p className="font-semibold text-lg text-gray-900 text-left mb-3">{t("labelReceiverInfo")}</p>
                             <p className="mb-1 text-gray-900 text-left text-base font-semibold">{order.receiver.fullName ? order.receiver.fullName : "-"}</p>
-                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">CCCD: </span>{order.receiver.identityCard ? order.receiver.identityCard : "-"}</p>
+                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">{t("labelIdentityNo")}: </span>{order.receiver.identityCard ? order.receiver.identityCard : "-"}</p>
                             {
                                 order.receiver.authMethod === "Email" ?
-                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Email: </span>{order.receiver.email ? order.receiver.email : "-"}</p>
+                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">{t("labelEmail")}: </span>{order.receiver.email ? order.receiver.email : "-"}</p>
                                     :
-                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Điện thoại: </span>{order.receiver.mobile ? order.receiver.mobile : "-"}</p>
+                                    <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">{t("labelMobile")}: </span>{order.receiver.mobile ? order.receiver.mobile : "-"}</p>
                             }
-                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">Phương thức gửi xác thực: </span>{order.receiver.authMethod ? order.receiver.authMethod : "-"}</p>
+                            <p className="mb-1 text-gray-600 text-left text-sm"><span className="font-medium">{t("labelOTPMethod")}: </span>{order.receiver.authMethod ? order.receiver.authMethod : "-"}</p>
                         </div>
                         <div className="grid grid-flow-col justify-items-end">
-                            <button className="w-42 mt-2 bg-yellow-400 hover:underline">Thay đổi thông tin</button>
+                            <button className="w-42 mt-2 bg-yellow-400 hover:underline" onClick={editInfo}>{t("btnChangeInfo")}</button>
                         </div>
                     </div>
                 </div>
@@ -83,7 +129,14 @@ export default function ConfirmCheckIn() {
                         <div className="text-left place-self-center">
                             <h3 className="font-black text-gray-900 text-3xl">{`${t("sizeUnit")} ${order.locker.sizeLetter ? order.locker.sizeLetter : "-"}`}</h3>
                             <p className="text-sm text-gray-500">{order.locker.sizeIndex ? t("sizeDescription." + (order.locker.sizeIndex - 1)) : "-"}</p>
-                            <p className="mt-3 text-base font-semibold text-gray-500">{`${t("labelLockerID")}: ${order.locker.id ? `#${order.locker.id}` : "-"}`}</p>
+                            <p className="flex gap-2 mt-3 text-base font-semibold text-gray-500 ">
+                                <span>{`${t("labelLockerID")}: `}</span>
+                                {
+                                    order.locker.id ?
+                                        <span>{`#${order.locker.no}`}</span> :
+                                        <span class="loading loading-spinner loading-sm align-baseline"></span>
+                                }
+                            </p>
                         </div>
                     </div>
                     <div className="flex gap-4 md:col-span-2">
@@ -108,19 +161,19 @@ export default function ConfirmCheckIn() {
                                 <span>{campus?.ADDRESS}</span>
                             </p>
                             <p className="mb-1 text-gray-600 text-left text-sm">
-                                <span className="font-medium">{`${t("labelMobile")}`}</span><br/>
+                                <span className="font-medium">{`${t("labelMobile")}`}</span><br />
                                 <span>{campus?.HOTLINE}</span>
                             </p>
                             <p className="mb-1 text-gray-600 text-left text-sm">
-                                <span className="font-medium">{`${t("labelWorkingTime")}`}</span><br/>
+                                <span className="font-medium">{`${t("labelWorkingTime")}`}</span><br />
                                 <span>{`${campus?.OPEN_TIME} - ${campus?.CLOSE_TIME}`}</span>
                             </p>
                         </div>
 
                     </div>
-     
+
                     <div className="flex flex-col h-full grid-cols-1">
-                        <div  className="mt-auto">
+                        <div className="mt-auto">
                             <div className="level my-1">
                                 <div className="level-left">
                                     <p className="text-gray-900 text-left text-base font-semibold">{t("labelSubTotal")}</p>
@@ -161,9 +214,15 @@ export default function ConfirmCheckIn() {
                 </div>
             </div >
             <div className="grid grid-flow-col justify-items-end">
-                <button className=" mt-5 bg-yellow-400">Xác thực thanh toán</button>
-
+                <button className=" mt-5 bg-yellow-400"
+                    onClick={showFaceRecognize}>{t("btnCheckout")}</button>
             </div>
+
+            <ModalFaceRecognize
+                isOpen={isOpenFaceRec}
+                onClose={() => setOpenFaceRec(false)}
+                onCapture={(file) => getCapturedFile(file)}
+            ></ModalFaceRecognize>
 
         </>
     )

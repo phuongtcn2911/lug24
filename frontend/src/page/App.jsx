@@ -33,7 +33,7 @@ function App() {
                 {/* <Route path="/RegulationCommitment" element={<Transition.Fade><RegulationCommitment /></Transition.Fade>} /> */}
                 <Route path="/SendParcel" element={<Transition.Fade><SendParcel /></Transition.Fade>} />
                 <Route path="/ReceiveParcel" element={<Transition.Fade><ReceiveParcel /></Transition.Fade>} />
-                <Route path="/ConfirmCheckIn" element={<Transition.Fade><ConfirmCheckIn /></Transition.Fade>} />
+                <Route path="/ConfirmCheckIn" element={<Transition.Fade><ConfirmCheckIn/></Transition.Fade>} />
                 <Route path="/OrderResult" element={<Transition.Fade><OrderResult/></Transition.Fade>}/>
             </Routes>
         </AnimatePresence>

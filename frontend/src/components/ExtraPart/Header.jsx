@@ -20,6 +20,7 @@ export function Header({ link, isBackEnable }) {
         if (link === "/") {
             stopTimer();
             resetTimer();
+            
            
             if (order?.orderID) {
                 (async () => {
@@ -42,9 +43,9 @@ export function Header({ link, isBackEnable }) {
                             <button className="button is-warning"
                                 onClick={resetNewSS}>
                                 <span className="icon">
-                                    <i className="fa-solid fa-circle-left"></i>
+                                    <i class="fa-solid fa-ban"></i>
                                 </span>
-                                <span>{t("btnBack")}</span>
+                                <span>{t("btnEndSession")}</span>
                             </button>
 
                             : null}

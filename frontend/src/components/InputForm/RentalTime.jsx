@@ -26,8 +26,8 @@ export default function RentalTime() {
 
     const [isTimeValid, setIsTimeValid] = useState(true);
     const [timeAlert, setTimeAlert] = useState("");
-    const [chooseRentalChoices, setChooseRentalChoices] = useState([true, true]);
 
+    const [isPromoRentalChoice, setPromoRentalChoice] = useState(true);
 
     const [draft, setDraft] = useState({
         order: {
@@ -66,25 +66,36 @@ export default function RentalTime() {
         console.log("rentalTime lúc khởi tạo: ", rentalTime);
 
         const startDate = order?.order.checkIn ? dayjs(order.order.checkIn) : roundDate();
-        let predictEnd = order?.order.checkOut ? dayjs(order.order.checkOut) : startDate.add(rentalTime, "hour");
+        let predictEnd = startDate.add(rentalTime, "hour");
+        // let predictEnd = order?.order.checkOut ? dayjs(order.order.checkOut) : startDate.add(rentalTime, "hour");
         console.log("Dự đoán ngày trả lúc khởi tạo: ", predictEnd);
-        let choiceList = [true, true];
+        // let choiceList = [true, true];
 
         console.log("Có ngoài giờ không? ", isOutWorkingTime(predictEnd));
+
 
         if (isOutWorkingTime(predictEnd)) {
             opt = 1;
             rentalTime = hourChoices[opt];
-            choiceList[opt] = false;
+            // choiceList[opt] = false;
             predictEnd = calcEndDate(startDate, rentalTime);
+            setPromoRentalChoice(false);
+            // console.log("Giờ thuê thực: ",rentalTime);
+        }
+        else {
+            setPromoRentalChoice(true);
         }
 
-        let endDate = predictEnd;
 
-        console.log(choiceList);
+        let endDate = !order?.order.checkOut?predictEnd:order?.order.checkOut;
+        let actualRentalTime = endDate.diff(startDate, "hour");
+        rentalTime = rentalTime != actualRentalTime ? actualRentalTime : rentalTime;
+       
+
+        // console.log(choiceList);
         console.log("Chọn cái option: ", opt);
 
-        setChooseRentalChoices(choiceList);
+        // setChooseRentalChoices(choiceList);
 
         setDraft(prev => ({
             ...prev,
@@ -99,7 +110,7 @@ export default function RentalTime() {
 
         updateOrder("order", "rentalTimeChoice", opt);
         updateOrder("order", "rentalTime", rentalTime);
-        updateOrder("order", "maxRentalTime", rentalTime);
+        updateOrder("order", "maxRentalTime",  roundMaxRentalTime(rentalTime));
         updateOrder("order", "checkIn", startDate);
         updateOrder("order", "checkOut", endDate);
         updateOrder("order", "finalCheckOut", endDate);
@@ -294,20 +305,20 @@ export default function RentalTime() {
                                         type="radio"
                                         value={key}
                                         checked={order.order.rentalTimeChoice === key || draft.order.rentalTimeChoice === key}
-                                        disabled={!chooseRentalChoices[key]}
+                                        disabled={key == 0 ? isPromoRentalChoice : false}
                                         name="order.rentalTimeChoice"
                                         onChange={changeRentalOpt}
                                         className={`w-4 h-4  border-default-medium bg-neutral-secondary-medium rounded-full 
                                                     checked:border-brand 
                                                     focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none
-                                                    ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
+                                                    ${key == 0 && !isPromoRentalChoice ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
                                                     `} />
 
                                     {/* ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"} */}
                                     <label
                                         for={`rentalChoice_${key}`}
                                         className={`w-full py-3 select-none ms-2 text-base font-medium text-heading text-left
-                                            ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
+                                            ${key == 0 && !isPromoRentalChoice ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
                                         `}>{item}</label>
 
                                     {/* ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"} */}

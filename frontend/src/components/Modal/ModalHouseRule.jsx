@@ -52,7 +52,7 @@ export default function ModalHouseRule({ isOpen, onClose }) {
     return (
         <>
             <ModalBase isOpen={isOpen} onClose={onClose}>
-                <div className="bg-white w-[650px] p-5 border border-yellow-500 rounded-lg 
+                <div className="bg-white w-[650px] p-5 border border-gray-300 rounded-lg 
                 max-h-[80vh] overflow-hidden flex flex-col">
                     {/* Header */}
                     <div className="flex items-center justify-between shrink-0 pb-4">

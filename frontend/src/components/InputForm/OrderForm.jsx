@@ -81,7 +81,7 @@ export function OrderForm() {
     function checkValidOrderForm() {
         //Kiểm tra tính hợp lệ từ thông tin của người dùng
         //Không kiểm tra dữ liệu liên quan đến việc tính toán
-        const isValidPerson = order.customer.fullName!=="" && (order.customer.mobile!=="" || order.customer.email!=="") && order.receiver.fullName!== ""&& (order.receiver.mobile!=="" || order.receiver.email!=="");
+        const isValidPerson = order.customer.fullName!=="" &&order.customer.identityCard!== ""&& (order.customer.mobile!=="" || order.customer.email!=="") && order.receiver.fullName!== ""&&order.receiver.identityCard!== ""&& (order.receiver.mobile!=="" || order.receiver.email!=="");
         const isValidLockerSize = order.locker.sizeLetter !== undefined;
         const isValidRentalTime = order.order.rentalTime!==0 && order.order.checkIn!==null && order.order.checkOut!==null;
         const isValidPaymentMethod = order.transaction.paymentMethod !== undefined;
@@ -183,8 +183,8 @@ export function OrderForm() {
                 </div>
 
                 <button className="button is-warning rounded-xl is-fullwidth"
-                    // disabled={!isEnabledBookingStatus}
-                    disabled={false}
+                    disabled={!isEnabledBookingStatus}
+                    // disabled={false}
                     onClick={showHouseRule}
                 >
                     <span className="icon">
