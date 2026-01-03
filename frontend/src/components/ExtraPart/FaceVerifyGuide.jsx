@@ -1,14 +1,31 @@
-export default function FaceVerifyGuide({onClick}) {
+export default function FaceVerifyGuide({ onClick }) {
 
     return (
         <>
-            <div className="w-[400px] h-[500px] 
+            <div className="w-[400px]  
             grid grid-rows-[auto_1fr_auto] gap-6
             bg-gray-50 border-gray-300 p-5 rounded-lg">
                 <div className="flex justify-center justify-between shrink-0 pb-4">
                     <h1 className="text-2xl font-bold text-heading uppercase text-center mt-3">
                         Hướng dẫn xác thực gương mặt
                     </h1>
+                </div>
+                <div className="flex justify-center">
+                    <div className="relative w-32 h-32 border-2 border-white/40 ">
+                        <span className="absolute top-0 left-0 w-8 h-2 bg-yellow-500 opacity-60"></span>
+                        <span className="absolute top-0 left-0 w-2 h-8 bg-yellow-500 opacity-60"></span>
+
+                        <span className="absolute top-0 right-0 w-8 h-2 bg-yellow-500 opacity-60"></span>
+                        <span className="absolute top-0 right-0 w-2 h-8 bg-yellow-500 opacity-60"></span>
+
+                        <span className="absolute bottom-0 left-0 w-8 h-2 bg-yellow-500 opacity-60"></span>
+                        <span className="absolute bottom-0 left-0 w-2 h-8 bg-yellow-500 opacity-60"></span>
+
+                        <span className="absolute bottom-0 right-0 w-8 h-2 bg-yellow-500 opacity-60"></span>
+                        <span className="absolute bottom-0 right-0 w-2 h-8 bg-yellow-500 opacity-60"></span>
+                        
+                        <i class="absolute inset-0 flex item-center justify-center fa-solid fa-user-tie text-7xl text-yellow-500 mt-5"></i>
+                    </div>
                 </div>
                 <div className="flex items-center">
                     <ul className="space-y-3 px-10 text-body list-disc list-outside marker:mr-5 text-justify">
@@ -20,7 +37,7 @@ export default function FaceVerifyGuide({onClick}) {
                 <div className="flex justify-center my-3 px-5">
                     <button className="btn w-full px-5 bg-yellow-400 border border-yellow-300 uppercase align-center font-semibold text-lg 
                     hover:bg-yellow-500 hover:border-yellow-300 hover:text-white"
-                    onClick={onClick}>Bắt đầu</button>
+                        onClick={onClick}>Bắt đầu</button>
                 </div>
             </div>
         </>

@@ -37,7 +37,6 @@ export default function SenderInput() {
     }, [showMobileCustomer]);
     useEffect(() => {
         updateOrder("receiver", "authMethod", showMobileReceiver ? "Zalo" : "Email");
-
     }, [showMobileReceiver]);
 
     function setValueInFormHandler(e) {
@@ -106,7 +105,9 @@ export default function SenderInput() {
 
             setOrder(prev => ({
                 ...prev,
+                isDifferentPerson:isDifferentPerson,
                 receiver: {
+                    ...prev.receiver,
                     fullName: "",
                     email: "",
                     mobile: "",

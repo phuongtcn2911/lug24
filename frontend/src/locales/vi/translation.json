@@ -295,6 +295,7 @@
     "labelCampusAddress": "Địa chỉ",
     "labelMobile": "Số điện thoại",
     "labelWorkingTime": "Thời gian hoạt động",
-    "labelOrderDate": "Đã được đặt vào"
+    "labelOrderDate": "Đã được đặt vào",
+    "btnIsProcessing":"Đang xử lý..."
     
 }

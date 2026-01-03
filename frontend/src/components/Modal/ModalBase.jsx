@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
-export default function ModalBase({ isOpen, onClose, children }) {
+export default function ModalBase({ isOpen, onClose, children, disableBackdropClose = false }) {
     useEffect(() => {
         if (!isOpen) return;
 
@@ -25,11 +25,15 @@ export default function ModalBase({ isOpen, onClose, children }) {
             {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-black/50"
-                onClick={onClose}
+                onClick={() => {
+                    if (!disableBackdropClose)
+                        onClose();
+                }}
             />
 
             {/* Modal */}
-            <div  className={`relative z-10 max-h-[80vh] overflow-hidden ${isOpen ? "animate-fadeIn" : "animate-fadeOut"}`}>
+            <div className={`relative z-10 max-h-[80vh] overflow-hidden ${isOpen ? "animate-fadeIn" : "animate-fadeOut"}`}
+                onClick={(e) => { e.stopPropagation(); }}>
                 {children}
             </div>
         </div>,

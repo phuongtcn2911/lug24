@@ -75,7 +75,7 @@ export default function SendParcel() {
                         </div>
 
                         {/* DƯỚI */}
-                        <div className="bg-yellow-50 border border-yellow-400 p-4 rounded-lg flex-1 text-justify">
+                        <div className="backdrop-blur-xs bg-yellow-50/85 border border-yellow-400 p-4 rounded-lg flex-1 text-justify">
                             <h2 className="mb-2 text-xl font-medium text-heading">
                                 <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
                                 {` ${t("notes.title")}`}

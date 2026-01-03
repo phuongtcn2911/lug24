@@ -294,5 +294,6 @@
     "labelCampusAddress": "Address",
     "labelMobile": "Phone Number",
     "labelWorkingTime": "Operating Hours",
-    "labelOrderDate": "Order booked on"
+    "labelOrderDate": "Order booked on",
+    "btnIsProcessing": "Processing..."
 }

@@ -4,7 +4,7 @@ import ModalBase from "./ModalBase";
 import { useEffect, useState, useContext } from "react";
 
 
-export default function ModalFaceRecognize({ isOpen, onClose, onCapture }) {
+export default function ModalFaceRecognize({ isOpen, onClose, onCapture,disableBackdropClose }) {
     const [step, setStep] = useState(1);
 
     useEffect(() => {
@@ -13,7 +13,7 @@ export default function ModalFaceRecognize({ isOpen, onClose, onCapture }) {
         }
     }, [isOpen]);
     return (
-        <ModalBase isOpen={isOpen} onClose={onClose}>
+        <ModalBase isOpen={isOpen} onClose={onClose} disableBackdropClose={disableBackdropClose}>
             <div className="h-full flex flex-col overflow-hidden">
                 <div
                     key={step}

@@ -22,6 +22,7 @@ export default function MyDateTimePicker({
       label={label}
       value={value}
       onChange={onChange}
+      className="backdrop-blur-xs bg-white/85"
       // renderInput={(params) => <TextField {...params} fullWidth />}
       disabled={isDisabled}
       disablePast={disablePast}

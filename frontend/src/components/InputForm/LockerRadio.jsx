@@ -17,7 +17,7 @@ export default function LockerRadio({ title, sizeDesc, amount, name, value, onCh
         <label
             className={`
                     flex-1 border rounded-lg p-4 select-none relative
-                    bg-white
+                    backdrop-blur-xs bg-white/85
                     ${!disabled ? "cursor-pointer hover:border-yellow-500 peer-checked:border-yellow-600" :
                     "cursor-not-allowed opacity-50"
                 }`}>

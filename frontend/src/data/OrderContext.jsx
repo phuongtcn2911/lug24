@@ -5,7 +5,7 @@ export const OrderContext = createContext();
 
 export const defaultOrder = {
     customer: {
-        id: "",
+        id: undefined,
         fullName: "",
         mobile: "",
         email: "",
@@ -14,7 +14,7 @@ export const defaultOrder = {
         authMethod: "Email"
     },
     receiver: {
-        id: "",
+        id: undefined,
         fullName: "",
         mobile: "",
         email: "",
@@ -22,6 +22,7 @@ export const defaultOrder = {
         imageURL: "",
         authMethod: "Email"
     },
+    isDifferentPerson:false,
     locker: {
         id: undefined,
         no: undefined,
@@ -30,7 +31,6 @@ export const defaultOrder = {
     },
     order: {
         id: undefined,
-        subID: undefined,
         rentalTimeChoice: undefined,
         rentalTime: 0,
         maxRentalTime: 0,
@@ -42,7 +42,8 @@ export const defaultOrder = {
         subTotal: 0,
         tax: 0,
         total: 0,
-        priceListID: ""
+        priceListID: "",
+        uuid:undefined
     },
     transaction: {
         uuid: undefined,

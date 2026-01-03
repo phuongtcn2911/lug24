@@ -107,7 +107,7 @@ export function OrderForm() {
             <h2 className="title-font sm:text-2xl text-xl font-medium text-gray-900 mb-4 text-left">
                 {t("legendOrder")}
             </h2>
-            <div className="bg-white border p-5 rounded-lg flex-1">
+            <div className="backdrop-blur-xs bg-white/70 border p-5 rounded-lg flex-1">
                 <div className="level">
                     <div className="level-left">
                         <p className="text-base font-medium text-heading">{t("labelLockerSize")}</p>

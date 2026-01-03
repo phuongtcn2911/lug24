@@ -12,8 +12,10 @@ export default defineConfig({
     port: 5173,
     host: '0.0.0.0',
     allowedHosts:[
-      'idioplasmatic-undeductive-roseanne.ngrok-free.dev'
+      'idioplasmatic-undeductive-roseanne.ngrok-free.dev',
+      'metallica-shannon-controlled-oem.trycloudflare.com'
     ],
+    // allowedHosts:"all",
     historyApiFallback: true
   }
 })

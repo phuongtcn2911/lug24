@@ -87,7 +87,7 @@ export default function RentalTime() {
         }
 
 
-        let endDate = !order?.order.checkOut?predictEnd:order?.order.checkOut;
+        let endDate = !order?.order.checkOut?predictEnd:dayjs(order?.order.checkOut);
         let actualRentalTime = endDate.diff(startDate, "hour");
         rentalTime = rentalTime != actualRentalTime ? actualRentalTime : rentalTime;
        
@@ -293,22 +293,22 @@ export default function RentalTime() {
     return (
         <>
             <h3 className="mb-3 text-left text-lg font-medium text-gray-900 ">{t("labelRentalTimeOrder")}</h3>
-            <ul class="w-full bg-white border border-default rounded-base rounded-lg">
+            <ul class="w-full backdrop-blur-xs bg-white/85 border border-default rounded-base rounded-lg">
                 {
                     items?.map(function (item, key) {
                         return (
                             <li key={"item" + key}
-                                className={`w-full ${key == 0 ? "border-b border-default" : ""}`}>
+                                className={`w-full  ${key == 0 ? "border-b border-default" : ""}`}>
                                 <div className={`flex items-center ps-3 `}>
                                     <input
                                         id={`rentalChoice_${key}`}
                                         type="radio"
                                         value={key}
                                         checked={order.order.rentalTimeChoice === key || draft.order.rentalTimeChoice === key}
-                                        disabled={key == 0 ? isPromoRentalChoice : false}
+                                        disabled={key == 0 ? !isPromoRentalChoice : false}
                                         name="order.rentalTimeChoice"
                                         onChange={changeRentalOpt}
-                                        className={`w-4 h-4  border-default-medium bg-neutral-secondary-medium rounded-full 
+                                        className={`w-4 h-4  border-default-medium  rounded-full 
                                                     checked:border-brand 
                                                     focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none
                                                     ${key == 0 && !isPromoRentalChoice ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
@@ -317,7 +317,7 @@ export default function RentalTime() {
                                     {/* ${!chooseRentalChoices[key] ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"} */}
                                     <label
                                         for={`rentalChoice_${key}`}
-                                        className={`w-full py-3 select-none ms-2 text-base font-medium text-heading text-left
+                                        className={`w-full py-3 select-none ms-2 text-base font-medium text-heading text-left 
                                             ${key == 0 && !isPromoRentalChoice ? "cursor-not-allowed opacity-50 text-gray-300" : "text-gray-500"}
                                         `}>{item}</label>
 

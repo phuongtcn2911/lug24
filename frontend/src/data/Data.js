@@ -26,6 +26,7 @@ import size_S from '../assets/img/SizeS.jpg'
 
 
 
+
 export const Logo = logo;
 export const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -116,3 +117,4 @@ export const WorkingTime = {
 
 export const detect_QR = dectectQR;
 export const beepSound = beepMP3;
+
