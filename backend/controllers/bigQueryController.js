@@ -2,19 +2,19 @@ import express from "express"
 import * as query from "../services/query.js"
 import { generateCustomerID } from "../utils/generator.js";
 
-export async function insertOrder(req, res) {
-    try {
-        const order = req.body?.obj;
-        console.log(order);
+// export async function insertOrder(req, res) {
+//     try {
+//         const order = req.body?.obj;
+//         console.log(order);
 
-        await query.insertOrder(order);
-        res.json({ message: "Inserted" });
+//         await query.insertOrder(order);
+//         res.json({ message: "Inserted" });
 
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ err: "Không thể kết nối tới BigQuery" });
-    }
-}
+//     } catch (err) {
+//         console.error(err.message);
+//         res.status(500).json({ err: "Không thể kết nối tới BigQuery" });
+//     }
+// }
 
 export async function checkExistCustomer(req, res) {
     try {
@@ -36,32 +36,77 @@ export async function checkExistCustomer(req, res) {
 
 export async function insertCustomer(req, res) {
     try {
-        const customer = req.body?.obj;
-        const results = await query.checkExistCustomer(customer);
-        if (results.length === 0) {
-            // console.log("Chưa có tài khoản người dùng");
-            // console.log("Generate mã khách hàng mới");
-            const customerID = generateCustomerID();
-            customer.id = customerID;
-            // console.log("Dữ liệu khách hàng: ",customer);
-            // console.log("Insert thông tin khách hàng");
-            await query.insertCustomer(customer);
-            // console.log("Trả về mã khách hàng mới");
-            return res.json({ customerID: customerID, message: "Insert customer successfully" });
-        } else {
-            // console.log("Đã có tài khoản người dùng");
-            // console.log(results);
-            // console.log("Lấy mã khách hàng từ CSDL");
-            // console.log("Trả về mã khách hàng");
-            return res.json({ customerID: results[0].CUSTOMER_ID, message: "Get customer ID from database" });
-        }
+        const customer = req.body?.customer;
+        const result = await query.insertCustomer(customer);
+        const customerID = result?.[0].CUSTOMER_ID;
+        // console.log(customerID);
+        return res.json({ customerID: customerID, message: "Insert customer successfully" });
+
+        // const results = await query.checkExistCustomer(customer);
+        // if (results.length === 0) {
+        //     // console.log("Chưa có tài khoản người dùng");
+        //     // console.log("Generate mã khách hàng mới");
+        //     const customerID = generateCustomerID();
+        //     customer.id = customerID;
+        //     // console.log("Dữ liệu khách hàng: ",customer);
+        //     // console.log("Insert thông tin khách hàng");
+        //     await query.insertCustomer(customer);
+        //     // console.log("Trả về mã khách hàng mới");
+        //     return res.json({ customerID: customerID, message: "Insert customer successfully" });
+        // } else {
+        //     // console.log("Đã có tài khoản người dùng");
+        //     // console.log(results);
+        //     // console.log("Lấy mã khách hàng từ CSDL");
+        //     // console.log("Trả về mã khách hàng");
+        //     return res.json({ customerID: results[0].CUSTOMER_ID, message: "Get customer ID from database" });
+        // }
 
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).json({ err: "Inserting customer failed: ", err });
+        res.status(500).json({ err: "Inserting Customer failed: ", err });
     }
+}
 
+export async function insertOrder(req, res) {
+    try {
+        const order = req?.body?.order;
+        // console.log("Backend nhận thông số order: ", order);
+        const uuid = await query.insertOrder(order);
+        return res.json({ uuid: uuid, message: "Inserted Order" });
+    }
+    catch (err) {
+        console.error(err.message);
+        res.status(500).json({ err: "Inserting Order failed: ", err });
+    }
+}
+
+export async function createTransactLog(req, res) {
+    try {
+        const transact = req?.body?.transact;
+        console.log("Tạo transact log mới. Backend nhận thông số transact: ", transact);
+        await query.createTransactLog(transact);
+        return res.json({ message: "Transact created" });
+
+    }
+    catch (err) {
+        console.error(err.message);
+        res.status(500).json({ err: "Inserting Transact Log failed: ", err });
+    }
+}
+
+export async function updateOrderStatus(req, res) {
+    try {
+        const obj = req?.body?.obj;
+        // console.log("Backend nhận thông số obj: ", obj);
+        await query.updateOrderStatus(obj);
+        return res.json({ message: "Order status has been updated" });
+
+    }
+    catch (err) {
+        console.error(err.message);
+        res.status(500).json({ err: "Updating Order Status failed: ", err });
+    }
 }
 
 export async function getPrivateVoucher(req, res) {
@@ -108,8 +153,4 @@ export async function getAvailableLocker(req, res) {
     } catch (err) {
         return res.json({ code: 0, message: "Lấy dữ liệu thất bại: ", err });
     }
-}
-
-export async function checkExistOrderID(req,res){
-
 }

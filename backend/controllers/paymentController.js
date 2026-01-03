@@ -33,7 +33,7 @@ export async function createPaymentSePay(req, res) {
         const pkg = {
             operation: 'PURCHASE',
             payment_method: 'BANK_TRANSFER',
-            order_invoice_number: obj.order.subID,
+            order_invoice_number: obj.order.id,
             order_amount: obj.order.total,
             currency: 'VND',
             order_description: obj.transaction.description,
@@ -51,7 +51,7 @@ export async function createPaymentSePay(req, res) {
             },
         });
 
-        // console.log("Liên kết thanh toán SePay: ",response.request.res.responseUrl);
+        console.log("Liên kết thanh toán SePay: ",response.request.res.responseUrl);
 
         res.json({
             checkout_url: response.request.res.responseUrl,

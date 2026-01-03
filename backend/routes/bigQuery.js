@@ -10,6 +10,8 @@ router.get("/getInitialData",bigQueryController.getInitialData);
 router.get("/getAvailableLockerAmount",bigQueryController.getAvailableLockerAmount);
 router.get("/getPrivateVoucher",bigQueryController.getPrivateVoucher);
 router.get("/getAvailableLocker",bigQueryController.getAvailableLocker);
+router.post("/createTransactLog",bigQueryController.createTransactLog);
+router.post("/updateOrderStatus",bigQueryController.updateOrderStatus);
 
 
 export default router;

@@ -1,31 +1,75 @@
 import { BigQueryDate, BigQueryDatetime, BigQueryTime, BigQueryTimestamp } from "@google-cloud/bigquery";
 import { getBigQueryConfig } from "../config.js";
 
+
 const bq = getBigQueryConfig();
 const dataset = "LUG";
 
 export async function insertOrder(order) {
+      console.log("Backend nhận thông tin Order:", order);
     const table = "ORDER";
-    const query = `INSERT INTO \`${dataset}.${table}\` 
-(MODIFIED_DATE, ORDER_ID, CHECK_IN, CHECK_OUT, RENTAL_TIME, PRICE_ID, SENDER_ID, RECEIVER_ID, NOTE)
-VALUES (@modifiedDate,@orderID,@checkIn,@checkOut,@rentalTime,@priceID,@senderID,@receiverID,@note)`;
+    const query = ` DECLARE vUUID STRING;
+                    
+                    SET vUUID=GENERATE_UUID();
+
+                    INSERT INTO \`${dataset}.${table}\` 
+                    (UUID, ORDER_ID, MODIFIED_DATE, 
+                    CHECK_IN, CHECK_OUT, 
+                    RENTAL_TIME, PRICE_ID, 
+                    SENDER_ID, RECEIVER_ID, 
+                    NOTE,DEF_ORD_STATUS_ID,
+                    SUBTOTAL,DISCOUNT,TAX,TOTAL)
+                    VALUES 
+                    (vUUID,@orderID,TIMESTAMP(@modifiedDate),
+                    TIMESTAMP(@checkIn),TIMESTAMP(@checkOut),
+                    @rentalTime,@priceID,
+                    @senderID,@receiverID,
+                    @note,@defOrdStatusID,
+                    @subTotal,@discount,@tax,@total);
+
+
+                    SELECT vUUID as UUID;
+                    `;
+
     const options = {
         query,
         params: {
-            modifiedDate: new Date().toISOString(),
-            orderID: order.order.subID,
+            orderID: order.order.id,
+            modifiedDate: new Date(),
             checkIn: order.order.checkIn,
-            checkOut: order.order.checkOut,
+            checkOut: order.order.finalCheckOut,
             rentalTime: order.order.maxRentalTime,
-            priceID: "",
-            senderID: "",
-            receiverID: "",
-            note: order.transaction.description
+            priceID: order.order.priceListID,
+            senderID: order.customer.id,
+            receiverID: order.receiver.id,
+            note: order.transaction.description,
+            subTotal: order.order.subTotal,
+            discount: order.order.discountPrice,
+            tax: order.order.tax,
+            total: order.order.total,
+            defOrdStatusID: -1
         }
     };
 
-    await bq.query(options);
-    return true;
+    const [rows] = await bq.query(options);
+    return rows?.[0]?.UUID;
+}
+
+export async function updateOrderStatus(obj) {
+    const table = "ORDER";
+    const query = ` UPDATE \`${dataset}.${table}\`
+                    SET DEF_ORD_STATUS_ID=@ordStatusID
+                    WHERE UUID=@uuid`;
+    const options = {
+        query,
+        params: {
+            ordStatusID:obj.ordStatusID,
+            uuid:obj.uuid
+        }
+    };
+    const res=await bq.query(options);
+    console.log(res.data);
+    return res.data;
 }
 
 export async function checkExistCustomer(customer) {
@@ -43,26 +87,112 @@ export async function checkExistCustomer(customer) {
     return rows;
 }
 
+// export async function insertCustomer(customer) {
+//     const table = "CUSTOMER";
+//     const query = `INSERT INTO \`${dataset}.${table}\`
+//     (CUSTOMER_ID, FULLNAME, MOBILE, EMAIL, IDENTITY_CARD, IMAGE_URL) 
+//     VALUES(@customerID, @fullname, @mobile, @email, @identityCard, @imgURL)`;
+//     const options = {
+//         query,
+//         params: {
+//             customerID: customer.id,
+//             fullname: customer.fullName,
+//             mobile: customer.mobile,
+//             email: customer.email,
+//             identityCard: customer.identityCard,
+//             imgURL: customer.imageURL
+//         }
+//     };
+
+//     await bq.query(options);
+//     return true;
+
+// }
+
 export async function insertCustomer(customer) {
+    // console.log("Backend nhận thông tin customer:", customer);
+    //Thực hiện công việc kiểm tra tồn tại trước
+    //Nếu chưa có thì Insert - sau đó trả về mã khách hàng
+    //Nếu đã có chỉ trả về mã khách hàng
+
     const table = "CUSTOMER";
-    const query = `INSERT INTO \`${dataset}.${table}\`
-    (CUSTOMER_ID, FULLNAME, MOBILE, EMAIL, IDENTITY_CARD, IMAGE_URL) 
-    VALUES(@customerID, @fullname, @mobile, @email, @identityCard, @imgURL)`;
+    const script = `
+    DECLARE inpFULLNAME STRING DEFAULT @fullname;
+    DECLARE inpMOBILE STRING DEFAULT @mobile;
+    DECLARE inpEMAIL STRING DEFAULT @email;
+    DECLARE inpIDENTITY_CARD STRING DEFAULT @identityCard;
+    DECLARE inpAUTH_MODE STRING DEFAULT @authMethod;
+
+    DECLARE vID STRING;
+
+    SET vID=(
+    SELECT CUSTOMER_ID
+    FROM \`${dataset}.${table}\` AS C
+    WHERE C.IDENTITY_CARD IS NOT NULL AND C.IDENTITY_CARD=inpIDENTITY_CARD
+    LIMIT 1);
+
+    IF vID is NULL THEN
+        IF inpAUTH_MODE="Email" THEN
+            SET vID=(
+                SELECT CUSTOMER_ID
+                FROM \`${dataset}.${table}\` AS C
+                WHERE C.EMAIL=inpEMAIL
+                LIMIT 1
+            );
+        ELSEIF inpAUTH_MODE="Zalo" THEN
+            SET vID=(
+                    SELECT CUSTOMER_ID
+                    FROM \`${dataset}.${table}\` AS C
+                    WHERE C.MOBILE=inpMOBILE
+                    LIMIT 1
+                );
+        END IF;
+    END IF;
+
+    IF vID is NULL THEN
+        SET vID = GENERATE_UUID();
+        INSERT INTO \`${dataset}.${table}\`
+        (CUSTOMER_ID, FULLNAME, MOBILE,EMAIL,IDENTITY_CARD)
+        VALUES 
+        (vID, inpFULLNAME, inpMOBILE,inpEMAIL,inpIDENTITY_CARD);
+    END IF;
+
+    SELECT vID AS CUSTOMER_ID;
+    `;
     const options = {
-        query,
+        query: script,
         params: {
-            customerID: customer.id,
             fullname: customer.fullName,
             mobile: customer.mobile,
             email: customer.email,
             identityCard: customer.identityCard,
-            imgURL: customer.imageURL
+            authMethod: customer.authMethod
         }
     };
+    const [result] = await bq.query(options);
+    return result;
+}
 
+export async function createTransactLog(transact) {
+    console.log("TRANSACT bên trong Bigquery: ",transact);
+    const table = "TRANSACT_LOG";
+    const query = ` INSERT INTO \`${dataset}.${table}\`
+                    (TIMESTAMP,UUID,ACTION_ID,ROLE_ID,ACTOR_ID,IMAGE_URL)
+                    VALUES
+                    (@timestamp,@uuid,@actionID,@actorType,@actorID,@imgURL)`;
+    const options = {
+        query,
+        params: {
+            timestamp: new Date(),
+            uuid: transact.uuid,
+            actionID: transact.actionID,
+            actorType: transact.actorType,
+            actorID: transact.actorID,
+            imgURL: transact.imageURL
+        }
+    };
     await bq.query(options);
     return true;
-
 }
 
 export async function getPriceList(deviceNo) {

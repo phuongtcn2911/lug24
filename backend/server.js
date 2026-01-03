@@ -17,11 +17,13 @@ import paymentRoutes from "./routes/payment.js";
 import zaloRoutes from "./routes/zalo.js";
 import i18next from "./routes/i18n.js"
 import bigQueryRoutes from "./routes/bigQuery.js";
+import gcsRoutes from './routes/gcs.js';
 
 // Khởi tạo app
 const app = express();
 app.use(cors({
-    origin: ["https://lug24-livid.vercel.app", "http://localhost:3000", "https://idioplasmatic-undeductive-roseanne.ngrok-free.dev"],
+    origin: true,
+    // origin: ["https://lug24-livid.vercel.app", "http://localhost:3000", "https://idioplasmatic-undeductive-roseanne.ngrok-free.dev"],
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
@@ -36,6 +38,7 @@ app.use("/api", otpRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api", zaloRoutes);
 app.use("/api", bigQueryRoutes);
+app.use("/api", gcsRoutes);
 
 // Khi chạy trên local (không phải production) thì listen cổng
 if (process.env.NODE_ENV !== "production") {
